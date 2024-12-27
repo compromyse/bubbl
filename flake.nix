@@ -18,6 +18,8 @@
           mpfr
           texinfo
           isl
+
+          file
         ];
       };
     };

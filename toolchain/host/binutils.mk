@@ -4,7 +4,7 @@ URL := https://ftp.gnu.org/gnu/binutils/binutils-$(VERSION).tar.gz
 DIR := $(BUILD_DIR)/binutils-$(VERSION)
 FILE := $(DIR)/binutils-$(VERSION).tar.gz
 SRC := $(DIR)/binutils-$(VERSION)
-OUT := $(OUT_DIR)/binutils
+OUT := $(OUT_DIR)/toolchain/host/binutils
 
 all: install
 

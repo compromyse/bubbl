@@ -5,4 +5,6 @@ BUILD_DIR := $(ROOT_DIR)/build
 OUT_DIR := $(ROOT_DIR)/out
 
 TOOLCHAIN_TARGETS := \
-	toolchain/cc.mk
+	toolchain/host/binutils.mk \
+	toolchain/host/coreutils.mk \
+	toolchain/host/gcc.mk

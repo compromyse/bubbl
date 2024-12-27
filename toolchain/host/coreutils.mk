@@ -4,7 +4,7 @@ URL := https://ftp.gnu.org/gnu/coreutils/coreutils-$(VERSION).tar.gz
 DIR := $(BUILD_DIR)/coreutils-$(VERSION)
 FILE := $(DIR)/coreutils-$(VERSION).tar.gz
 SRC := $(DIR)/coreutils-$(VERSION)
-OUT := $(OUT_DIR)/coreutils
+OUT := $(OUT_DIR)/toolchain/host/coreutils
 
 all: install
 

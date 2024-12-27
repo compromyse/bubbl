@@ -4,13 +4,11 @@ URL := https://ftp.gnu.org/gnu/gcc/gcc-$(VERSION)/gcc-$(VERSION).tar.gz
 DIR := $(BUILD_DIR)/gcc-$(VERSION)
 FILE := $(DIR)/gcc-$(VERSION).tar.gz
 SRC := $(DIR)/gcc-$(VERSION)
-OUT := $(OUT_DIR)/gcc
+OUT := $(OUT_DIR)/toolchain/host/gcc
 
 all: install
 
 .ONESHELL:
-
-export PATH := $(OUT_DIR)/binutils/bin:$(PATH)
 
 $(FILE):
 	mkdir -p $(DIR)
@@ -24,6 +22,7 @@ configure: unpack
 	./contrib/download_prerequisites
 	mkdir -p $(SRC)/build
 	cd $(SRC)/build
+	export PATH=$(OUT_DIR)/toolchain/host/binutils/bin:$$PATH
 	../configure --disable-nls --enable-languages=c,c++
 
 build: configure
