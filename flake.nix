@@ -9,7 +9,15 @@
     in {
       devShells.x86_64-linux.default = pkgs.mkShell {
         buildInputs = with pkgs; [
-          pkgsCross.i686-embedded.buildPackages.gcc
+          gcc14
+          gnumake
+          bison
+          flex
+          libmpc
+          gmp
+          mpfr
+          texinfo
+          isl
         ];
       };
     };

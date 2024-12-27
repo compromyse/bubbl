@@ -1,6 +1,8 @@
-PARALLEL_CORES := 16
-BUILD_DIR := $(shell pwd)/build
+ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-TARGETS := \
-	toolchain/hostbinutils.mk \
-	toolchain/hostcc.mk
+PARALLEL_CORES := 16
+BUILD_DIR := $(ROOT_DIR)/build
+OUT_DIR := $(ROOT_DIR)/out
+
+TOOLCHAIN_TARGETS := \
+	toolchain/cc.mk
