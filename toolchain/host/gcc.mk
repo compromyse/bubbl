@@ -20,17 +20,16 @@ unpack: $(FILE)
 configure: unpack
 	cd $(SRC)
 	./contrib/download_prerequisites
-	mkdir -p $(SRC)/build
-	cd $(SRC)/build
-	export PATH=$(OUT_DIR)/toolchain/host/binutils/bin:$$PATH
-	../configure --disable-nls --enable-languages=c,c++
+	mkdir -p $(SRC)/build_host
+	cd $(SRC)/build_host
+	../configure --disable-nls --enable-languages=c,c++ --prefix=/
 
 build: configure
-	cd $(SRC)/build
+	cd $(SRC)/build_host
 	$(MAKE) -j$(PARALLEL_CORES)
 
 install: build
-	cd $(SRC)/build
+	cd $(SRC)/build_host
 	$(MAKE) install DESTDIR=$(OUT)
 
 clean:
