@@ -6,7 +6,8 @@ OUT_DIR := $(ROOT_DIR)/out
 
 # TOOLCHAIN_TARGETS := \
 	toolchain/host/binutils.mk \
-	toolchain/host/gcc.mk \
+	toolchain/host/gcc.mk
 
 TOOLCHAIN_TARGETS += \
-	toolchain/cross/gcc.mk \
+	toolchain/cross/binutils.mk \
+	toolchain/cross/gcc.mk

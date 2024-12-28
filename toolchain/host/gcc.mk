@@ -4,7 +4,7 @@ URL := https://ftp.gnu.org/gnu/gcc/gcc-$(VERSION)/gcc-$(VERSION).tar.gz
 DIR := $(BUILD_DIR)/gcc-$(VERSION)
 FILE := $(DIR)/gcc-$(VERSION).tar.gz
 SRC := $(DIR)/gcc-$(VERSION)
-OUT := $(OUT_DIR)/toolchain/host/gcc
+OUT := $(OUT_DIR)/toolchain/host
 
 all: install
 
