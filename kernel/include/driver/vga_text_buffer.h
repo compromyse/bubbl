@@ -35,7 +35,7 @@ typedef enum {
 bool vga_text_buffer_is_initialized(void);
 
 void vga_text_buffer_initialize(void);
-void vga_text_buffer_write_char(char c);
-void vga_text_buffer_write_string(char *data);
+void vga_text_buffer_write_char(char);
+void vga_text_buffer_write_string(char *);
 
 #endif
