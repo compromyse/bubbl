@@ -1,10 +1,11 @@
 VERSION := 14.2.0
 URL := https://ftp.gnu.org/gnu/gcc/gcc-$(VERSION)/gcc-$(VERSION).tar.gz
 
-DIR := $(BUILD_DIR)/gcc-$(VERSION)
+DIR := $(BUILD_DIR)/toolchain/gcc-$(VERSION)
 FILE := $(DIR)/gcc-$(VERSION).tar.gz
 SRC := $(DIR)/gcc-$(VERSION)
 OUT := $(OUT_DIR)/toolchain/host
+BUILD := $(DIR)/build_host
 
 all: install
 
@@ -20,17 +21,20 @@ unpack: $(FILE)
 configure: unpack
 	cd $(SRC)
 	./contrib/download_prerequisites
-	mkdir -p $(SRC)/build_host
-	cd $(SRC)/build_host
-	../configure --disable-nls --enable-languages=c,c++ --prefix=/
+	mkdir -p $(BUILD)
+	cd $(BUILD)
+	$(SRC)/configure \
+		--prefix=$(OUT) \
+		--disable-nls \
+		--enable-languages=c,c++
 
 build: configure
-	cd $(SRC)/build_host
+	cd $(BUILD)
 	$(MAKE) -j$(PARALLEL_CORES)
 
 install: build
-	cd $(SRC)/build_host
-	$(MAKE) install DESTDIR=$(OUT)
+	cd $(BUILD)
+	$(MAKE) install
 
 clean:
-	rm -rf $(DIR) $(FILE)
+	rm -rf $(DIR) $(FILE) $(OUT)

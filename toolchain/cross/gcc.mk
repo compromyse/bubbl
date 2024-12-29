@@ -1,3 +1,6 @@
+include $(ROOT_DIR)/make/utils.mk
+include $(ROOT_DIR)/toolchain/constants.mk
+
 VERSION := 14.2.0
 URL := https://ftp.gnu.org/gnu/gcc/gcc-$(VERSION)/gcc-$(VERSION).tar.gz
 
@@ -5,14 +8,14 @@ DIR := $(BUILD_DIR)/toolchain/gcc-$(VERSION)
 FILE := $(DIR)/gcc-$(VERSION).tar.gz
 SRC := $(DIR)/gcc-$(VERSION)
 OUT := $(OUT_DIR)/toolchain/cross
-
-TARGET := i686-elf
+BUILD := $(DIR)/build_cross
 
 all: install
 
 .ONESHELL:
 
-export PATH := $(OUT_DIR)/toolchain/host/gcc/bin:$(OUT_DIR)/toolchain/host/binutils/bin:$(OUT_DIR)/toolchain/cross/bin:$(PATH)
+$(call add-to-path,$(CROSS_TOOLCHAIN))
+$(call add-to-path,$(HOST_TOOLCHAIN))
 
 $(FILE):
 	mkdir -p $(DIR)
@@ -24,24 +27,24 @@ unpack: $(FILE)
 configure: unpack
 	cd $(SRC)
 	./contrib/download_prerequisites
-	mkdir -p $(SRC)/build_cross
-	cd $(SRC)/build_cross
-	../configure \
+	mkdir -p $(BUILD)
+	cd $(BUILD)
+	$(SRC)/configure \
 		--prefix=$(OUT) \
-		--target=$(TARGET) \
+		--target=$(TOOLCHAIN_TARGET) \
 		--disable-nls \
 		--enable-languages=c,c++ \
 		--without-headers \
 		--disable-hosted-libstdcxx
 
 build: configure
-	cd $(SRC)/build_cross
+	cd $(BUILD)
 	$(MAKE) -j$(PARALLEL_CORES) all-gcc
 	$(MAKE) -j$(PARALLEL_CORES) all-target-libgcc
 	$(MAKE) -j$(PARALLEL_CORES) all-target-libstdc++-v3
 
 install: build
-	cd $(SRC)/build_cross
+	cd $(BUILD)
 	$(MAKE) install-gcc
 	$(MAKE) install-target-libgcc
 	$(MAKE) install-target-libstdc++-v3

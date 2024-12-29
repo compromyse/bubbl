@@ -1,16 +1,28 @@
 include config.mk
 
+export ROOT_DIR
+export BUILD_DIR
+export OUT_DIR
+export PARALLEL_CORES
+
+# TARGETS
 all: $(TARGETS)
 
 .PHONY: $(TARGETS)
 $(TARGETS):
-	$(MAKE) -f $@ BUILD_DIR=$(BUILD_DIR)/$@ OUT_DIR=$(OUT_DIR) PARALLEL_CORES=$(PARALLEL_CORES)
+	$(MAKE) -f $@
 
+# TOOLCHAINS
 toolchain: $(TOOLCHAIN_TARGETS)
+
+toolchain-clean:
+	for target in $(TOOLCHAIN_TARGETS); do \
+		$(MAKE) -f $$target clean; \
+	done
 
 .PHONY: $(TOOLCHAIN_TARGETS)
 $(TOOLCHAIN_TARGETS):
-	$(MAKE) -f $@ BUILD_DIR=$(BUILD_DIR) OUT_DIR=$(OUT_DIR) PARALLEL_CORES=$(PARALLEL_CORES)
+	$(MAKE) -f $@
 
 clean:
 	rm -rf $(BUILD_DIR)

@@ -1,18 +1,20 @@
+include $(ROOT_DIR)/make/utils.mk
+include $(ROOT_DIR)/toolchain/constants.mk
+
 VERSION := 2.42
 URL := https://ftp.gnu.org/gnu/binutils/binutils-$(VERSION).tar.gz
 
-DIR := $(BUILD_DIR)/binutils-$(VERSION)
+DIR := $(BUILD_DIR)/toolchain/binutils-$(VERSION)
 FILE := $(DIR)/binutils-$(VERSION).tar.gz
 SRC := $(DIR)/binutils-$(VERSION)
 OUT := $(OUT_DIR)/toolchain/cross
-
-TARGET := i686-elf
+BUILD := $(DIR)/build_cross
 
 all: install
 
 .ONESHELL:
 
-export PATH := $(OUT_DIR)/toolchain/host/gcc/bin:$(OUT_DIR)/toolchain/host/binutils/bin:$(PATH)
+$(call add-to-path,$(HOST_TOOLCHAIN))
 
 $(FILE):
 	mkdir -p $(DIR)
@@ -22,20 +24,20 @@ unpack: $(FILE)
 	tar xf $(FILE) -C $(DIR)
 
 configure: unpack
-	mkdir -p $(SRC)/build_cross
-	cd $(SRC)/build_cross
-	../configure \
+	mkdir -p $(BUILD)
+	cd $(BUILD)
+	$(SRC)/configure \
 		--prefix=$(OUT) \
-		--target=$(TARGET) \
+		--target=$(TOOLCHAIN_TARGET) \
 		--disable-nls \
 		--with-sysroot
 
 build: configure
-	cd $(SRC)/build_cross
+	cd $(BUILD)
 	$(MAKE) -j$(PARALLEL_CORES)
 
 install: build
-	cd $(SRC)/build_cross
+	cd $(BUILD)
 	$(MAKE) install
 
 clean:
