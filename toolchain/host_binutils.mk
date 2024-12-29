@@ -1,20 +1,15 @@
-include $(ROOT_DIR)/make/utils.mk
-include $(ROOT_DIR)/toolchain/constants.mk
-
 VERSION := 2.42
 URL := https://ftp.gnu.org/gnu/binutils/binutils-$(VERSION).tar.gz
 
 DIR := $(BUILD_DIR)/toolchain/binutils-$(VERSION)
 FILE := $(DIR)/binutils-$(VERSION).tar.gz
 SRC := $(DIR)/binutils-$(VERSION)
-OUT := $(OUT_DIR)/toolchain/cross
-BUILD := $(DIR)/build_cross
+OUT := $(OUT_DIR)/host
+BUILD := $(DIR)/build_host
 
 all: install
 
 .ONESHELL:
-
-$(call add-to-path,$(HOST_TOOLCHAIN))
 
 $(FILE):
 	mkdir -p $(DIR)
@@ -28,9 +23,7 @@ configure: unpack
 	cd $(BUILD)
 	$(SRC)/configure \
 		--prefix=$(OUT) \
-		--target=$(TOOLCHAIN_TARGET) \
-		--disable-nls \
-		--with-sysroot
+		--disable-nls
 
 build: configure
 	cd $(BUILD)

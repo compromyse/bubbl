@@ -1,3 +1,5 @@
 .direnv/
 build/*
-out/*
+toolchain/cross/
+toolchain/host/
+toolchain/build/

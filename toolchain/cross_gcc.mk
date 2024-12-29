@@ -1,5 +1,4 @@
-include $(ROOT_DIR)/make/utils.mk
-include $(ROOT_DIR)/toolchain/constants.mk
+include utils.mk
 
 VERSION := 14.2.0
 URL := https://ftp.gnu.org/gnu/gcc/gcc-$(VERSION)/gcc-$(VERSION).tar.gz
@@ -7,15 +6,17 @@ URL := https://ftp.gnu.org/gnu/gcc/gcc-$(VERSION)/gcc-$(VERSION).tar.gz
 DIR := $(BUILD_DIR)/toolchain/gcc-$(VERSION)
 FILE := $(DIR)/gcc-$(VERSION).tar.gz
 SRC := $(DIR)/gcc-$(VERSION)
-OUT := $(OUT_DIR)/toolchain/cross
+OUT := $(OUT_DIR)/cross
 BUILD := $(DIR)/build_cross
+
+TOOLCHAIN_TARGET := i686-elf
 
 all: install
 
 .ONESHELL:
 
-$(call add-to-path,$(CROSS_TOOLCHAIN))
-$(call add-to-path,$(HOST_TOOLCHAIN))
+$(call add-to-path,$(shell pwd)/cross/bin)
+$(call add-to-path,$(shell pwd)/host/bin)
 
 $(FILE):
 	mkdir -p $(DIR)

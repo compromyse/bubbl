@@ -1,18 +1,12 @@
-# CMakeLists.txt
-
-set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/cmake/toolchain.cmake)
-set(CMAKE_C_COMPILER_WORKS TRUE)
-set(CMAKE_CXX_COMPILER_WORKS TRUE)
-
 cmake_minimum_required(VERSION 3.21)
-project(CMOS C ASM)
+project(kernel C ASM)
 
 set(KERNEL_SRC
   kernel/kernel.c
   arch/x86/init/boot.s
 )
 
-add_executable(cmos.bin ${KERNEL_SRC})
+add_executable(kernel ${KERNEL_SRC})
 
 set(C_COMPILE_OPTIONS
   -ffreestanding
@@ -22,13 +16,13 @@ set(C_COMPILE_OPTIONS
   -pedantic
 )
 
-target_compile_options(cmos.bin PRIVATE 
+target_compile_options(kernel PRIVATE 
   $<$<COMPILE_LANGUAGE:C>: ${C_COMPILE_OPTIONS}>
 )
 
-set(LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/arch/x86/link.ld")
+set(LINKER_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/arch/x86/link.ld")
 set(LINKER_FLAGS
   -T ${LINKER_SCRIPT}
   -nostdlib
 )
-target_link_options(cmos.bin PRIVATE ${LINKER_FLAGS})
+target_link_options(kernel PRIVATE ${LINKER_FLAGS})
