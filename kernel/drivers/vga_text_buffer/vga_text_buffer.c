@@ -16,9 +16,9 @@ static uint8_t
 vga_entry_color(vga_color fg, vga_color bg)
 {
     /*
-    * bg   fg
-    * 1110 0101
-    */
+     * bg   fg
+     * 1110 0101
+     */
     return bg << 4 | fg;
 }
 
@@ -26,11 +26,9 @@ static uint16_t
 vga_entry(unsigned char character, uint8_t color)
 {
     /*
-    * TODO: Unsure if this understanding
-    * is correct.
-    * color     character
-    * 1110 0101 1001 1010
-    */
+     * color     character
+     * 1110 0101 1001 1010
+     */
     return (uint16_t) color << 8 | (uint16_t) character;
 }
 

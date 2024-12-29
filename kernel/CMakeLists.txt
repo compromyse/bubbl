@@ -5,6 +5,7 @@ set(KERNEL_SRC
     arch/x86/init/boot.s
 
     kernel/kernel.c
+    kernel/stack_smashing_protector/stack_smashing_protector.c
 
     drivers/vga_text_buffer/vga_text_buffer.c
 
@@ -17,7 +18,12 @@ target_include_directories(kernel PRIVATE include)
 
 set(C_COMPILE_OPTIONS
     -ffreestanding
+
+    -fstack-protector
+    -fstack-protector-all
+
     -O2
+
     -Wall
     -Wextra
     -pedantic

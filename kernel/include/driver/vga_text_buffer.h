@@ -1,9 +1,10 @@
 #ifndef __drivers_vga_text_buffer_h
 #define __drivers_vga_text_buffer_h
 
-/* TODO:
+/*
+ * TODO:
  * Implement scrolling
-*/
+ */
 
 #include <stdint.h>
 #include <stdbool.h>
