@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
-export PATH="$PWD/toolchain/cross/bin:$PWD/toolchain/host/bin:$PATH"
+dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 
-alias r="cd $PWD"
+export PATH="$dir/toolchain/cross/bin:$dir/toolchain/host/bin:$PATH"
+
+alias r="cd $dir"
+alias b="mkdir -p $dir/build && cd $dir/build"
