@@ -4,10 +4,15 @@ project(kernel C ASM)
 set(KERNEL_SRC
   kernel/kernel.c
 
+  drivers/vga_text_buffer/vga_text_buffer.c
+  
+  libk/strlen.c
+
   arch/x86/init/boot.s
 )
 
 add_executable(kernel ${KERNEL_SRC})
+target_include_directories(kernel PRIVATE include)
 
 set(C_COMPILE_OPTIONS
   -ffreestanding
