@@ -30,7 +30,7 @@ uint8_t vga_entry_color(vga_color fg, vga_color bg);
 uint16_t vga_entry(unsigned char character, uint8_t color);
 
 void terminal_initialize(void);
-void terminal_put_entry_at(char c, uint8_t color, uint8_t x, uint8_t y);
+void terminal_write_entry_at(char c, uint8_t color, uint8_t x, uint8_t y);
 void terminal_write_char(char c);
 void terminal_write_string(char *data);
 

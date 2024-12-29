@@ -1,5 +1,3 @@
-.intel_syntax noprefix
-
 /* Adapted from https://wiki.osdev.org/Bare_Bones */
 
 /* Declare constants for the multiboot header. */
@@ -67,7 +65,7 @@ _start:
 	stack (as it grows downwards on x86 systems). This is necessarily done
 	in assembly as languages such as C cannot function without a stack.
 	*/
-	mov esp, stack_top
+	movl $stack_top, %esp
 
 	/*
 	This is a good place to initialize crucial processor state before the
@@ -79,6 +77,9 @@ _start:
 	C++ features such as global constructors and exceptions will require
 	runtime support to work as well.
 	*/
+
+  /* Call the global constructors. */
+  call _init
 
 	/*
 	Enter the high-level kernel. The ABI requires the stack is 16-byte

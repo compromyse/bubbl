@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 3.21)
 project(kernel C ASM)
 
 set(KERNEL_SRC
+  arch/x86/init/boot.s
+
   kernel/kernel.c
 
   drivers/vga_text_buffer/vga_text_buffer.c
   
   libk/strlen.c
-
-  arch/x86/init/boot.s
 )
 
 add_executable(kernel ${KERNEL_SRC})
