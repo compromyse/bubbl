@@ -3,3 +3,5 @@ build/*
 toolchain/cross/
 toolchain/host/
 toolchain/build/
+.cache/
+compile_commands.json
