@@ -1,5 +1,7 @@
 include config.mk
 
+ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
 export ROOT_DIR
 export BUILD_DIR
 export OUT_DIR
@@ -10,7 +12,7 @@ all: $(TARGETS)
 
 .PHONY: $(TARGETS)
 $(TARGETS):
-	$(MAKE) -f $@
+	$(MAKE) -C $@
 
 # TOOLCHAINS
 toolchain: $(TOOLCHAIN_TARGETS)
