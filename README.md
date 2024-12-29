@@ -1,6 +1,13 @@
 # cmos
 
-# Building
+## Building
+
+### Dependencies:
+
+- CMake
+- Ninja
+- Aria2 (for fetch-toolchain.sh)
+
 ```sh
 ./scripts/fetch-toolchain.sh
 
@@ -10,7 +17,12 @@ cmake ..
 ninja build
 ```
 
-# Running
+## Running
+
 ```sh
 ninja run
 ```
+
+## Authors
+
+- [@compromyse](https://www.github.com/compromyse)
