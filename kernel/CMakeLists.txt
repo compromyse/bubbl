@@ -9,6 +9,7 @@ set(KERNEL_SRC
     drivers/vga_text_buffer/vga_text_buffer.c
 
     libk/strlen.c
+    libk/printk.c
 )
 
 add_executable(kernel ${KERNEL_SRC})

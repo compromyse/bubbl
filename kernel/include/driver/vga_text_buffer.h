@@ -2,6 +2,7 @@
 #define __drivers_vga_text_buffer_h
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
@@ -26,12 +27,10 @@ typedef enum {
     VGA_COLOR_WHITE = 15,
 } vga_color;
 
-uint8_t vga_entry_color(vga_color fg, vga_color bg);
-uint16_t vga_entry(unsigned char character, uint8_t color);
+bool vga_text_buffer_is_initialized(void);
 
-void terminal_initialize(void);
-void terminal_write_entry_at(char c, uint8_t color, uint8_t x, uint8_t y);
-void terminal_write_char(char c);
-void terminal_write_string(char *data);
+void vga_text_buffer_initialize(void);
+void vga_text_buffer_write_char(char c);
+void vga_text_buffer_write_string(char *data);
 
 #endif
