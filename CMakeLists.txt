@@ -13,7 +13,7 @@ get_target_property(KERNEL_SOURCE kernel SOURCE_DIR)
 set(QEMU_SYSTEM_CMD qemu-system-i386)
 
 set(QEMU_ARGUMENTS
-    -kernel ${KERNEL_BINARY_DIR}/kernel
+    -cdrom ${CMAKE_BINARY_DIR}/cmos.iso
 )
 
 add_custom_target(iso
@@ -29,7 +29,7 @@ add_custom_target(run
     ${QEMU_SYSTEM_CMD}
     ${QEMU_ARGUMENTS}
 
-    DEPENDS kernel
+    DEPENDS iso
 )
 
 add_custom_target(run-gdb
@@ -37,12 +37,6 @@ add_custom_target(run-gdb
     ${QEMU_ARGUMENTS}
     -s
     -S
-
-    DEPENDS kernel
-)
-
-add_custom_target(run-iso
-    ${QEMU_SYSTEM_CMD} -cdrom ${CMAKE_BINARY_DIR}/cmos.iso
 
     DEPENDS iso
 )

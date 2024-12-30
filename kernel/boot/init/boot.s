@@ -96,6 +96,8 @@ _start:
     runtime support to work as well.
     */
 
+    /* TODO: Initialize global descriptor table */
+
     /* Call the global constructors. */
     call _init
 
