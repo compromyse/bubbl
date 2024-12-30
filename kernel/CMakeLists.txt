@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 project(kernel C ASM)
 
 set(KERNEL_SRC
-    arch/x86/init/boot.s
+    boot/init/boot.s
 
     kernel/kernel.c
     kernel/stack_smashing_protector/stack_smashing_protector.c
@@ -33,7 +33,7 @@ target_compile_options(kernel PRIVATE
     $<$<COMPILE_LANGUAGE:C>: ${C_COMPILE_OPTIONS}>
 )
 
-set(LINKER_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/arch/x86/link.ld")
+set(LINKER_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/boot/link.ld")
 set(LINKER_FLAGS
     -T ${LINKER_SCRIPT}
     -nostdlib
@@ -51,8 +51,8 @@ execute_process(COMMAND ${CMAKE_C_COMPILER}
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-add_library(crti OBJECT arch/x86/init/crti.s)
-add_library(crtn OBJECT arch/x86/init/crtn.s)
+add_library(crti OBJECT boot/init/crti.s)
+add_library(crtn OBJECT boot/init/crtn.s)
 add_dependencies(kernel crti crtn)
 
 get_target_property(CRTI_SRC crti SOURCES)
