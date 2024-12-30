@@ -44,5 +44,5 @@ add_custom_target(run-gdb
 add_custom_target(run-iso
     ${QEMU_SYSTEM_CMD} -cdrom ${CMAKE_BINARY_DIR}/cmos.iso
 
-    DEPENDS kernel
+    DEPENDS iso
 )
