@@ -16,12 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <drivers/vga_text_buffer.h>
+#ifndef __kernel_halt_h
+#define __kernel_halt_h
 
-#include <libk/io.h>
+void halt(void);
 
-void
-printk(char *msg)
-{
-  vga_text_buffer_write_string(msg);
-}
+#endif

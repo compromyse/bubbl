@@ -5,6 +5,7 @@ set(KERNEL_SRC
   boot/init/boot.s
 
   kernel/kernel.c
+  kernel/halt.c
   kernel/stack_smashing_protector/stack_smashing_protector.c
 
   drivers/vga_text_buffer/vga_text_buffer.c

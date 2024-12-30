@@ -16,12 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <drivers/vga_text_buffer.h>
-
 #include <libk/io.h>
 
+#include <kernel/halt.h>
+
 void
-printk(char *msg)
+halt(void)
 {
-  vga_text_buffer_write_string(msg);
+  printk("kernel: halted.");
+
+  for (;;)
+    ;
 }
