@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
 
 #include <libk/string.h>
 
@@ -68,10 +68,8 @@ vga_text_buffer_initialize(void)
 {
   vga_text_buffer_row = 0;
   vga_text_buffer_column = 0;
-  vga_text_buffer_color = vga_entry_color(
-      VGA_COLOR_LIGHT_GREY,
-      VGA_COLOR_BLACK
-      );
+  vga_text_buffer_color
+      = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
   vga_text_buffer_buffer = (uint16_t *) 0xB8000;
 
   for (uint8_t y = 0; y < VGA_HEIGHT; y++)
@@ -88,7 +86,8 @@ vga_text_buffer_write_char(char c)
     vga_text_buffer_row++;
     vga_text_buffer_column = 0;
   } else {
-    vga_text_buffer_write_entry_at(c, vga_text_buffer_color, vga_text_buffer_column, vga_text_buffer_row);
+    vga_text_buffer_write_entry_at(
+        c, vga_text_buffer_color, vga_text_buffer_column, vga_text_buffer_row);
 
     if (++vga_text_buffer_column == VGA_WIDTH) {
       vga_text_buffer_column = 0;

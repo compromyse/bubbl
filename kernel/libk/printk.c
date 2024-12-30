@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libk/io.h>
 #include <driver/vga_text_buffer.h>
+#include <libk/io.h>
 
 void
 printk(char *msg)
