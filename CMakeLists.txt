@@ -12,12 +12,8 @@ get_target_property(KERNEL_SOURCE kernel SOURCE_DIR)
 
 set(QEMU_SYSTEM_CMD qemu-system-i386)
 
-add_custom_target(run
-    ${QEMU_SYSTEM_CMD}
+set(QEMU_ARGUMENTS
     -kernel ${KERNEL_BINARY_DIR}/kernel
-    -serial stdio
-    # -s
-    # -S
 )
 
 add_custom_target(iso
@@ -25,6 +21,18 @@ add_custom_target(iso
     cp ${KERNEL_BINARY_DIR}/kernel ${CMAKE_BINARY_DIR}/iso/boot &&
     cp ${KERNEL_SOURCE}/boot/grub.cfg ${CMAKE_BINARY_DIR}/iso/boot/grub &&
     grub-mkrescue -o ${CMAKE_BINARY_DIR}/cmos.iso ${CMAKE_BINARY_DIR}/iso
+)
+
+add_custom_target(run
+    ${QEMU_SYSTEM_CMD}
+    ${QEMU_ARGUMENTS}
+)
+
+add_custom_target(run-gdb
+    ${QEMU_SYSTEM_CMD}
+    ${QEMU_ARGUMENTS}
+    -s
+    -S
 )
 
 add_custom_target(run-iso
