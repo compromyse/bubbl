@@ -38,6 +38,13 @@ vga_text_buffer_is_initialized(void)
     return vga_text_buffer_initialized;
 }
 
+static void
+vga_text_buffer_write_entry_at(char c, uint8_t color, uint8_t x, uint8_t y)
+{
+    size_t index = y * VGA_WIDTH + x;
+    vga_text_buffer_buffer[index] = vga_entry(c, color);
+}
+
 void
 vga_text_buffer_initialize(void)
 {
@@ -50,19 +57,10 @@ vga_text_buffer_initialize(void)
     vga_text_buffer_buffer = (uint16_t *) 0xB8000;
 
     for (uint8_t y = 0; y < VGA_HEIGHT; y++)
-	for (uint8_t x = 0; x < VGA_WIDTH; x++) {
-	    size_t index = y * VGA_WIDTH + x;
-	    vga_text_buffer_buffer[index] = vga_entry(' ', vga_text_buffer_color);
-	}
+	for (uint8_t x = 0; x < VGA_WIDTH; x++)
+	    vga_text_buffer_write_entry_at(' ', vga_text_buffer_color, x, y);
 
     vga_text_buffer_initialized = true;
-}
-
-static void
-vga_text_buffer_write_entry_at(char c, uint8_t color, uint8_t x, uint8_t y)
-{
-    uint8_t index = y * VGA_WIDTH + x;
-    vga_text_buffer_buffer[index] = vga_entry(c, color);
 }
 
 void
