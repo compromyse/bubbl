@@ -1,20 +1,20 @@
 /*
-* CMOS
-* Copyright (C) 2024 Raghuram Subramani <raghus2247@gmail.com>
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * CMOS
+ * Copyright (C) 2024 Raghuram Subramani <raghus2247@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /* The bootloader will look at this image and start execution at the symbol
    designated as the entry point. */
@@ -24,7 +24,7 @@ ENTRY(_start)
    kernel image. */
 SECTIONS
 {
-    /* It used to be universally recommended to use 1M as a start offset,
+  /* It used to be universally recommended to use 1M as a start offset,
 	as it was effectively guaranteed to be available under BIOS systems.
 	However, UEFI has made things more complicated, and experimental data
 	strongly suggests that 2M is a safer place to load. In 2016, a new
@@ -35,36 +35,36 @@ SECTIONS
 	memory which is verified to be available by the firmware, in order to
 	work around this issue. This does not use that feature, so 2M was
 	chosen as a safer option than the traditional 1M. */
-    . = 2M;
+  . = 2M;
 
-    /* First put the multiboot header, as it is required to be put very early
+  /* First put the multiboot header, as it is required to be put very early
 	in the image or the bootloader won't recognize the file format.
 	Next we'll put the .text section. */
-    .text BLOCK(4K) : ALIGN(4K)
-    {
-	    *(.multiboot)
-	    *(.text)
-    }
+  .text BLOCK(4K) : ALIGN(4K)
+  {
+    *(.multiboot)
+    *(.text)
+  }
 
-    /* Read-only data. */
-    .rodata BLOCK(4K) : ALIGN(4K)
-    {
-	    *(.rodata)
-    }
+  /* Read-only data. */
+  .rodata BLOCK(4K) : ALIGN(4K)
+  {
+    *(.rodata)
+  }
 
-    /* Read-write data (initialized) */
-    .data BLOCK(4K) : ALIGN(4K)
-    {
-	    *(.data)
-    }
+  /* Read-write data (initialized) */
+  .data BLOCK(4K) : ALIGN(4K)
+  {
+    *(.data)
+  }
 
-    /* Read-write data (uninitialized) and stack */
-    .bss BLOCK(4K) : ALIGN(4K)
-    {
-	    *(COMMON)
-	    *(.bss)
-    }
+  /* Read-write data (uninitialized) and stack */
+  .bss BLOCK(4K) : ALIGN(4K)
+  {
+    *(COMMON)
+    *(.bss)
+  }
 
-    /* The compiler may produce other sections, by default it will put them in
+  /* The compiler may produce other sections, by default it will put them in
 	a segment with the same name. Simply add stuff here as needed. */
 }

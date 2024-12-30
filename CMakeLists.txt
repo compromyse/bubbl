@@ -13,38 +13,39 @@ get_target_property(KERNEL_SOURCE kernel SOURCE_DIR)
 set(QEMU_SYSTEM_CMD qemu-system-i386)
 
 set(QEMU_ARGUMENTS
-    -cdrom ${CMAKE_BINARY_DIR}/cmos.iso
+  -cdrom ${CMAKE_BINARY_DIR}/cmos.iso
 )
 
 add_custom_target(iso
-    mkdir -p ${CMAKE_BINARY_DIR}/iso/boot/grub &&
-    cp ${KERNEL_BINARY_DIR}/kernel ${CMAKE_BINARY_DIR}/iso/boot &&
-    cp ${KERNEL_SOURCE}/boot/grub.cfg ${CMAKE_BINARY_DIR}/iso/boot/grub &&
-    grub-mkrescue -o ${CMAKE_BINARY_DIR}/cmos.iso ${CMAKE_BINARY_DIR}/iso
+  rm -rf ${CMAKE_BINARY_DIR}/iso &&
+  mkdir -p ${CMAKE_BINARY_DIR}/iso/boot/grub &&
+  cp ${KERNEL_BINARY_DIR}/kernel ${CMAKE_BINARY_DIR}/iso/boot &&
+  cp ${KERNEL_SOURCE}/boot/grub.cfg ${CMAKE_BINARY_DIR}/iso/boot/grub &&
+  grub-mkrescue -o ${CMAKE_BINARY_DIR}/cmos.iso ${CMAKE_BINARY_DIR}/iso
 
-    DEPENDS kernel
+  DEPENDS kernel
 )
 
 add_custom_target(run
-    ${QEMU_SYSTEM_CMD}
-    ${QEMU_ARGUMENTS}
+  ${QEMU_SYSTEM_CMD}
+  ${QEMU_ARGUMENTS}
 
-    DEPENDS iso
+  DEPENDS iso
 )
 
 add_custom_target(run-gdb
-    ${QEMU_SYSTEM_CMD}
-    ${QEMU_ARGUMENTS}
-    -s
-    -S
+  ${QEMU_SYSTEM_CMD}
+  ${QEMU_ARGUMENTS}
+  -s
+  -S
 
-    DEPENDS iso
+  DEPENDS iso
 )
 
 add_custom_target(clean-custom
-    rm -rf
-    ${CMAKE_BINARY_DIR}/iso
-    ${CMAKE_BINARY_DIR}/cmos.iso
+  rm -rf
+  ${CMAKE_BINARY_DIR}/iso
+  ${CMAKE_BINARY_DIR}/cmos.iso
 
-    DEPENDS clean
+  DEPENDS clean
 )

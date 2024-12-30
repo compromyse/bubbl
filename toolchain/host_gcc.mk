@@ -30,29 +30,29 @@ all: install
 .ONESHELL:
 
 $(FILE):
-    mkdir -p $(DIR)
-    wget $(URL) -O $(FILE)
+	mkdir -p $(DIR)
+	wget $(URL) -O $(FILE)
 
 unpack: $(FILE)
-    tar xf $(FILE) -C $(DIR)
+	tar xf $(FILE) -C $(DIR)
 
 configure: unpack
-    cd $(SRC)
-    ./contrib/download_prerequisites
-    mkdir -p $(BUILD)
-    cd $(BUILD)
-    $(SRC)/configure \
-	--prefix=$(OUT) \
-	--disable-nls \
-	--enable-languages=c,c++
+	cd $(SRC)
+	./contrib/download_prerequisites
+	mkdir -p $(BUILD)
+	cd $(BUILD)
+	$(SRC)/configure \
+		--prefix=$(OUT) \
+		--disable-nls \
+		--enable-languages=c,c++
 
 build: configure
-    cd $(BUILD)
-    $(MAKE) -j$(PARALLEL_CORES)
+	cd $(BUILD)
+	$(MAKE) -j$(PARALLEL_CORES)
 
 install: build
-    cd $(BUILD)
-    $(MAKE) install
+	cd $(BUILD)
+	$(MAKE) install
 
 clean:
-    rm -rf $(DIR) $(FILE) $(OUT)
+	rm -rf $(DIR) $(FILE) $(OUT)

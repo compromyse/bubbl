@@ -37,36 +37,36 @@ $(call add-to-path,$(shell pwd)/cross/bin)
 $(call add-to-path,$(shell pwd)/host/bin)
 
 $(FILE):
-    mkdir -p $(DIR)
-    wget $(URL) -O $(FILE)
+	mkdir -p $(DIR)
+	wget $(URL) -O $(FILE)
 
 unpack: $(FILE)
-    tar xf $(FILE) -C $(DIR)
+	tar xf $(FILE) -C $(DIR)
 
 configure: unpack
-    cd $(SRC)
-    ./contrib/download_prerequisites
-    mkdir -p $(BUILD)
-    cd $(BUILD)
-    $(SRC)/configure \
-	--prefix=$(OUT) \
-	--target=$(TOOLCHAIN_TARGET) \
-	--disable-nls \
-	--enable-languages=c,c++ \
-	--without-headers \
-	--disable-hosted-libstdcxx
+	cd $(SRC)
+	./contrib/download_prerequisites
+	mkdir -p $(BUILD)
+	cd $(BUILD)
+	$(SRC)/configure \
+		--prefix=$(OUT) \
+		--target=$(TOOLCHAIN_TARGET) \
+		--disable-nls \
+		--enable-languages=c,c++ \
+		--without-headers \
+		--disable-hosted-libstdcxx
 
 build: configure
-    cd $(BUILD)
-    $(MAKE) -j$(PARALLEL_CORES) all-gcc
-    $(MAKE) -j$(PARALLEL_CORES) all-target-libgcc
-    $(MAKE) -j$(PARALLEL_CORES) all-target-libstdc++-v3
+	cd $(BUILD)
+	$(MAKE) -j$(PARALLEL_CORES) all-gcc
+	$(MAKE) -j$(PARALLEL_CORES) all-target-libgcc
+	$(MAKE) -j$(PARALLEL_CORES) all-target-libstdc++-v3
 
 install: build
-    cd $(BUILD)
-    $(MAKE) install-gcc
-    $(MAKE) install-target-libgcc
-    $(MAKE) install-target-libstdc++-v3
+	cd $(BUILD)
+	$(MAKE) install-gcc
+	$(MAKE) install-target-libgcc
+	$(MAKE) install-target-libstdc++-v3
 
 clean:
-    rm -rf $(DIR) $(FILE) $(OUT)
+	rm -rf $(DIR) $(FILE) $(OUT)

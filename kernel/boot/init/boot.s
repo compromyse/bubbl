@@ -1,20 +1,20 @@
 /*
-* CMOS
-* Copyright (C) 2024 Raghuram Subramani <raghus2247@gmail.com>
-*
-* This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * CMOS
+ * Copyright (C) 2024 Raghuram Subramani <raghus2247@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /* Adapted from https://wiki.osdev.org/Bare_Bones */
 
@@ -65,70 +65,70 @@ stack_top:
 .global _start
 .type _start, @function
 _start:
-    /*
-    The bootloader has loaded us into 32-bit protected mode on a x86
-    machine. Interrupts are disabled. Paging is disabled. The processor
-    state is as defined in the multiboot standard. The kernel has full
-    control of the CPU. The kernel can only make use of hardware features
-    and any code it provides as part of itself. There's no printf
-    function, unless the kernel provides its own <stdio.h> header and a
-    printf implementation. There are no security restrictions, no
-    safeguards, no debugging mechanisms, only what the kernel provides
-    itself. It has absolute and complete power over the
-    machine.
-    */
+  /*
+  The bootloader has loaded us into 32-bit protected mode on a x86
+  machine. Interrupts are disabled. Paging is disabled. The processor
+  state is as defined in the multiboot standard. The kernel has full
+  control of the CPU. The kernel can only make use of hardware features
+  and any code it provides as part of itself. There's no printf
+  function, unless the kernel provides its own <stdio.h> header and a
+  printf implementation. There are no security restrictions, no
+  safeguards, no debugging mechanisms, only what the kernel provides
+  itself. It has absolute and complete power over the
+  machine.
+  */
 
-    /*
-    To set up a stack, we set the esp register to point to the top of the
-    stack (as it grows downwards on x86 systems). This is necessarily done
-    in assembly as languages such as C cannot function without a stack.
-    */
-    movl $stack_top, %esp
+  /*
+  To set up a stack, we set the esp register to point to the top of the
+  stack (as it grows downwards on x86 systems). This is necessarily done
+  in assembly as languages such as C cannot function without a stack.
+  */
+  movl $stack_top, %esp
 
-    /*
-    This is a good place to initialize crucial processor state before the
-    high-level kernel is entered. It's best to minimize the early
-    environment where crucial features are offline. Note that the
-    processor is not fully initialized yet: Features such as floating
-    point instructions and instruction set extensions are not initialized
-    yet. The GDT should be loaded here. Paging should be enabled here.
-    C++ features such as global constructors and exceptions will require
-    runtime support to work as well.
-    */
+  /*
+  This is a good place to initialize crucial processor state before the
+  high-level kernel is entered. It's best to minimize the early
+  environment where crucial features are offline. Note that the
+  processor is not fully initialized yet: Features such as floating
+  point instructions and instruction set extensions are not initialized
+  yet. The GDT should be loaded here. Paging should be enabled here.
+  C++ features such as global constructors and exceptions will require
+  runtime support to work as well.
+  */
 
-    /* TODO: Initialize global descriptor table */
+  /* TODO: Initialize global descriptor table */
 
-    /* Call the global constructors. */
-    call _init
+  /* Call the global constructors. */
+  call _init
 
-    /*
-    Enter the high-level kernel. The ABI requires the stack is 16-byte
-    aligned at the time of the call instruction (which afterwards pushes
-    the return pointer of size 4 bytes). The stack was originally 16-byte
-    aligned above and we've pushed a multiple of 16 bytes to the
-    stack since (pushed 0 bytes so far), so the alignment has thus been
-    preserved and the call is well defined.
-    */
-    call kernel_main
+  /*
+  Enter the high-level kernel. The ABI requires the stack is 16-byte
+  aligned at the time of the call instruction (which afterwards pushes
+  the return pointer of size 4 bytes). The stack was originally 16-byte
+  aligned above and we've pushed a multiple of 16 bytes to the
+  stack since (pushed 0 bytes so far), so the alignment has thus been
+  preserved and the call is well defined.
+  */
+  call kernel_main
 
-    /*
-    If the system has nothing more to do, put the computer into an
-    infinite loop. To do that:
-    1) Disable interrupts with cli (clear interrupt enable in eflags).
-	They are already disabled by the bootloader, so this is not needed.
-	Mind that you might later enable interrupts and return from
-	kernel_main (which is sort of nonsensical to do).
-    2) Wait for the next interrupt to arrive with hlt (halt instruction).
-	Since they are disabled, this will lock up the computer.
-    3) Jump to the hlt instruction if it ever wakes up due to a
-	non-maskable interrupt occurring or due to system management mode.
-    */
-    cli
-    jmp quit
+  /*
+  If the system has nothing more to do, put the computer into an
+  infinite loop. To do that:
+  1) Disable interrupts with cli (clear interrupt enable in eflags).
+  They are already disabled by the bootloader, so this is not needed.
+  Mind that you might later enable interrupts and return from
+  kernel_main (which is sort of nonsensical to do).
+  2) Wait for the next interrupt to arrive with hlt (halt instruction).
+  Since they are disabled, this will lock up the computer.
+  3) Jump to the hlt instruction if it ever wakes up due to a
+  non-maskable interrupt occurring or due to system management mode.
+  */
+  cli
+  jmp quit
 
 quit:
-    hlt
-    jmp quit
+  hlt
+  jmp quit
 
 /*
 Set the size of the _start symbol to the current location '.' minus its start.
