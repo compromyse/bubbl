@@ -21,11 +21,15 @@ add_custom_target(iso
     cp ${KERNEL_BINARY_DIR}/kernel ${CMAKE_BINARY_DIR}/iso/boot &&
     cp ${KERNEL_SOURCE}/boot/grub.cfg ${CMAKE_BINARY_DIR}/iso/boot/grub &&
     grub-mkrescue -o ${CMAKE_BINARY_DIR}/cmos.iso ${CMAKE_BINARY_DIR}/iso
+
+    DEPENDS kernel
 )
 
 add_custom_target(run
     ${QEMU_SYSTEM_CMD}
     ${QEMU_ARGUMENTS}
+
+    DEPENDS kernel
 )
 
 add_custom_target(run-gdb
@@ -33,8 +37,12 @@ add_custom_target(run-gdb
     ${QEMU_ARGUMENTS}
     -s
     -S
+
+    DEPENDS kernel
 )
 
 add_custom_target(run-iso
     ${QEMU_SYSTEM_CMD} -cdrom ${CMAKE_BINARY_DIR}/cmos.iso
+
+    DEPENDS kernel
 )
