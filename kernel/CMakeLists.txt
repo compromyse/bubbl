@@ -27,6 +27,8 @@ set(C_COMPILE_OPTIONS
     -Wall
     -Wextra
     -pedantic
+
+    -g
 )
 
 target_compile_options(kernel PRIVATE 
