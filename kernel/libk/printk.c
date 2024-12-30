@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <driver/vga_text_buffer.h>
+#include <drivers/vga_text_buffer.h>
 #include <libk/io.h>
 
 void

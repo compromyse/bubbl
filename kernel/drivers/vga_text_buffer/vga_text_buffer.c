@@ -22,7 +22,7 @@
 
 #include <libk/string.h>
 
-#include <driver/vga_text_buffer.h>
+#include <drivers/vga_text_buffer.h>
 
 uint8_t vga_text_buffer_row;
 uint8_t vga_text_buffer_column;
