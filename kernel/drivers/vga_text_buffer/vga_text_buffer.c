@@ -50,10 +50,10 @@ vga_text_buffer_initialize(void)
     vga_text_buffer_buffer = (uint16_t *) 0xB8000;
 
     for (uint8_t y = 0; y < VGA_HEIGHT; y++)
-    for (uint8_t x = 0; x < VGA_WIDTH; x++) {
-	size_t index = y * VGA_WIDTH + x;
-	vga_text_buffer_buffer[index] = vga_entry(' ', vga_text_buffer_color);
-    }
+	for (uint8_t x = 0; x < VGA_WIDTH; x++) {
+	    size_t index = y * VGA_WIDTH + x;
+	    vga_text_buffer_buffer[index] = vga_entry(' ', vga_text_buffer_color);
+	}
 
     vga_text_buffer_initialized = true;
 }

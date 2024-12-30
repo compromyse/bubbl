@@ -15,8 +15,9 @@ set(QEMU_SYSTEM_CMD qemu-system-i386)
 add_custom_target(run
     ${QEMU_SYSTEM_CMD}
     -kernel ${KERNEL_BINARY_DIR}/kernel
-    -s
-    -S
+    -serial stdio
+    # -s
+    # -S
 )
 
 add_custom_target(iso
