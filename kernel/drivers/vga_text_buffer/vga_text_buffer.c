@@ -28,7 +28,6 @@ uint8_t vga_text_buffer_row;
 uint8_t vga_text_buffer_column;
 uint8_t vga_text_buffer_color;
 uint16_t *vga_text_buffer_buffer;
-bool vga_text_buffer_initialized = false;
 
 static uint8_t
 vga_entry_color(vga_color fg, vga_color bg)
@@ -50,12 +49,6 @@ vga_entry(unsigned char character, uint8_t color)
   return (uint16_t) color << 8 | (uint16_t) character;
 }
 
-bool
-vga_text_buffer_is_initialized(void)
-{
-  return vga_text_buffer_initialized;
-}
-
 static void
 vga_text_buffer_write_entry_at(char c, uint8_t color, uint8_t x, uint8_t y)
 {
@@ -75,8 +68,6 @@ vga_text_buffer_initialize(void)
   for (uint8_t y = 0; y < VGA_HEIGHT; y++)
     for (uint8_t x = 0; x < VGA_WIDTH; x++)
       vga_text_buffer_write_entry_at(' ', vga_text_buffer_color, x, y);
-
-  vga_text_buffer_initialized = true;
 }
 
 void
