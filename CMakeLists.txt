@@ -40,3 +40,11 @@ add_custom_target(run-gdb
 
     DEPENDS iso
 )
+
+add_custom_target(clean-custom
+    rm -rf
+    ${CMAKE_BINARY_DIR}/iso
+    ${CMAKE_BINARY_DIR}/cmos.iso
+
+    DEPENDS clean
+)
