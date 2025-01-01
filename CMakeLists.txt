@@ -15,7 +15,10 @@ set(QEMU_SYSTEM_CMD qemu-system-i386)
 set(QEMU_ARGUMENTS
   -cdrom ${CMAKE_BINARY_DIR}/cmos.iso
   -serial stdio
+  -device isa-debug-exit,iobase=0xf4,iosize=0x04
 )
+
+set(IGNORE_EXIT || true)
 
 add_custom_target(iso
   rm -rf ${CMAKE_BINARY_DIR}/iso &&
@@ -30,6 +33,7 @@ add_custom_target(iso
 add_custom_target(run
   ${QEMU_SYSTEM_CMD}
   ${QEMU_ARGUMENTS}
+  ${IGNORE_EXIT}
 
   DEPENDS iso
   USES_TERMINAL
@@ -40,6 +44,8 @@ add_custom_target(run-gdb
   ${QEMU_ARGUMENTS}
   -s
   -S
+
+  ${IGNORE_EXIT}
 
   DEPENDS iso
   USES_TERMINAL

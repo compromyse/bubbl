@@ -19,6 +19,7 @@
 #include <libk/io.h>
 
 #include <kernel/halt.h>
+#include <kernel/io.h>
 
 void
 halt(void)
@@ -27,4 +28,10 @@ halt(void)
 
   for (;;)
     ;
+}
+
+void
+exit(void)
+{
+  outb(0xf4, 0x1);
 }

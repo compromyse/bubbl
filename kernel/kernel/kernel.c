@@ -17,6 +17,7 @@
  */
 
 #include <kernel/halt.h>
+
 #include <libk/io.h>
 
 #include <drivers/serial.h>
@@ -29,5 +30,7 @@ kernel_main(void)
   serial_initialize();
 
   printk("kernel_main", "Started.");
-  halt();
+
+  exit();
+  halt(); /* If exit() fails (on real hardware) */
 }

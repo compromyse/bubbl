@@ -20,5 +20,6 @@
 #define __kernel_halt_h
 
 void halt(void);
+void exit(void);
 
 #endif
