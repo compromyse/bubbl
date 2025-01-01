@@ -16,21 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <kernel/halt.h>
+#include <stdint.h>
 
-#include <libk/io.h>
+#include <boot/gdt.h>
 
-#include <drivers/serial.h>
-#include <drivers/vga_text_buffer.h>
+GDT_entry GDT[] = {
+  /* NULL Descriptor */
+  GDT_ENTRY(0, 0, 0, 0),
 
-void
-kernel_main(void)
-{
-  vga_text_buffer_initialize();
-  serial_initialize();
+  /* Kernel Mode Code Segment */
+  GDT_ENTRY(0, 0xfffff, KERNEL_CODE_SEGMENT_ACCESS_FLAGS, FLAGS),
 
-  printk("kernel_main", "Started.");
+  /* Kernel Mode Data Segment */
+  GDT_ENTRY(0, 0xfffff, KERNEL_DATA_SEGMENT_ACCESS_FLAGS, FLAGS)
+};
 
-  // exit();
-  halt(); /* If exit() fails (on real hardware) */
-}
+GDT_descriptor g_GDT_descriptor = { sizeof(GDT) - 1, GDT };
