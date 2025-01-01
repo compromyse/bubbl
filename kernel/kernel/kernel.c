@@ -18,12 +18,14 @@
 
 #include <libk/io.h>
 
+#include <drivers/serial.h>
 #include <drivers/vga_text_buffer.h>
 
 void
 kernel_main(void)
 {
   vga_text_buffer_initialize();
+  serial_initialize();
 
   printk("kernel_main: Started\n");
 }

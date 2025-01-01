@@ -16,14 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <drivers/serial.h>
-#include <drivers/vga_text_buffer.h>
+#ifndef __drivers_serial_h
+#define __drivers_serial_h
 
-#include <libk/io.h>
+#define PORT 0x3f8 // COM1
 
-void
-printk(char *msg)
-{
-  vga_text_buffer_write_string(msg);
-  serial_write_string(msg);
-}
+void serial_initialize(void);
+void serial_write_char(char);
+void serial_write_string(char *);
+
+#endif

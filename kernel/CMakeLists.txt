@@ -7,8 +7,10 @@ set(KERNEL_SRC
   kernel/kernel.c
   kernel/halt.c
   kernel/stack_smashing_protector.c
+  kernel/io/io.c
 
   drivers/vga_text_buffer/vga_text_buffer.c
+  drivers/serial/serial.c
 
   libk/strlen.c
   libk/printk.c

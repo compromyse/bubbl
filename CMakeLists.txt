@@ -14,6 +14,7 @@ set(QEMU_SYSTEM_CMD qemu-system-i386)
 
 set(QEMU_ARGUMENTS
   -cdrom ${CMAKE_BINARY_DIR}/cmos.iso
+  -serial stdio
 )
 
 add_custom_target(iso
@@ -31,6 +32,7 @@ add_custom_target(run
   ${QEMU_ARGUMENTS}
 
   DEPENDS iso
+  USES_TERMINAL
 )
 
 add_custom_target(run-gdb
@@ -40,6 +42,7 @@ add_custom_target(run-gdb
   -S
 
   DEPENDS iso
+  USES_TERMINAL
 )
 
 add_custom_target(clean-custom

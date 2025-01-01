@@ -89,9 +89,9 @@ vga_text_buffer_write_char(char c)
 }
 
 void
-vga_text_buffer_write_string(char *data)
+vga_text_buffer_write_string(char *string)
 {
-  size_t size = strlen(data);
+  size_t size = strlen(string);
   for (size_t i = 0; i < size; i++)
-    vga_text_buffer_write_char(data[i]);
+    vga_text_buffer_write_char(string[i]);
 }

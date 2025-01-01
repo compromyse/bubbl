@@ -16,14 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <drivers/serial.h>
-#include <drivers/vga_text_buffer.h>
+#ifndef __kernel_io_h
+#define __kernel_io_h
 
-#include <libk/io.h>
+#include <stdint.h>
 
-void
-printk(char *msg)
-{
-  vga_text_buffer_write_string(msg);
-  serial_write_string(msg);
-}
+uint8_t inb(uint16_t port);
+void outb(uint16_t port, uint8_t val);
+
+#endif
