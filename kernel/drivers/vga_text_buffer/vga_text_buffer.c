@@ -30,7 +30,7 @@ uint8_t vga_text_buffer_color;
 uint16_t *vga_text_buffer_buffer;
 
 static uint8_t
-vga_entry_color(vga_color fg, vga_color bg)
+vga_entry_color(const vga_color fg, const vga_color bg)
 {
   /*
    * bg   fg
@@ -40,7 +40,7 @@ vga_entry_color(vga_color fg, vga_color bg)
 }
 
 static uint16_t
-vga_entry(unsigned char character, uint8_t color)
+vga_entry(const unsigned char character, const uint8_t color)
 {
   /*
    * color     character
@@ -50,7 +50,10 @@ vga_entry(unsigned char character, uint8_t color)
 }
 
 static void
-vga_text_buffer_write_entry_at(char c, uint8_t color, uint8_t x, uint8_t y)
+vga_text_buffer_write_entry_at(const char c,
+                               const uint8_t color,
+                               const uint8_t x,
+                               const uint8_t y)
 {
   size_t index = y * VGA_WIDTH + x;
   vga_text_buffer_buffer[index] = vga_entry(c, color);
@@ -71,7 +74,7 @@ vga_text_buffer_initialize(void)
 }
 
 void
-vga_text_buffer_write_char(char c)
+vga_text_buffer_write_char(const char c)
 {
   if (c == '\n') {
     vga_text_buffer_row++;
@@ -89,7 +92,7 @@ vga_text_buffer_write_char(char c)
 }
 
 void
-vga_text_buffer_write_string(char *string)
+vga_text_buffer_write_string(const char *string)
 {
   size_t size = strlen(string);
   for (size_t i = 0; i < size; i++)

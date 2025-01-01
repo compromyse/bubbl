@@ -22,8 +22,11 @@
 #include <libk/io.h>
 
 void
-printk(char *msg)
+printk(const char *from, const char *msg)
 {
-  vga_text_buffer_write_string(msg);
+  serial_write_string("\033[33m");
+  serial_write_string(from);
+  serial_write_string(":\033[0m ");
   serial_write_string(msg);
+  serial_write_string("\033[0m\n");
 }

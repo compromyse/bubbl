@@ -13,6 +13,6 @@ void
 __stack_chk_fail(void)
 {
   /* TODO: Panic the kernel */
-  printk("SSP: Stack smashing detected!\n");
+  printk("Stack Smashing Protector", "Stack smashing detected!");
   halt();
 }

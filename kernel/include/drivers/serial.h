@@ -22,7 +22,7 @@
 #define PORT 0x3f8 // COM1
 
 void serial_initialize(void);
-void serial_write_char(char);
-void serial_write_string(char *);
+void serial_write_char(const char);
+void serial_write_string(const char *);
 
 #endif

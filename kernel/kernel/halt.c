@@ -23,7 +23,7 @@
 void
 halt(void)
 {
-  printk("kernel: halted.");
+  printk("kernel", "Halted.");
 
   for (;;)
     ;

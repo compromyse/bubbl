@@ -56,7 +56,7 @@ is_transmit_empty()
 }
 
 void
-serial_write_char(char a)
+serial_write_char(const char a)
 {
   while (is_transmit_empty() == 0)
     ;
@@ -65,7 +65,7 @@ serial_write_char(char a)
 }
 
 void
-serial_write_string(char *string)
+serial_write_string(const char *string)
 {
   size_t size = strlen(string);
   for (size_t i = 0; i < size; i++)

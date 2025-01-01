@@ -27,5 +27,5 @@ kernel_main(void)
   vga_text_buffer_initialize();
   serial_initialize();
 
-  printk("kernel_main: Started\n");
+  printk("kernel_main", "Started.");
 }
