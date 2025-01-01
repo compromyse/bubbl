@@ -24,7 +24,7 @@
 void
 halt(void)
 {
-  printk("kernel", "Halted.");
+  printk("Kernel", "Halted.");
 
   for (;;)
     ;
