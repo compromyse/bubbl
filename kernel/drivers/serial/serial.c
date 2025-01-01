@@ -22,6 +22,9 @@
 
 #include <drivers/serial.h>
 
+/* Implementation adapted from
+ * https://wiki.osdev.org/Inline_Assembly/Examples */
+
 void
 serial_initialize(void)
 {
