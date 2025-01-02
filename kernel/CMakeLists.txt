@@ -3,8 +3,8 @@ project(kernel C ASM)
 
 set(KERNEL_SRC
   boot/init/boot.s
-  boot/gdt.c
-  boot/gdt.s
+  boot/gdt/gdt.c
+  boot/gdt/gdt.s
 
   kernel/kernel.c
   kernel/halt.c
