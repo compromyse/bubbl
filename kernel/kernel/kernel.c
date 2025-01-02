@@ -19,7 +19,7 @@
 #include <boot/gdt.h>
 #include <kernel/halt.h>
 
-#include <libk/io.h>
+#include <libk/stdio.h>
 
 #include <drivers/serial.h>
 #include <drivers/vga_text_buffer.h>

@@ -16,22 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libk/stdio.h>
+#ifndef __libk_stdio_h
+#define __libk_stdio_h
 
-#include <kernel/halt.h>
-#include <kernel/io.h>
+#include <stdarg.h>
+#include <stddef.h>
 
-void
-halt(void)
-{
-  printk("Kernel", "Halted.");
+typedef int (*_printf_engine_output_func)(const char *str,
+                                          size_t len,
+                                          void *state);
 
-  for (;;)
-    ;
-}
+int _printf_engine(_printf_engine_output_func out,
+                   void *state,
+                   const char *fmt,
+                   va_list ap);
 
-void
-exit(void)
-{
-  outb(0xf4, 0x1);
-}
+int sprintf(char *str, const char *fmt, ...);
+int snprintf(char *str, size_t len, const char *fmt, ...);
+int vsprintf(char *str, const char *fmt, va_list ap);
+int vsnprintf(char *str, size_t len, const char *fmt, va_list ap);
+
+void printk(const char *, const char *, ...);
+
+#endif

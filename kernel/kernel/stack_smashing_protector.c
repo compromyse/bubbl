@@ -18,7 +18,7 @@
 
 #include <stdint.h>
 
-#include <libk/io.h>
+#include <libk/stdio.h>
 
 #include <kernel/halt.h>
 

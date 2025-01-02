@@ -16,6 +16,7 @@ set(KERNEL_SRC
 
   libk/strlen.c
   libk/printk.c
+  libk/printf.c
 )
 
 add_executable(kernel ${KERNEL_SRC})
