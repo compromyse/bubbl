@@ -19,6 +19,8 @@
 #ifndef __boot_gdt_h
 #define __boot_gdt_h
 
+#include <stdint.h>
+
 /* Access Flags:
  * 7 PRESENT
  * 6 PRIVILEGE
@@ -38,13 +40,19 @@
 #define READABLE_WRITABLE(x) (x << 1)
 #define ACCESSED(x) x
 
-#define KERNEL_CODE_SEGMENT_ACCESS_FLAGS                                      \
-  PRESENT(1) | PRIVILEGE(0) | TYPE(1) | EXECUTABLE(1)                         \
+#define CODE_SEGMENT_ACCESS_FLAGS(privilege)                                  \
+  PRESENT(1) | PRIVILEGE(privilege) | TYPE(1) | EXECUTABLE(1)                 \
       | DIRECTION_CONFORMING(0) | READABLE_WRITABLE(1) | ACCESSED(0)
 
-#define KERNEL_DATA_SEGMENT_ACCESS_FLAGS                                      \
-  PRESENT(1) | PRIVILEGE(0) | TYPE(1) | EXECUTABLE(0)                         \
+#define DATA_SEGMENT_ACCESS_FLAGS(privilege)                                  \
+  PRESENT(1) | PRIVILEGE(privilege) | TYPE(1) | EXECUTABLE(0)                 \
       | DIRECTION_CONFORMING(0) | READABLE_WRITABLE(1) | ACCESSED(0)
+
+#define KERNEL_CODE_SEGMENT_ACCESS_FLAGS CODE_SEGMENT_ACCESS_FLAGS(0)
+#define KERNEL_DATA_SEGMENT_ACCESS_FLAGS DATA_SEGMENT_ACCESS_FLAGS(0)
+
+#define USER_CODE_SEGMENT_ACCESS_FLAGS CODE_SEGMENT_ACCESS_FLAGS(3)
+#define USER_DATA_SEGMENT_ACCESS_FLAGS DATA_SEGMENT_ACCESS_FLAGS(3)
 
 /* Other Flags:
  * 3 GRANULARITY
@@ -92,7 +100,7 @@ typedef struct {
   GDT_entry *ptr; /* Address of GDT */
 } __attribute__((packed)) GDT_descriptor;
 
-/* TODO: Implement GDT_load() */
-void __attribute((cdecl)) GDT_load(void);
+extern void _GDT_flush(GDT_descriptor *);
+void GDT_load(void);
 
 #endif

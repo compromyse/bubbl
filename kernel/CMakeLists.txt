@@ -4,6 +4,7 @@ project(kernel C ASM)
 set(KERNEL_SRC
   boot/init/boot.s
   boot/gdt.c
+  boot/gdt.s
 
   kernel/kernel.c
   kernel/halt.c

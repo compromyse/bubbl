@@ -18,6 +18,8 @@
 
 #include <stdint.h>
 
+#include <kernel/io.h>
+
 #include <boot/gdt.h>
 
 GDT_entry GDT[] = {
@@ -28,7 +30,22 @@ GDT_entry GDT[] = {
   GDT_ENTRY(0, 0xfffff, KERNEL_CODE_SEGMENT_ACCESS_FLAGS, FLAGS),
 
   /* Kernel Mode Data Segment */
-  GDT_ENTRY(0, 0xfffff, KERNEL_DATA_SEGMENT_ACCESS_FLAGS, FLAGS)
+  GDT_ENTRY(0, 0xfffff, KERNEL_DATA_SEGMENT_ACCESS_FLAGS, FLAGS),
+
+  /* User Mode Code Segment */
+  GDT_ENTRY(0, 0xfffff, USER_CODE_SEGMENT_ACCESS_FLAGS, FLAGS),
+
+  /* User Mode Data Segment */
+  GDT_ENTRY(0, 0xfffff, USER_DATA_SEGMENT_ACCESS_FLAGS, FLAGS)
+
+  /* TODO: TSS? */
+  /* TODO: LDT? */
 };
 
-GDT_descriptor g_GDT_descriptor = { sizeof(GDT) - 1, GDT };
+GDT_descriptor g_GDT_descriptor = { sizeof(GDT_entry) * 5 - 1, &GDT[0] };
+
+void
+GDT_load(void)
+{
+  _GDT_flush(&g_GDT_descriptor);
+}

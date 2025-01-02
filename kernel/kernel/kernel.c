@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <boot/gdt.h>
 #include <kernel/halt.h>
 
 #include <libk/io.h>
@@ -26,10 +27,12 @@
 void
 kernel_main(void)
 {
-  vga_text_buffer_initialize();
-  serial_initialize();
+  GDT_load();
 
   printk("Kernel", "Started.");
+
+  vga_text_buffer_initialize();
+  serial_initialize();
 
   // exit();
   halt(); /* If exit() fails (on real hardware) */
