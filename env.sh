@@ -27,8 +27,9 @@ alias b="mkdir -p $dir/build && cd $dir/build"
 
 CMAKE_FLAGS="-G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=true"
 alias cm="cmake $CMAKE_FLAGS"
+
 alias m="ninja"
 alias mc="ninja clean-custom"
-alias mr="ninja run"
 alias mi="ninja iso"
+alias mr="ninja run"
 alias mg="ninja run-gdb"

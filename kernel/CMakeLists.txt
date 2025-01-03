@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(kernel C ASM)
 
-set(KERNEL_SRC
+set(SRC
   boot/init/boot.s
   boot/gdt/gdt.c
   boot/gdt/gdt.s
@@ -19,7 +19,7 @@ set(KERNEL_SRC
   libk/printf.c
 )
 
-add_executable(kernel ${KERNEL_SRC})
+add_executable(kernel ${SRC})
 target_include_directories(kernel PRIVATE include)
 
 set(C_COMPILE_OPTIONS
@@ -71,6 +71,7 @@ get_target_property(CRTN_OUT crtn BINARY_DIR)
 set(CRTI_O "${CRTI_OUT}/CMakeFiles/crti.dir/${CRTI_SRC}.o")
 set(CRTN_O "${CRTN_OUT}/CMakeFiles/crtn.dir/${CRTN_SRC}.o")
 
+# FIXME: This isn't a good way of setting the link order.
 set(CMAKE_C_LINK_EXECUTABLE "${CMAKE_C_COMPILER} <CMAKE_C_LINK_FLAGS> <FLAGS> <LINK_FLAGS> \
   ${CRTI_O} \
   ${CRTBEGIN_O} \
