@@ -45,6 +45,6 @@ kernel_main(multiboot_info_t *multiboot_info, uint32_t magic)
 
   printk("Kernel", "Started.");
 
-  // exit();
+  exit();
   halt(); /* If exit() fails (on real hardware) */
 }

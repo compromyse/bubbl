@@ -69,10 +69,9 @@ memory_map_load(multiboot_info_t *multiboot_info)
         = (multiboot_memory_map_t *) (multiboot_info->mmap_addr + i);
 
     printk("mm",
-           "start: 0x%x | length: 0x%x | size: 0x%x | type: %s",
+           "start: 0x%x | length: 0x%x | type: %s",
            mmap->addr_low,
            mmap->len_low,
-           mmap->size,
            memory_map_fetch_type(mmap));
   }
 }
