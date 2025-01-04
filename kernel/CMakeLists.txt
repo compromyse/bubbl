@@ -11,6 +11,8 @@ set(SRC
   kernel/stack_smashing_protector.c
   kernel/io/io.c
 
+  mm/memory_map.c
+
   drivers/vga_text_buffer/vga_text_buffer.c
   drivers/serial/serial.c
 

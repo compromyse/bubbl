@@ -1,6 +1,6 @@
 /*
  * CMOS
- * Copyright (C) 2024-2025 Raghuram Subramani <raghus2247@gmail.com>
+ * Copyright (C) 2025 Raghuram Subramani <raghus2247@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,35 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <boot/gdt.h>
+#ifndef __mm_memory_map_h
+#define __mm_memory_map_h
 
-#include <mm/memory_map.h>
 #include <mm/multiboot.h>
 
-#include <kernel/halt.h>
+void memory_map_load(multiboot_info_t *);
 
-#include <libk/stdio.h>
-
-#include <drivers/serial.h>
-#include <drivers/vga_text_buffer.h>
-
-void
-kernel_main(multiboot_info_t *multiboot_info, uint32_t magic)
-{
-  serial_initialize();
-
-  if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
-    printk("Kernel", "Invalid Multiboot Magic: %x", magic);
-    halt();
-  }
-
-  GDT_load();
-  memory_map_load(multiboot_info);
-
-  vga_text_buffer_initialize();
-
-  printk("Kernel", "Started.");
-
-  // exit();
-  halt(); /* If exit() fails (on real hardware) */
-}
+#endif
