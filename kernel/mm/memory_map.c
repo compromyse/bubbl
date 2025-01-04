@@ -49,6 +49,9 @@ memory_map_load(multiboot_info_t *multiboot_info)
 {
   printk("mm", "Loading Memory Map:");
 
+  uint32_t total_mem = 0;
+  uint32_t total_available_mem = 0;
+
   /* https://www.gnu.org/software/grub/manual/multiboot/multiboot.html:
    *
    * If bit 6 in the ‘flags’ word is set, then the ‘mmap_*’ fields are
@@ -68,10 +71,17 @@ memory_map_load(multiboot_info_t *multiboot_info)
     multiboot_memory_map_t *mmap
         = (multiboot_memory_map_t *) (multiboot_info->mmap_addr + i);
 
+    total_mem += mmap->len_low;
+    if (mmap->type == MULTIBOOT_MEMORY_AVAILABLE)
+      total_available_mem += mmap->len_low;
+
     printk("mm",
            "start: 0x%x | length: 0x%x | type: %s",
            mmap->addr_low,
            mmap->len_low,
            memory_map_fetch_type(mmap));
   }
+
+  printk("mm", "Total Memory: %lu MiB", total_mem / MiB);
+  printk("mm", "Total Available Memory: %lu MiB", total_available_mem / MiB);
 }
