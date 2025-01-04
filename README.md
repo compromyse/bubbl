@@ -16,9 +16,9 @@ An Operating System for The x86 Architecture.
 ./scripts/fetch-toolchain.sh
 
 source env.sh
-mkdir build && cd build
+b
 cm ..
-ninja build
+m
 ```
 
 ## Running
@@ -28,7 +28,7 @@ ninja build
 - QEMU (qemu-system-i386)
 
 ```sh
-ninja run
+mr
 ```
 
 ## Authors
