@@ -22,7 +22,7 @@
 
 #include <boot/gdt.h>
 
-GDT_entry GDT[] = {
+GDT_entry_t GDT_entries[] = {
   /* NULL Descriptor */
   GDT_ENTRY(0, 0, 0, 0),
 
@@ -42,10 +42,10 @@ GDT_entry GDT[] = {
   /* TODO: LDT? */
 };
 
-GDT_descriptor g_GDT_descriptor = { sizeof(GDT) - 1, &GDT[0] };
+GDT_descriptor_t GDT_descriptor = { sizeof(GDT_entries) - 1, &GDT_entries[0] };
 
 void
 GDT_load(void)
 {
-  _GDT_flush(&g_GDT_descriptor);
+  _GDT_flush(&GDT_descriptor);
 }

@@ -95,14 +95,14 @@ typedef struct {
   uint8_t access_flags;
   uint8_t flags_limit_high;
   uint8_t base_high;
-} PACKED GDT_entry;
+} PACKED GDT_entry_t;
 
 typedef struct {
-  uint16_t limit; /* sizeof(GDT) - 1 */
-  GDT_entry *ptr; /* Address of GDT */
-} PACKED GDT_descriptor;
+  uint16_t limit;   /* sizeof(GDT) - 1 */
+  GDT_entry_t *ptr; /* Address of GDT */
+} PACKED GDT_descriptor_t;
 
-extern void _GDT_flush(GDT_descriptor *);
+extern void _GDT_flush(GDT_descriptor_t *);
 void GDT_load(void);
 
 #endif
