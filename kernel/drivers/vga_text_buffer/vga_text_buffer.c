@@ -25,10 +25,10 @@
 
 #include <drivers/vga_text_buffer.h>
 
-uint8_t vga_text_buffer_row;
-uint8_t vga_text_buffer_column;
-uint8_t vga_text_buffer_color;
-uint16_t *vga_text_buffer_buffer;
+static uint8_t vga_text_buffer_row;
+static uint8_t vga_text_buffer_column;
+static uint8_t vga_text_buffer_color;
+static uint16_t *vga_text_buffer_buffer;
 
 static uint8_t
 vga_entry_color(const vga_color fg, const vga_color bg)

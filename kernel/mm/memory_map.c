@@ -26,7 +26,7 @@
 #include <mm/memory_map.h>
 #include <mm/multiboot.h>
 
-free_memory_regions_t free_memory_regions = { 0 };
+static free_memory_regions_t free_memory_regions = { 0 };
 
 ALWAYS_INLINE static char *
 memory_map_fetch_type(multiboot_memory_map_t *mmap)
