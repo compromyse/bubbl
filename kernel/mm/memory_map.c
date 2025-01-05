@@ -93,7 +93,7 @@ memory_map_load(multiboot_info_t *multiboot_info)
   printk("mm", "Total Available Memory: %lu MiB", total_available_mem / MiB);
 }
 
-free_memory_regions_t *
+ALWAYS_INLINE free_memory_regions_t *
 memory_map_get_free_regions(void)
 {
   return &free_memory_regions;
