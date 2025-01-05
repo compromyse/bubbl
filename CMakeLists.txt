@@ -17,7 +17,7 @@ set(QEMU_ARGUMENTS
   -cdrom ${CMAKE_BINARY_DIR}/cmos.iso
   -serial stdio
   -device isa-debug-exit,iobase=0xf4,iosize=0x04
-  -m 64M
+  -m 32M
   -smp 1
 )
 

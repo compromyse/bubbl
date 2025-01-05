@@ -76,7 +76,7 @@ memory_map_load(multiboot_info_t *multiboot_info)
       total_available_mem += mmap->len_low;
 
     printk("mm",
-           "start: 0x%x | length: 0x%x | type: %s",
+           "start: 0x%.08x | length: 0x%.08x | type: %s",
            mmap->addr_low,
            mmap->len_low,
            memory_map_fetch_type(mmap));
