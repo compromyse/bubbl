@@ -19,8 +19,19 @@
 #ifndef __mm_memory_map_h
 #define __mm_memory_map_h
 
+#include <stdint.h>
+
 #include <mm/multiboot.h>
 
+/* TODO: Practically, do we need more than 32? */
+#define MAX_FREE_REGIONS 32
+
+typedef struct {
+  uint8_t n_regions;
+  multiboot_memory_map_t *region_list[MAX_FREE_REGIONS];
+} free_memory_regions_t;
+
 void memory_map_load(multiboot_info_t *);
+free_memory_regions_t *memory_map_get_free_regions(void);
 
 #endif

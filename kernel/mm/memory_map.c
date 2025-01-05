@@ -23,7 +23,10 @@
 #include <kernel/halt.h>
 #include <libk/stdio.h>
 
+#include <mm/memory_map.h>
 #include <mm/multiboot.h>
+
+free_memory_regions_t free_memory_regions = { 0 };
 
 ALWAYS_INLINE static char *
 memory_map_fetch_type(multiboot_memory_map_t *mmap)
@@ -72,8 +75,12 @@ memory_map_load(multiboot_info_t *multiboot_info)
         = (multiboot_memory_map_t *) (multiboot_info->mmap_addr + i);
 
     total_mem += mmap->len_low;
-    if (mmap->type == MULTIBOOT_MEMORY_AVAILABLE)
+    if (mmap->type == MULTIBOOT_MEMORY_AVAILABLE) {
+      free_memory_regions.region_list[free_memory_regions.n_regions] = mmap;
+      free_memory_regions.n_regions++;
+
       total_available_mem += mmap->len_low;
+    }
 
     printk("mm",
            "start: 0x%.08x | length: 0x%.08x | type: %s",
@@ -84,4 +91,10 @@ memory_map_load(multiboot_info_t *multiboot_info)
 
   printk("mm", "Total Memory: %lu MiB", total_mem / MiB);
   printk("mm", "Total Available Memory: %lu MiB", total_available_mem / MiB);
+}
+
+free_memory_regions_t *
+memory_map_get_free_regions(void)
+{
+  return &free_memory_regions;
 }

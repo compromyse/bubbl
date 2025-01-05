@@ -45,6 +45,13 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
 
   printk("Kernel", "Started.");
 
+  free_memory_regions_t *free_memory_regions = memory_map_get_free_regions();
+  for (int i = 0; i < free_memory_regions->n_regions; i++)
+    printk("Kernel",
+           "start: 0x%.08x | length: 0x%.08x",
+           free_memory_regions->region_list[i]->addr_low,
+           free_memory_regions->region_list[i]->len_low);
+
   exit();
   halt(); /* If exit() fails (on real hardware) */
 }
