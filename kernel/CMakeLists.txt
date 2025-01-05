@@ -43,7 +43,7 @@ target_compile_options(kernel PRIVATE
   $<$<COMPILE_LANGUAGE:C>: ${C_COMPILE_OPTIONS}>
 )
 
-set(LINKER_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/boot/link.ld")
+set(LINKER_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/boot/linker.ld")
 set(LINKER_FLAGS
   -T ${LINKER_SCRIPT}
   -nostdlib
