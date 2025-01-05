@@ -20,6 +20,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <libk/stdio.h>
 #include <libk/string.h>
 
 #include <drivers/vga_text_buffer.h>
@@ -97,4 +98,18 @@ vga_text_buffer_write_string(const char *string)
   size_t size = strlen(string);
   for (size_t i = 0; i < size; i++)
     vga_text_buffer_write_char(string[i]);
+}
+
+void
+vga_text_buffer_printf(const char *string, ...)
+{
+  /* TODO: Dynamic Memory Allocation */
+  char str[256];
+
+  va_list ap;
+  va_start(ap, string);
+  vsnprintf(str, sizeof(str), string, ap);
+  va_end(ap);
+
+  vga_text_buffer_write_string(str);
 }

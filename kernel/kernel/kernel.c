@@ -32,6 +32,7 @@ void
 kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
 {
   serial_initialize();
+  vga_text_buffer_initialize();
 
   if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
     printk("Kernel", "Invalid Multiboot Magic: %x", magic);
@@ -40,8 +41,6 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
 
   GDT_load();
   memory_map_load(multiboot_info);
-
-  vga_text_buffer_initialize();
 
   printk("Kernel", "Started.");
 
