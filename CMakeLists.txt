@@ -10,6 +10,7 @@ add_subdirectory(kernel)
 get_target_property(KERNEL_BINARY_DIR kernel BINARY_DIR)
 get_target_property(KERNEL_SOURCE kernel SOURCE_DIR)
 
+set(BOCHS_CMD bochs)
 set(QEMU_SYSTEM_CMD qemu-system-i386)
 
 set(QEMU_ARGUMENTS
@@ -36,6 +37,14 @@ add_custom_target(run
   ${QEMU_SYSTEM_CMD}
   ${QEMU_ARGUMENTS}
   ${IGNORE_EXIT}
+
+  DEPENDS iso
+  USES_TERMINAL
+)
+
+add_custom_target(run-bochs
+  ${BOCHS_CMD}
+  -f ${CMAKE_SOURCE_DIR}/.bochsrc
 
   DEPENDS iso
   USES_TERMINAL
