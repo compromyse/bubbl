@@ -30,7 +30,7 @@ set(C_COMPILE_OPTIONS
   -fstack-protector
   -fstack-protector-all
 
-  -O2
+  -O3
 
   -Wall
   -Wextra
