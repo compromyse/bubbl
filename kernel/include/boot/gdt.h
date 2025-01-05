@@ -21,6 +21,8 @@
 
 #include <stdint.h>
 
+#include <common.h>
+
 /* Access Flags:
  * 7 PRESENT
  * 6 PRIVILEGE
@@ -93,12 +95,12 @@ typedef struct {
   uint8_t access_flags;
   uint8_t flags_limit_high;
   uint8_t base_high;
-} __attribute__((packed)) GDT_entry;
+} PACKED GDT_entry;
 
 typedef struct {
   uint16_t limit; /* sizeof(GDT) - 1 */
   GDT_entry *ptr; /* Address of GDT */
-} __attribute__((packed)) GDT_descriptor;
+} PACKED GDT_descriptor;
 
 extern void _GDT_flush(GDT_descriptor *);
 void GDT_load(void);
