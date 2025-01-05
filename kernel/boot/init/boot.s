@@ -86,8 +86,8 @@ _start:
   movl $stack_top, %esp
 
   /* Push Multiboot values to stack for kernel_main */
-  push %eax
   push %ebx
+  push %eax
 
   /*
   This is a good place to initialize crucial processor state before the

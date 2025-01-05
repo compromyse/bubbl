@@ -29,7 +29,7 @@
 #include <drivers/vga_text_buffer.h>
 
 void
-kernel_main(multiboot_info_t *multiboot_info, uint32_t magic)
+kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
 {
   serial_initialize();
 
