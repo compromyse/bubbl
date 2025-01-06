@@ -27,10 +27,10 @@
 
 #include <drivers/vga_text_buffer.h>
 
-static uint8_t vga_text_buffer_row;
-static uint8_t vga_text_buffer_column;
+static uint16_t *vga_text_buffer_buffer = (uint16_t *) 0xB8000;
+static uint8_t vga_text_buffer_row = 0;
+static uint8_t vga_text_buffer_column = 0;
 static uint8_t vga_text_buffer_color;
-static uint16_t *vga_text_buffer_buffer;
 
 static uint8_t
 vga_entry_color(const vga_color fg, const vga_color bg)
@@ -72,11 +72,8 @@ vga_text_buffer_initialize(void)
   outb(0x3D4, 0x0A);
   outb(0x3D5, 0x20);
 
-  vga_text_buffer_row = 0;
-  vga_text_buffer_column = 0;
   vga_text_buffer_color
       = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
-  vga_text_buffer_buffer = (uint16_t *) 0xB8000;
 
   for (uint8_t y = 0; y < VGA_HEIGHT; y++)
     for (uint8_t x = 0; x < VGA_WIDTH; x++)
