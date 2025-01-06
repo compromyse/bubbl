@@ -14,7 +14,7 @@ set(BOCHS_CMD bochs)
 set(QEMU_SYSTEM_CMD qemu-system-i386)
 
 set(QEMU_ARGUMENTS
-  -cdrom ${CMAKE_BINARY_DIR}/cmos.iso
+  -cdrom ${CMAKE_BINARY_DIR}/bubbl.iso
   -device isa-debug-exit,iobase=0xf4,iosize=0x04
   -m 32M
   -smp 1
@@ -27,7 +27,7 @@ add_custom_target(iso
   mkdir -p ${CMAKE_BINARY_DIR}/iso/boot/grub &&
   cp ${KERNEL_BINARY_DIR}/kernel ${CMAKE_BINARY_DIR}/iso/boot &&
   cp ${KERNEL_SOURCE}/boot/grub.cfg ${CMAKE_BINARY_DIR}/iso/boot/grub &&
-  grub-mkrescue -o ${CMAKE_BINARY_DIR}/cmos.iso ${CMAKE_BINARY_DIR}/iso
+  grub-mkrescue -o ${CMAKE_BINARY_DIR}/bubbl.iso ${CMAKE_BINARY_DIR}/iso
 
   DEPENDS kernel
 )
@@ -75,7 +75,7 @@ add_custom_target(run-gdb
 add_custom_target(clean-custom
   rm -rf
   ${CMAKE_BINARY_DIR}/iso
-  ${CMAKE_BINARY_DIR}/cmos.iso
+  ${CMAKE_BINARY_DIR}/bubbl.iso
 
   DEPENDS clean
 )
