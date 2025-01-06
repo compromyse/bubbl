@@ -20,6 +20,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <common.h>
+
 #include <libk/stdio.h>
 #include <libk/string.h>
 
@@ -30,29 +32,10 @@
 static uint16_t *vga_text_buffer_buffer = (uint16_t *) 0xB8000;
 static uint8_t vga_text_buffer_row = 0;
 static uint8_t vga_text_buffer_column = 0;
-static uint8_t vga_text_buffer_color;
+static uint8_t vga_text_buffer_color
+    = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
 
-static uint8_t
-vga_entry_color(const vga_color fg, const vga_color bg)
-{
-  /*
-   * bg   fg
-   * 1110 0101
-   */
-  return bg << 4 | fg;
-}
-
-static uint16_t
-vga_entry(const unsigned char character, const uint8_t color)
-{
-  /*
-   * color     character
-   * 1110 0101 1001 1010
-   */
-  return (uint16_t) color << 8 | (uint16_t) character;
-}
-
-static void
+ALWAYS_INLINE static void
 vga_text_buffer_write_entry_at(const char c,
                                const uint8_t color,
                                const uint8_t x,
@@ -71,9 +54,6 @@ vga_text_buffer_initialize(void)
    */
   outb(0x3D4, 0x0A);
   outb(0x3D5, 0x20);
-
-  vga_text_buffer_color
-      = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
 
   for (uint8_t y = 0; y < VGA_HEIGHT; y++)
     for (uint8_t x = 0; x < VGA_WIDTH; x++)

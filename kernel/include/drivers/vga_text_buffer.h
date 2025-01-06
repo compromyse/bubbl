@@ -50,6 +50,19 @@ typedef enum {
   VGA_COLOR_WHITE = 15,
 } vga_color;
 
+/*
+ * bg   fg
+ * 1110 0101
+ */
+#define vga_entry_color(fg, bg) (bg << 4 | fg)
+
+/*
+ * color     character
+ * 1110 0101 1001 1010
+ */
+#define vga_entry(character, color)                                           \
+  ((uint16_t) color << 8 | (uint16_t) character)
+
 bool vga_text_buffer_is_initialized(void);
 
 void vga_text_buffer_initialize(void);
