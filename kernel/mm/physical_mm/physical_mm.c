@@ -20,14 +20,19 @@ void
 physical_mm_init(void)
 {
   free_memory_regions_t *free_memory_regions = memory_map_get_free_regions();
+  printk("physical_mm", "Free Memory Regions:");
   for (int i = 0; i < free_memory_regions->n_regions; i++)
-    printk("Kernel",
+    printk("physical_mm",
            "start: 0x%.08x | length: 0x%.08x",
            free_memory_regions->region_list[i]->addr_low,
            free_memory_regions->region_list[i]->len_low);
 
-  printk("physical_mm", "Kernel starts at: 0x%x", &kernel_start);
-  printk("physical_mm", "Kernel ends at: 0x%x", &kernel_end);
+  printk("physical_mm", "Kernel region:");
+  printk("physical_mm", "Start: 0x%x", &kernel_start);
+  printk("physical_mm", "End:   0x%x", &kernel_end);
+  printk("physical_mm",
+         "Size: 0x%x",
+         ((uint32_t) &kernel_end) - ((uint32_t) &kernel_start));
 }
 
 ALWAYS_INLINE void
