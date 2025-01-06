@@ -23,6 +23,8 @@
 #include <libk/stdio.h>
 #include <libk/string.h>
 
+#include <kernel/io.h>
+
 #include <drivers/vga_text_buffer.h>
 
 static uint8_t vga_text_buffer_row;
@@ -63,6 +65,13 @@ vga_text_buffer_write_entry_at(const char c,
 void
 vga_text_buffer_initialize(void)
 {
+  /*
+   * Disable the cursor
+   * TODO: Abstract this and all other cursor functionality out
+   */
+  outb(0x3D4, 0x0A);
+  outb(0x3D5, 0x20);
+
   vga_text_buffer_row = 0;
   vga_text_buffer_column = 0;
   vga_text_buffer_color
