@@ -19,6 +19,8 @@
 #ifndef __mm_physical_mm_h
 #define __mm_physical_mm_h
 
+#include <stdint.h>
+
 #include <common.h>
 
 /*
@@ -32,6 +34,9 @@
 
 #define BLOCK_ALIGN BLOCK_SIZE
 
+#define BITMAP_ENTRY_SIZE 32
+
 void physical_mm_init(void);
+uint32_t mmap_find_first_free(void);
 
 #endif
