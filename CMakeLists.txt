@@ -3,7 +3,7 @@ set(CMAKE_C_COMPILER_WORKS TRUE)
 set(CMAKE_CXX_COMPILER_WORKS TRUE)
 
 cmake_minimum_required(VERSION 3.21)
-project(CMOS)
+project(bubbl)
 
 add_subdirectory(kernel)
 

@@ -1,5 +1,5 @@
 #
-# CMOS
+# bubbl
 # Copyright (C) 2024-2025  Raghuram Subramani <raghus2247@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify

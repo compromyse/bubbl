@@ -1,4 +1,4 @@
-# CMOS
+# Bubbl
 
 An Operating System for The x86 Architecture.
 
