@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdbool.h>
+
 #include <libk/string.h>
 
 #include <kernel/io.h>
@@ -25,7 +27,7 @@
 /* Implementation adapted from
  * https://wiki.osdev.org/Inline_Assembly/Examples */
 
-void
+bool
 serial_initialize(void)
 {
   outb(PORT + 1, 0x00); // Disable all interrupts
@@ -40,13 +42,15 @@ serial_initialize(void)
                         // returns same byte)
 
   // TODO: Check if serial is faulty (i.e: not same byte as sent)
-  /* if (inb(PORT + 0) != 0xAE) {
-    return 1;
-  } */
+  if (inb(PORT + 0) != 0xAE) {
+    return false;
+  }
 
   // If serial is not faulty set it in normal operation mode
   // (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
   outb(PORT + 4, 0x0F);
+
+  return true;
 }
 
 static int

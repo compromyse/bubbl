@@ -19,9 +19,11 @@
 #ifndef __drivers_serial_h
 #define __drivers_serial_h
 
+#include <stdbool.h>
+
 #define PORT 0x3f8 // COM1
 
-void serial_initialize(void);
+bool serial_initialize(void);
 void serial_write_char(const char);
 void serial_write_string(const char *);
 
