@@ -20,6 +20,16 @@
    designated as the entry point. */
 ENTRY(_start)
 
+PHDRS
+{
+  /* Flags: Read/Execute
+   * EXECUTABLE (1 << 0)
+   * WRITABLE   (1 << 1)
+   * READABLE   (1 << 2)
+   */
+   OTHERS PT_LOAD FLAGS (0x5);
+}
+
 /* Tell where the various sections of the object files will be put in the final
    kernel image. */
 SECTIONS
@@ -45,6 +55,12 @@ SECTIONS
   {
     *(.multiboot)
     *(.text)
+
+    *(.init)
+    *(.fini)
+
+    *(.ctors)
+    *(.dtors)
   }
 
   /* Read-only data. */
@@ -66,8 +82,10 @@ SECTIONS
     *(.bss)
   }
 
-  /* The compiler may produce other sections, by default it will put them in
-	a segment with the same name. Simply add stuff here as needed. */
-}
+  .other : ALIGN(4K)
+  {
+    *(*)
+  } : OTHERS
 
-kernel_end = .;
+  kernel_end = .;
+}
