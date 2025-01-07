@@ -42,7 +42,7 @@ GDT_entry_t GDT_entries[] = {
   /* TODO: LDT? */
 };
 
-GDT_descriptor_t GDT_descriptor = { sizeof(GDT_entries) - 1, &GDT_entries[0] };
+GDT_descriptor_t GDT_descriptor = { sizeof(GDT_entries) - 1, GDT_entries };
 
 void
 GDT_load(void)
