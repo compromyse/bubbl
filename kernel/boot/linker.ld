@@ -20,16 +20,6 @@
    designated as the entry point. */
 ENTRY(_start)
 
-PHDRS
-{
-  /* Flags: Read/Execute
-   * EXECUTABLE (1 << 0)
-   * WRITABLE   (1 << 1)
-   * READABLE   (1 << 2)
-   */
-   OTHERS PT_LOAD FLAGS (0x5);
-}
-
 /* Tell where the various sections of the object files will be put in the final
    kernel image. */
 SECTIONS
@@ -66,13 +56,13 @@ SECTIONS
   /* Read-only data. */
   .rodata : ALIGN(4K)
   {
-    *(.rodata)
+    *(.rodata*)
   }
 
   /* Read-write data (initialized) */
   .data : ALIGN(4K)
   {
-    *(.data)
+    *(.data*)
   }
 
   /* Read-write data (uninitialized) and stack */
@@ -82,10 +72,16 @@ SECTIONS
     *(.bss)
   }
 
-  .other : ALIGN(4K)
+  .debug : ALIGN(4K)
   {
-    *(*)
-  } : OTHERS
+    *(.comment)
+    *(.debug*)
+  }
+
+  .eh_frame : ALIGN(4K)
+  {
+    *(.eh_frame)
+  }
 
   kernel_end = .;
 }
