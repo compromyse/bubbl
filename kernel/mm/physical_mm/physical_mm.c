@@ -115,8 +115,8 @@ physical_mm_init(void)
 }
 
 /* Returns:
- * True if the bit is unset (block isn't in use)
- * False if the bit is set (block is in use)
+ * True if the bit is set (block is in use)
+ * False if the bit is unset (block isn't in use)
  */
 ALWAYS_INLINE static bool
 physical_mm_test_bit(const uint32_t bit)
@@ -134,7 +134,7 @@ physical_mm_find_first_free_block(void)
     if (memory_map[i] != 0xffffffff)
       /* Test each bit to see if it's zero */
       for (uint32_t j = 0; j < BITMAP_ENTRY_SIZE; j++)
-        if (physical_mm_test_bit(i * BITMAP_ENTRY_SIZE + j))
+        if (!physical_mm_test_bit(i * BITMAP_ENTRY_SIZE + j))
           return i * BITMAP_ENTRY_SIZE + j;
 
   /* Shouldn't be reached, since we're keeping track of the number of free
