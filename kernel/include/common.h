@@ -25,4 +25,8 @@
 #define KiB 1024
 #define MiB (KiB * KiB)
 
+#define ASSERT_NOT_REACHED()                                                  \
+  printk("ASSERTION FAILED:", "[%s] SHOULD NOT BE REACHED.", __func__);       \
+  halt();
+
 #endif

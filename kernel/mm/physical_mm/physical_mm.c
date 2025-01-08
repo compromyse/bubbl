@@ -10,6 +10,8 @@
 #include <mm/memory_map.h>
 #include <mm/physical_mm.h>
 
+#include <kernel/halt.h>
+
 extern uint32_t kernel_start;
 extern uint32_t kernel_end;
 
@@ -20,14 +22,17 @@ void
 physical_mm_init(void)
 {
   free_memory_regions_t *free_memory_regions = memory_map_get_free_regions();
-  printk("physical_mm", "Free Memory Regions:");
+
+  /* TODO: Initialize these free memory regions */
+  printk("\nphysical_mm", "Free Memory Regions:");
   for (int i = 0; i < free_memory_regions->n_regions; i++)
     printk("physical_mm",
            "start: 0x%.08x | length: 0x%.08x",
            free_memory_regions->region_list[i]->addr_low,
            free_memory_regions->region_list[i]->len_low);
 
-  printk("physical_mm", "Kernel region:");
+  /* TODO: De-initialize region used by the kernel */
+  printk("\nphysical_mm", "Kernel region:");
   printk("physical_mm", "Start: 0x%x", &kernel_start);
   printk("physical_mm", "End:   0x%x", &kernel_end);
   printk("physical_mm",
@@ -74,6 +79,6 @@ physical_mm_find_first_free(void)
         if (physical_mm_test_bit(i * BITMAP_ENTRY_SIZE + j))
           return i * BITMAP_ENTRY_SIZE + j;
 
-  /* TODO: Assert not reached, or something similar */
+  ASSERT_NOT_REACHED();
   return -1;
 }
