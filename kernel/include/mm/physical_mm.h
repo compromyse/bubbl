@@ -32,6 +32,10 @@
 #define MAX_BLOCKS 1048576
 
 void physical_mm_init(void);
+
 uint32_t physical_mm_find_first_free_block(void);
+
+void *physical_mm_allocate_block(void);
+void physical_mm_free_block(void *physical_address);
 
 #endif
