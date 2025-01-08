@@ -68,6 +68,6 @@ bool vga_text_buffer_is_initialized(void);
 void vga_text_buffer_initialize(void);
 void vga_text_buffer_write_char(const char);
 void vga_text_buffer_write_string(const char *);
-void vga_text_buffer_printf(const char *string, ...);
+void vga_text_buffer_printf(const char *, ...);
 
 #endif

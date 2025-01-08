@@ -23,20 +23,15 @@
 
 #include <common.h>
 
-/*
- * A byte has 8 bits, hence we can store information for up to 8 blocks at a
- * time
- */
-#define BLOCKS_PER_BYTE 8
-
 /* TODO: Update this to 2MiB when PAE is enabled */
-#define BLOCK_SIZE 4 * KiB
-
-#define BLOCK_ALIGN BLOCK_SIZE
+#define BLOCK_SIZE (4 * KiB)
 
 #define BITMAP_ENTRY_SIZE 32
 
+/* TODO: This is the maximum number of blocks for a 4GiB system. */
+#define MAX_BLOCKS 1048576
+
 void physical_mm_init(void);
-uint32_t mmap_find_first_free(void);
+uint32_t physical_mm_find_first_free_block(void);
 
 #endif
