@@ -108,6 +108,8 @@ physical_mm_init(void)
   physical_mm_log_memory_map(free_memory_regions);
 
   /* All blocks are initially used */
+  /* TODO: Move this block to a place after block_count is set. This is why
+   * using block_count instead of MAX_BLOCKS wasn't working. */
   for (uint32_t i = 0; i < MAX_BLOCKS / BITMAP_ENTRY_SIZE; i++)
     memory_map[i] = 0xffffffff;
 
@@ -118,13 +120,27 @@ physical_mm_init(void)
     physical_mm_initialize_region(region->addr_low, region->len_low);
   }
 
-  physical_mm_deinitialize_region((uint32_t) &kernel_start,
-                                  ((uint32_t) &kernel_end)
-                                      - ((uint32_t) &kernel_start));
+  uint32_t kernel_size = ((uint32_t) &kernel_end) - ((uint32_t) &kernel_start);
+  physical_mm_deinitialize_region((uint32_t) &kernel_start, kernel_size);
 
+  total_free_memory -= kernel_size;
   block_count = total_free_memory / BLOCK_SIZE;
   printk("\nphysical_mm", "Total blocks: 0x%x", block_count);
   printk("physical_mm", "Total free blocks: 0x%x", total_free_blocks);
+
+#if 0
+  /* Manually loop through and calculate the number of free blocks. */
+  uint32_t free_blcks = 0;
+  for (uint32_t i = 0; i < MAX_BLOCKS / BITMAP_ENTRY_SIZE; i++)
+    /* At least one block in the entry isn't in use */
+    if (memory_map[i] != 0xffffffff)
+      /* Test each bit to see if it's zero */
+      for (uint32_t j = 0; j < BITMAP_ENTRY_SIZE; j++)
+        if (!physical_mm_test_bit(i * BITMAP_ENTRY_SIZE + j))
+          free_blcks++;
+
+  printk("physical_mm", "Calculated free blocks: 0x%x", free_blcks);
+#endif
 }
 
 uint32_t
