@@ -19,6 +19,7 @@
 #ifndef __mm_physical_mm_h
 #define __mm_physical_mm_h
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include <common.h>
@@ -37,5 +38,13 @@ uint32_t physical_mm_find_first_free_block(void);
 
 void *physical_mm_allocate_block(void);
 void physical_mm_free_block(void *physical_address);
+
+void physical_mm_set_used(const uint32_t bit,
+                          uint32_t *total_free_blocks,
+                          uint32_t *memory_map);
+void physical_mm_set_usable(const uint32_t bit,
+                            uint32_t *total_free_blocks,
+                            uint32_t *memory_map);
+bool physical_mm_test_bit(const uint32_t bit, uint32_t *memory_map);
 
 #endif

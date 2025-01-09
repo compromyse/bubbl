@@ -39,38 +39,6 @@ physical_mm_log_memory_map(free_memory_regions_t *free_memory_regions)
          ((uint32_t) &kernel_end) - ((uint32_t) &kernel_start));
 }
 
-/* Marks the block as 'used' */
-ALWAYS_INLINE static void
-physical_mm_set_used(const uint32_t bit)
-{
-  uint32_t memory_map_index = bit / BITMAP_ENTRY_SIZE;
-  uint32_t bitmask = 1 << (bit % BITMAP_ENTRY_SIZE);
-  total_free_blocks--;
-  memory_map[memory_map_index] |= bitmask;
-}
-
-/* Marks the block as 'unused' */
-ALWAYS_INLINE static void
-physical_mm_set_usable(const uint32_t bit)
-{
-  uint32_t memory_map_index = bit / BITMAP_ENTRY_SIZE;
-  uint32_t bitmask = 1 << (bit % BITMAP_ENTRY_SIZE);
-  total_free_blocks++;
-  memory_map[memory_map_index] &= ~bitmask;
-}
-
-/* Returns:
- * True if the bit is set (block is in use)
- * False if the bit is unset (block isn't in use)
- */
-ALWAYS_INLINE static bool
-physical_mm_test_bit(const uint32_t bit)
-{
-  uint32_t memory_map_index = bit / BITMAP_ENTRY_SIZE;
-  uint32_t bitmask = 1 << (bit % BITMAP_ENTRY_SIZE);
-  return memory_map[memory_map_index] & bitmask;
-}
-
 ALWAYS_INLINE static void
 physical_mm_initialize_region(uint32_t start, uint32_t length)
 {
@@ -79,12 +47,12 @@ physical_mm_initialize_region(uint32_t start, uint32_t length)
   uint32_t n_blocks = length / BLOCK_SIZE;
 
   for (; n_blocks > 0; n_blocks--)
-    if (physical_mm_test_bit(bit))
-      physical_mm_set_usable(bit++);
+    if (physical_mm_test_bit(bit, memory_map))
+      physical_mm_set_usable(bit++, &total_free_blocks, memory_map);
 
   /* First block is always used (first 64 KiB) */
-  if (!physical_mm_test_bit(0))
-    physical_mm_set_used(0);
+  if (!physical_mm_test_bit(0, memory_map))
+    physical_mm_set_used(0, &total_free_blocks, memory_map);
 }
 
 ALWAYS_INLINE static void
@@ -97,8 +65,8 @@ physical_mm_deinitialize_region(uint32_t start, uint32_t length)
     n_blocks++;
 
   for (; n_blocks > 0; n_blocks--)
-    if (!physical_mm_test_bit(bit))
-      physical_mm_set_used(bit++);
+    if (!physical_mm_test_bit(bit, memory_map))
+      physical_mm_set_used(bit++, &total_free_blocks, memory_map);
 }
 
 void
@@ -136,10 +104,12 @@ physical_mm_init(void)
     if (memory_map[i] != 0xffffffff)
       /* Test each bit to see if it's zero */
       for (uint32_t j = 0; j < BITMAP_ENTRY_SIZE; j++)
-        if (!physical_mm_test_bit(i * BITMAP_ENTRY_SIZE + j))
+        if (!physical_mm_test_bit(i * BITMAP_ENTRY_SIZE + j, memory_map))
           free_blcks++;
 
-  printk("physical_mm", "Calculated free blocks: 0x%x", free_blcks);
+  printk("physical_mm",
+         "Experimentally calculated free blocks: 0x%x",
+         free_blcks);
 #endif
 }
 
@@ -152,7 +122,7 @@ physical_mm_find_first_free_block(void)
     if (memory_map[i] != 0xffffffff)
       /* Test each bit to see if it's zero */
       for (uint32_t j = 0; j < BITMAP_ENTRY_SIZE; j++)
-        if (!physical_mm_test_bit(i * BITMAP_ENTRY_SIZE + j))
+        if (!physical_mm_test_bit(i * BITMAP_ENTRY_SIZE + j, memory_map))
           return i * BITMAP_ENTRY_SIZE + j;
 
   /* Shouldn't be reached, since we're keeping track of the number of free
@@ -171,7 +141,7 @@ physical_mm_allocate_block(void)
 
   uint32_t block = physical_mm_find_first_free_block();
 
-  physical_mm_set_used(block);
+  physical_mm_set_used(block, &total_free_blocks, memory_map);
 
   uint32_t physical_address = block * BLOCK_SIZE;
   return (void *) physical_address;
@@ -181,5 +151,5 @@ void
 physical_mm_free_block(void *physical_address)
 {
   uint32_t block = ((uint32_t) physical_address) / BLOCK_SIZE;
-  physical_mm_set_usable(block);
+  physical_mm_set_usable(block, &total_free_blocks, memory_map);
 }

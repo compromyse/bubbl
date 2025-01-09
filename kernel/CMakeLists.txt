@@ -13,6 +13,7 @@ set(SRC
 
   mm/memory_map.c
   mm/physical_mm/physical_mm.c
+  mm/physical_mm/memory_map.c
 
   drivers/vga_text_buffer/vga_text_buffer.c
   drivers/serial/serial.c
