@@ -12,8 +12,7 @@ set(SRC
   kernel/io/io.c
 
   mm/memory_map.c
-  mm/physical_mm/initialization.c
-  mm/physical_mm/allocation.c
+  mm/physical_mm/physical_mm.c
   mm/physical_mm/memory_map.c
 
   drivers/vga_text_buffer/vga_text_buffer.c
