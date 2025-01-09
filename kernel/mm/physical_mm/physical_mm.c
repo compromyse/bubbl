@@ -19,7 +19,7 @@ extern uint32_t kernel_end;
 
 uint32_t block_count = 0;
 uint32_t total_free_blocks = 0;
-uint32_t memory_map[MAX_BLOCKS];
+uint32_t memory_map[MAX_BLOCKS / BITMAP_ENTRY_SIZE];
 
 ALWAYS_INLINE static void
 physical_mm_log_memory_map(free_memory_regions_t *free_memory_regions)
@@ -45,6 +45,7 @@ physical_mm_set_used(const uint32_t bit)
 {
   uint32_t memory_map_index = bit / BITMAP_ENTRY_SIZE;
   uint32_t bitmask = 1 << (bit % BITMAP_ENTRY_SIZE);
+  total_free_blocks--;
   memory_map[memory_map_index] |= bitmask;
 }
 
@@ -54,7 +55,20 @@ physical_mm_set_usable(const uint32_t bit)
 {
   uint32_t memory_map_index = bit / BITMAP_ENTRY_SIZE;
   uint32_t bitmask = 1 << (bit % BITMAP_ENTRY_SIZE);
+  total_free_blocks++;
   memory_map[memory_map_index] &= ~bitmask;
+}
+
+/* Returns:
+ * True if the bit is set (block is in use)
+ * False if the bit is unset (block isn't in use)
+ */
+ALWAYS_INLINE static bool
+physical_mm_test_bit(const uint32_t bit)
+{
+  uint32_t memory_map_index = bit / BITMAP_ENTRY_SIZE;
+  uint32_t bitmask = 1 << (bit % BITMAP_ENTRY_SIZE);
+  return memory_map[memory_map_index] & bitmask;
 }
 
 ALWAYS_INLINE static void
@@ -64,28 +78,27 @@ physical_mm_initialize_region(uint32_t start, uint32_t length)
   uint32_t bit = start / BLOCK_SIZE;
   uint32_t n_blocks = length / BLOCK_SIZE;
 
-  for (; n_blocks > 0; n_blocks--) {
-    physical_mm_set_usable(bit++);
-    total_free_blocks++;
-  }
+  for (; n_blocks > 0; n_blocks--)
+    if (physical_mm_test_bit(bit))
+      physical_mm_set_usable(bit++);
 
   /* First block is always used (first 64 KiB) */
-  physical_mm_set_used(0);
+  if (!physical_mm_test_bit(0))
+    physical_mm_set_used(0);
 }
 
 ALWAYS_INLINE static void
 physical_mm_deinitialize_region(uint32_t start, uint32_t length)
 {
-  uint32_t align = start / BLOCK_SIZE;
+  uint32_t bit = start / BLOCK_SIZE;
   uint32_t n_blocks = length / BLOCK_SIZE;
 
   if (length % BLOCK_SIZE > 0)
     n_blocks++;
 
-  for (; n_blocks > 0; n_blocks--) {
-    physical_mm_set_used(align++);
-    total_free_blocks--;
-  }
+  for (; n_blocks > 0; n_blocks--)
+    if (!physical_mm_test_bit(bit))
+      physical_mm_set_used(bit++);
 }
 
 void
@@ -95,7 +108,7 @@ physical_mm_init(void)
   physical_mm_log_memory_map(free_memory_regions);
 
   /* All blocks are initially used */
-  for (uint32_t i = 0; i < MAX_BLOCKS; i++)
+  for (uint32_t i = 0; i < MAX_BLOCKS / BITMAP_ENTRY_SIZE; i++)
     memory_map[i] = 0xffffffff;
 
   uint32_t total_free_memory = 0;
@@ -114,22 +127,11 @@ physical_mm_init(void)
   printk("physical_mm", "Total free blocks: 0x%x", total_free_blocks);
 }
 
-/* Returns:
- * True if the bit is set (block is in use)
- * False if the bit is unset (block isn't in use)
- */
-ALWAYS_INLINE static bool
-physical_mm_test_bit(const uint32_t bit)
-{
-  uint32_t memory_map_index = bit / BITMAP_ENTRY_SIZE;
-  uint32_t bitmask = 1 << (bit % BITMAP_ENTRY_SIZE);
-  return memory_map[memory_map_index] & bitmask;
-}
-
 uint32_t
 physical_mm_find_first_free_block(void)
 {
-  for (uint32_t i = 0; i < block_count / BITMAP_ENTRY_SIZE; i++)
+  /* TODO: Why doesn't using block_count instead of MAX_BLOCKS work? */
+  for (uint32_t i = 0; i < MAX_BLOCKS / BITMAP_ENTRY_SIZE; i++)
     /* At least one block in the entry isn't in use */
     if (memory_map[i] != 0xffffffff)
       /* Test each bit to see if it's zero */
@@ -146,13 +148,14 @@ physical_mm_find_first_free_block(void)
 void *
 physical_mm_allocate_block(void)
 {
-  if (total_free_blocks <= 0)
+  if (total_free_blocks == 0) {
+    printk("physical_mm", "No more free blocks!");
     return NULL;
+  }
 
   uint32_t block = physical_mm_find_first_free_block();
 
   physical_mm_set_used(block);
-  total_free_blocks--;
 
   uint32_t physical_address = block * BLOCK_SIZE;
   return (void *) physical_address;
@@ -163,5 +166,4 @@ physical_mm_free_block(void *physical_address)
 {
   uint32_t block = ((uint32_t) physical_address) / BLOCK_SIZE;
   physical_mm_set_usable(block);
-  total_free_blocks++;
 }
