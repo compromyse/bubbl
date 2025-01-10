@@ -2,25 +2,26 @@ cmake_minimum_required(VERSION 3.21)
 project(kernel C ASM)
 
 set(SRC
-  boot/init/boot.s
   boot/gdt/gdt.c
   boot/gdt/gdt.s
+  boot/init/boot.s
 
-  kernel/kernel.c
+  drivers/serial/serial.c
+  drivers/vga_text_buffer/vga_text_buffer.c
+
   kernel/halt.c
-  kernel/stack_smashing_protector.c
   kernel/io/io.c
+  kernel/kernel.c
+  kernel/stack_smashing_protector.c
+
+  libk/printf.c
+  libk/printk.c
+  libk/strlen.c
 
   mm/memory_map.c
-  mm/physical_mm/physical_mm.c
   mm/physical_mm/memory_map.c
-
-  drivers/vga_text_buffer/vga_text_buffer.c
-  drivers/serial/serial.c
-
-  libk/strlen.c
-  libk/printk.c
-  libk/printf.c
+  mm/physical_mm/physical_mm.c
+  mm/virtual_mm/virtual_mm.c
 )
 
 add_executable(kernel ${SRC})
