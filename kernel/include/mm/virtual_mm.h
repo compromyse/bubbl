@@ -26,6 +26,9 @@
 #define PAGE_DIRECTORY_SIZE 1024
 #define PAGE_TABLE_SIZE 1024
 
+#define PAGE_DIRECTORY_INDEX(virtual_address) ((virtual_address >> 22) & 0x3ff)
+#define PAGE_TABLE_INDEX(virtual_address) ((virtual_address >> 12) & 0x3ff)
+
 #define PDE_PRESENT 1
 #define PDE_WRITABLE (1 << 1)
 #define PDE_USER (1 << 2)
@@ -41,24 +44,47 @@
 /* Page table address */
 #define PDE_FRAME(x) (x << 11)
 
-#define PTE_PRESENT 1
-#define PTE_WRITABLE (1 << 1)
-#define PTE_USER (1 << 2)
-#define PTE_WRITETHROUGH (1 << 3)
-#define PTE_CACHE_DISABLE (1 << 4)
-#define PTE_ACCESSED (1 << 5)
-#define PTE_DIRTY (1 << 6)
-#define PTE_PAT (1 << 7)
-#define PTE_GLOBAL (1 << 8)
+#define SET_PTE_PRESENT(x) x
+#define SET_PTE_WRITABLE(x) (x << 1)
+#define SET_PTE_USER(x) (x << 2)
+#define SET_PTE_WRITETHROUGH(x) (x << 3)
+#define SET_PTE_CACHE_DISABLE(x) (x << 4)
+#define SET_PTE_ACCESSED(x) (x << 5)
+#define SET_PTE_DIRTY(x) (x << 6)
+#define SET_PTE_PAT(x) (x << 7)
+#define SET_PTE_GLOBAL(x) (x << 8)
 /* NOTE: Unused by the CPU, free to be used by us! */
-#define PTE_UNUSED(x) (x << 9)
+#define SET_PTE_UNUSED(x) (x << 9)
 /* MAX: 0xFFFFF000 */
-#define PTE_FRAME(x) (x << 11)
+#define SET_PTE_FRAME(x) (x << 11)
+
+#define GET_PTE_FRAME(x) (*x >> 11)
 
 #define ADD_ATTRIB(entry, attribute) (*entry |= (attribute))
-#define SET_FRAME(entry, frame)                                               \
-  (ADD_ATTRIB(entry, PTE_FRAME((uint32_t) frame)))
 
+/*
+ * Given a page table entry, it sets the frame to a newly allocated address,
+ * and sets the present bit to false.
+ */
 bool virtual_mm_allocate_page(uint32_t *pt_entry);
+
+/*
+ * Given a page table entry, it sets the entry to 0 (therefore zero-ing the
+ * frame and present bit).
+ */
+bool virtual_mm_free_page(uint32_t *pt_entry);
+
+/*
+ * Given a page table and virtual address, it returns a pointer to the page
+ * table entry referenced by the virtual address.
+ */
+uint32_t *virtual_mm_lookup_table(uint32_t *page_table, uint32_t virtual_addr);
+
+/*
+ * Given a page directory and virtual address, it returns a pointer to the page
+ * directory entry referenced by the virtual address.
+ */
+uint32_t *virtual_mm_lookup_directory(uint32_t *page_directory,
+                                      uint32_t virtual_addr);
 
 #endif

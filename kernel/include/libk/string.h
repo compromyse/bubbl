@@ -21,7 +21,6 @@
 
 #include <stddef.h>
 
-size_t strlen(const char *);
-char *strcat(char *, const char *);
+size_t strlen(const char *str);
 
 #endif

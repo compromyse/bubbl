@@ -102,7 +102,7 @@ typedef struct {
   GDT_entry_t *ptr; /* Address of GDT */
 } PACKED GDT_descriptor_t;
 
-extern void _GDT_flush(GDT_descriptor_t *);
+extern void _GDT_flush(GDT_descriptor_t *GDT_descriptor);
 void GDT_load(void);
 
 #endif
