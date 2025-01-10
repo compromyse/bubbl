@@ -26,7 +26,7 @@
 extern uint32_t kernel_start;
 extern uint32_t kernel_end;
 
-uint32_t page_directory[PAGE_DIRECTORY_SIZE];
+uint32_t initial_page_directory[PAGE_DIRECTORY_SIZE];
 uint32_t initial_page_table[PAGE_TABLE_SIZE];
 
 bool
@@ -36,8 +36,38 @@ virtual_mm_allocate_page(uint32_t *pt_entry)
   if (!ptr)
     return false;
 
-  SET_FRAME(pt_entry, ptr);
-  ADD_ATTRIB(pt_entry, PTE_PRESENT);
+  ADD_ATTRIB(pt_entry, SET_PTE_FRAME((uint32_t) ptr));
+  ADD_ATTRIB(pt_entry, SET_PTE_PRESENT(1));
 
   return true;
+}
+
+bool
+virtual_mm_free_page(uint32_t *pt_entry)
+{
+  void *ptr = (void *) GET_PTE_FRAME(pt_entry);
+  if (ptr)
+    physical_mm_free_block(ptr);
+
+  *pt_entry = 0;
+
+  return true;
+}
+
+ALWAYS_INLINE uint32_t *
+virtual_mm_lookup_table(uint32_t *page_table, uint32_t virtual_addr)
+{
+  if (page_table)
+    return &page_table[PAGE_TABLE_INDEX(virtual_addr)];
+
+  return NULL;
+}
+
+ALWAYS_INLINE uint32_t *
+virtual_mm_lookup_directory(uint32_t *page_directory, uint32_t virtual_addr)
+{
+  if (page_directory)
+    return &page_directory[PAGE_DIRECTORY_INDEX(virtual_addr)];
+
+  return NULL;
 }

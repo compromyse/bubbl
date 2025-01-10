@@ -21,6 +21,7 @@
 #include <mm/memory_map.h>
 #include <mm/multiboot.h>
 #include <mm/physical_mm.h>
+#include <mm/virtual_mm.h>
 
 #include <kernel/halt.h>
 
@@ -45,6 +46,9 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   physical_mm_init();
 
   printk("\nKernel", "Started.");
+
+  uint32_t x = 0;
+  virtual_mm_allocate_page(&x);
 
   exit();
   halt(); /* If exit() fails (on real hardware) */

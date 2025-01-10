@@ -60,12 +60,12 @@ is_transmit_empty()
 }
 
 void
-serial_write_char(const char a)
+serial_write_char(const char chr)
 {
   while (is_transmit_empty() == 0)
     ;
 
-  outb(PORT, a);
+  outb(PORT, chr);
 }
 
 void
