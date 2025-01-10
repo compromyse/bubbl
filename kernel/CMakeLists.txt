@@ -87,3 +87,4 @@ set(CMAKE_C_LINK_EXECUTABLE "${CMAKE_C_COMPILER} <CMAKE_C_LINK_FLAGS> <FLAGS> <L
 )
 
 target_link_options(kernel PRIVATE ${LINKER_FLAGS})
+target_link_libraries(kernel PRIVATE gcc)

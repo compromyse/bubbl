@@ -71,3 +71,9 @@ virtual_mm_lookup_directory(uint32_t *page_directory, uint32_t virtual_addr)
 
   return NULL;
 }
+
+ALWAYS_INLINE void
+virtual_mm_load_page_directory(uint32_t *page_directory)
+{
+  __asm__("movl %0, %%cr0" ::"r"(page_directory));
+}

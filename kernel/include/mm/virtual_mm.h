@@ -87,4 +87,9 @@ uint32_t *virtual_mm_lookup_table(uint32_t *page_table, uint32_t virtual_addr);
 uint32_t *virtual_mm_lookup_directory(uint32_t *page_directory,
                                       uint32_t virtual_addr);
 
+/*
+ * Loads a given page directory into CR0
+ */
+void virtual_mm_load_page_directory(uint32_t *page_directory);
+
 #endif
