@@ -18,6 +18,9 @@
 
 #include <stdint.h>
 
+#include <libk/stdio.h>
+
+#include <mm/physical_mm.h>
 #include <mm/virtual_mm.h>
 
 extern uint32_t kernel_start;
@@ -25,3 +28,16 @@ extern uint32_t kernel_end;
 
 uint32_t page_directory[PAGE_DIRECTORY_SIZE];
 uint32_t initial_page_table[PAGE_TABLE_SIZE];
+
+bool
+virtual_mm_allocate_page(uint32_t *pt_entry)
+{
+  void *ptr = physical_mm_allocate_block();
+  if (!ptr)
+    return false;
+
+  SET_FRAME(pt_entry, ptr);
+  ADD_ATTRIB(pt_entry, PTE_PRESENT);
+
+  return true;
+}

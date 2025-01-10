@@ -19,12 +19,15 @@
 #ifndef __mm_virtual_mm_h
 #define __mm_virtual_mm_h
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #define PAGE_SIZE (4096 * KiB)
 #define PAGE_DIRECTORY_SIZE 1024
 #define PAGE_TABLE_SIZE 1024
 
 #define PDE_PRESENT 1
-#define PDE_WRITABLE (1 << 2)
+#define PDE_WRITABLE (1 << 1)
 #define PDE_USER (1 << 2)
 #define PDE_WRITETHROUGH (1 << 3)
 #define PDE_CACHE_DISABLE (1 << 4)
@@ -34,12 +37,12 @@
 #define PDE_PAGE_SIZE (1 << 7)
 #define PDE_GLOBAL (1 << 8)
 /* NOTE: Unused by the CPU, free to be used by us! */
-#define PDE_UNUSED(x) (x << 11)
+#define PDE_UNUSED(x) (x << 9)
 /* Page table address */
-#define PDE_FRAME(x) (x << 31)
+#define PDE_FRAME(x) (x << 11)
 
 #define PTE_PRESENT 1
-#define PTE_WRITABLE (1 << 2)
+#define PTE_WRITABLE (1 << 1)
 #define PTE_USER (1 << 2)
 #define PTE_WRITETHROUGH (1 << 3)
 #define PTE_CACHE_DISABLE (1 << 4)
@@ -48,11 +51,14 @@
 #define PTE_PAT (1 << 7)
 #define PTE_GLOBAL (1 << 8)
 /* NOTE: Unused by the CPU, free to be used by us! */
-#define PTE_UNUSED(x) (x << 11)
+#define PTE_UNUSED(x) (x << 9)
 /* MAX: 0xFFFFF000 */
-#define PTE_FRAME(x) (x << 31)
+#define PTE_FRAME(x) (x << 11)
 
-#define ADD_ATTRIB(entry, attribute) (entry |= attribute)
-#define SET_FRAME(entry, frame) (PTE_ADD_ATRIB(PTE_FRAME(frame)))
+#define ADD_ATTRIB(entry, attribute) (*entry |= (attribute))
+#define SET_FRAME(entry, frame)                                               \
+  (ADD_ATTRIB(entry, PTE_FRAME((uint32_t) frame)))
+
+bool virtual_mm_allocate_page(uint32_t *pt_entry);
 
 #endif
