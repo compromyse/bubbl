@@ -44,11 +44,9 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   GDT_load();
   memory_map_load(multiboot_info);
   physical_mm_init();
+  virtual_mm_initialize();
 
   printk("\nKernel", "Started.");
-
-  uint32_t x = 0;
-  virtual_mm_allocate_page(&x);
 
   exit();
   halt(); /* If exit() fails (on real hardware) */

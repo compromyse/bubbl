@@ -38,6 +38,7 @@ set(C_COMPILE_OPTIONS
   -Wall
   -Wextra
   -pedantic
+  -Werror
 
   -g
 )

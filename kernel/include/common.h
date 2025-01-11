@@ -26,7 +26,14 @@
 #define MiB (KiB * KiB)
 
 #define ASSERT_NOT_REACHED()                                                  \
-  printk("ASSERTION FAILED", "[%s] SHOULD NOT BE REACHED.", __func__);        \
-  halt();
+  {                                                                           \
+    printk("ASSERTION FAILED",                                                \
+           "[%s]:%lu SHOULD NOT BE REACHED.",                                 \
+           __func__,                                                          \
+           __LINE__);                                                         \
+    /* TODO: We should probably remove this exit() eventually */              \
+    exit();                                                                   \
+    halt();                                                                   \
+  }
 
 #endif
