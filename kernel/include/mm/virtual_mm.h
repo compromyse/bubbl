@@ -22,7 +22,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define PAGE_SIZE (4096 * KiB)
 #define PAGE_DIRECTORY_SIZE 1024
 #define PAGE_TABLE_SIZE 1024
 

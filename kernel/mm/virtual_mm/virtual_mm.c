@@ -76,10 +76,7 @@ virtual_mm_lookup_directory(uint32_t *page_directory, uint32_t virtual_addr)
 ALWAYS_INLINE void
 virtual_mm_load_page_directory(uint32_t *page_directory)
 {
-  __asm__("movl %0, %%eax" ::"r"(page_directory) : "%eax");
-  /* For some reason, that colon is required; else the assembler thinks that
-   * %eax doesn't exist :^) */
-  __asm__("movl %%eax, %%cr3" ::: "%eax");
+  __asm__("movl %0, %%cr3" ::"r"(page_directory));
 }
 
 bool
@@ -158,6 +155,9 @@ virtual_mm_initialize(void)
 
     table[PAGE_TABLE_INDEX(virtual_addr)] = page;
   }
+  printk("\n\ndebug",
+         "Table: 0x%x",
+         GET_PTE_FRAME(&table[PAGE_TABLE_INDEX(0x2000)]));
 
   uint32_t *page_directory = physical_mm_allocate_block();
   if (!page_directory)
@@ -166,12 +166,13 @@ virtual_mm_initialize(void)
   for (uint32_t i = 0; i < 1024; i++)
     page_directory[i] = 0;
 
+  current_page_directory = page_directory;
+
   uint32_t *pd_entry = &page_directory[PAGE_DIRECTORY_INDEX(0)];
   ADD_ATTRIB(pd_entry, SET_PDE_PRESENT(1));
   ADD_ATTRIB(pd_entry, SET_PDE_WRITABLE(1));
   ADD_ATTRIB(pd_entry, SET_PDE_FRAME((uint32_t) table));
 
-  current_page_directory = page_directory;
   virtual_mm_switch_page_directory(current_page_directory);
   virtual_mm_enable_paging();
 }
