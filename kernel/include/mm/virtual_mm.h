@@ -37,13 +37,12 @@
 /* Never set (reserved by Intel) */
 #define SET_PDE_RESERVED(x) (x << 6)
 #define SET_PDE_PAGE_SIZE(x) (x << 7)
-#define SET_PDE_GLOBAL(x) (x << 8)
 /* NOTE: Unused by the CPU, free to be used by us! */
-#define SET_PDE_UNUSED(x) (x << 9)
+#define SET_PDE_UNUSED(x) (x << 8)
 /* Page table address */
-#define SET_PDE_FRAME(x) (x << 11)
+#define SET_PDE_FRAME(x) (x << 12)
 
-#define GET_PDE_FRAME(x) (*x >> 11)
+#define GET_PDE_FRAME(x) (*x >> 12)
 
 #define SET_PTE_PRESENT(x) x
 #define SET_PTE_WRITABLE(x) (x << 1)
@@ -57,10 +56,10 @@
 /* NOTE: Unused by the CPU, free to be used by us! */
 #define SET_PTE_UNUSED(x) (x << 9)
 /* MAX: 0xFFFFF000 */
-#define SET_PTE_FRAME(x) (x << 11)
+#define SET_PTE_FRAME(x) (x << 12)
 
 #define PTE_IS_PRESENT(x) (x & 1)
-#define GET_PTE_FRAME(x) (*x >> 11)
+#define GET_PTE_FRAME(x) (*x >> 12)
 
 #define ADD_ATTRIB(entry, attribute) (*entry |= (attribute))
 
