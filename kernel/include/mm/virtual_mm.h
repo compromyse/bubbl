@@ -64,31 +64,6 @@
 #define ADD_ATTRIB(entry, attribute) (*entry |= (attribute))
 
 /*
- * Given a page table entry, it sets the frame to a newly allocated address,
- * and sets the present bit to false.
- */
-bool virtual_mm_allocate_page(uint32_t *pt_entry);
-
-/*
- * Given a page table entry, it sets the entry to 0 (therefore zero-ing the
- * frame and present bit).
- */
-bool virtual_mm_free_page(uint32_t *pt_entry);
-
-/*
- * Given a page table and virtual address, it returns a pointer to the page
- * table entry referenced by the virtual address.
- */
-uint32_t *virtual_mm_lookup_table(uint32_t *page_table, uint32_t virtual_addr);
-
-/*
- * Given a page directory and virtual address, it returns a pointer to the page
- * directory entry referenced by the virtual address.
- */
-uint32_t *virtual_mm_lookup_directory(uint32_t *page_directory,
-                                      uint32_t virtual_addr);
-
-/*
  * Loads a given page directory into CR0
  */
 void virtual_mm_load_page_directory(uint32_t *page_directory);
@@ -97,16 +72,6 @@ void virtual_mm_load_page_directory(uint32_t *page_directory);
  * Switches the current page directory to a given page directory
  */
 bool virtual_mm_switch_page_directory(uint32_t *page_directory);
-
-/*
- * Flushes the given TLB entry
- */
-void virtual_mm_flush_tlb_entry(uint32_t *virtual_addr);
-
-/*
- * Map a given physical address to a virtual address
- */
-bool virtual_mm_map_page(uint32_t *physical_addr, uint32_t *virtual_addr);
 
 /*
  * Initialize the virtual memory manager
