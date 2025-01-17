@@ -23,10 +23,9 @@ add_custom_target(iso
   DEPENDS kernel
 )
 
-add_custom_target(clean-custom
-  rm -rf
-  ${CMAKE_BINARY_DIR}/iso
-  ${CMAKE_BINARY_DIR}/bubbl.iso
-
-  DEPENDS clean
+set_property(
+  TARGET iso
+  APPEND
+  PROPERTY ADDITIONAL_CLEAN_FILES iso
+  PROPERTY ADDITIONAL_CLEAN_FILES bubbl.iso
 )
