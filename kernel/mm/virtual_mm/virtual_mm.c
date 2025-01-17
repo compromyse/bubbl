@@ -62,47 +62,25 @@ virtual_mm_initialize(void)
   uint32_t *table = physical_mm_allocate_block();
   if (!table)
     ASSERT_NOT_REACHED();
+  printk("debug", "Page table is at: 0x%x", table);
 
   for (uint32_t i = 0; i < 1024; i++)
     table[i] = 0x2;
 
   /* Identity map the first 4MiB (maps 4KiB 1024 times) */
-  /* for (uint32_t i = 0, physical_addr = 0, virtual_addr = 0; i < 1024;
-       i++, physical_addr += 4096, virtual_addr += 4096) {
-    uint32_t pt_entry = 0;
-    ADD_ATTRIB(&pt_entry, SET_PTE_PRESENT(1));
-    ADD_ATTRIB(&pt_entry, SET_PTE_WRITABLE(1));
-    ADD_ATTRIB(&pt_entry, SET_PTE_FRAME(physical_addr));
-
-    table[PAGE_TABLE_INDEX(virtual_addr)] = pt_entry;
-  }
-  printk("debug", "Page table is at: 0x%x", table); */
-
-  for (uint32_t i = 0; i < 1024; i++) {
-    uint32_t pt_entry = 0;
-    ADD_ATTRIB(&pt_entry, SET_PTE_PRESENT(1));
-    ADD_ATTRIB(&pt_entry, SET_PTE_WRITABLE(1));
-    ADD_ATTRIB(&pt_entry, SET_PTE_FRAME(i));
-
-    table[i] = pt_entry;
-  }
+  for (uint32_t i = 0; i < 1024; i++)
+    table[i] = PTE_FRAME(i) | PTE_PRESENT(1) | PTE_WRITABLE(1);
 
   uint32_t *page_directory = physical_mm_allocate_block();
   if (!page_directory)
     ASSERT_NOT_REACHED();
+  printk("debug", "Page directory is at: 0x%x", page_directory);
 
   for (uint32_t i = 0; i < 1024; i++)
     page_directory[i] = 0;
 
-  /* uint32_t *pd_entry = &page_directory[0];
-  ADD_ATTRIB(pd_entry, SET_PDE_PRESENT(1));
-  ADD_ATTRIB(pd_entry, SET_PDE_WRITABLE(1));
-  ADD_ATTRIB(pd_entry, SET_PDE_FRAME((uint32_t) table)); */
-  page_directory[0] = ((uint32_t) table) | 3;
-
-  printk("debug", "Page directory is at: 0x%x", page_directory);
-  // printk("debug", "pd_entry: 0x%x", pd_entry);
-  printk("debug", "513th entry: 0x%x", table[513]);
+  uint32_t *pd_entry = &page_directory[0];
+  *pd_entry = PDE_FRAME((uint32_t) table) | PDE_PRESENT(1) | PDE_WRITABLE(1);
 
   virtual_mm_switch_page_directory(page_directory);
   virtual_mm_enable_paging();
