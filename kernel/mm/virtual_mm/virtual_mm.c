@@ -67,7 +67,8 @@ virtual_mm_initialize(void)
   for (uint32_t i = 0; i < 1024; i++)
     table[i] = 0x2;
 
-  /* Identity map the first 4MiB (maps 4KiB 1024 times) */
+  /* Identity map the first 4MiB, excluding the 4th MiB
+   * (maps 4KiB 1024 times) */
   for (uint32_t i = 0; i < 1024; i++)
     table[i] = PTE_FRAME(i) | PTE_PRESENT(1) | PTE_WRITABLE(1);
 

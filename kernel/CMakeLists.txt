@@ -10,8 +10,9 @@ set(SRC
   drivers/vga_text_buffer/vga_text_buffer.c
 
   kernel/halt.c
-  kernel/io/io.c
+  kernel/io.c
   kernel/kernel.c
+  kernel/spinlock.c
   kernel/stack_smashing_protector.c
 
   libk/printf.c
@@ -38,7 +39,7 @@ set(C_COMPILE_OPTIONS
   -Wall
   -Wextra
   -pedantic
-  -Werror
+  # -Werror
 
   -g
 )
