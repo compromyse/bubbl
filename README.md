@@ -6,13 +6,8 @@ An Operating System for The x86 Architecture.
 
 ### Dependencies:
 
-- CMake
-- Ninja
-- Aria2 (for fetch-toolchain.sh)
-- GRUB (grub-mkrescue)
-- xorriso
-
 ```sh
+sudo apt install cmake ninja-build aria2 xorriso grub-common qemu-system-x86
 ./scripts/fetch-toolchain.sh
 
 source env.sh
