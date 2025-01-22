@@ -29,12 +29,12 @@
 
 #define BITMAP_ENTRY_SIZE 32
 
-/* TODO: This is the maximum number of blocks for a 4GiB system. */
+/* This is the maximum number of blocks for a 4GiB system. */
 #define MAX_BLOCKS 1048576
 
 void physical_mm_init(void);
 
-uint32_t physical_mm_find_first_free_block(void);
+uint32_t physical_mm_find_free_block(void);
 
 void *physical_mm_allocate_block(void);
 void physical_mm_free_block(void *physical_address);

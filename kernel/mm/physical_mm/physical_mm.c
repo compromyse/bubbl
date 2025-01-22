@@ -140,7 +140,7 @@ physical_mm_init(void)
 }
 
 uint32_t
-physical_mm_find_first_free_block(void)
+physical_mm_find_free_block(void)
 {
   /* TODO: Why doesn't using block_count instead of MAX_BLOCKS work? */
   for (uint32_t i = 0; i < MAX_BLOCKS / BITMAP_ENTRY_SIZE; i++)
@@ -167,7 +167,7 @@ physical_mm_allocate_block(void)
 
   spinlock_acquire(&memory_map_lock);
 
-  uint32_t block = physical_mm_find_first_free_block();
+  uint32_t block = physical_mm_find_free_block();
   physical_mm_set_used(block, &total_free_blocks, memory_map);
 
   spinlock_release(&memory_map_lock);

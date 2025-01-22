@@ -113,3 +113,67 @@ virtual_mm_map_page(void *physical_address, void *virtual_address)
   *pt_entry = PTE_FRAME((uint32_t) physical_address) | PTE_PRESENT(1)
               | PTE_WRITABLE(1);
 }
+
+ALWAYS_INLINE uint32_t *
+get_table(uint32_t *pd_entry)
+{
+  uint32_t *table;
+  if (!PDE_IS_PRESENT(pd_entry)) {
+    table = physical_mm_allocate_block();
+    if (!table)
+      ASSERT_NOT_REACHED();
+
+    for (uint32_t _ = 0; _ < 1024; _++)
+      table[_] = 0;
+
+    *pd_entry = PDE_FRAME((uint32_t) table) | PDE_PRESENT(1) | PDE_WRITABLE(1);
+  } else
+    table = (uint32_t *) PDE_GET_TABLE(pd_entry);
+
+  return table;
+}
+
+ALWAYS_INLINE void
+virtual_mm_find_free_virtual_addresses(uint32_t n)
+{
+  for (uint32_t i = 0; i < PAGE_DIRECTORY_SIZE; i++) {
+    uint32_t current_pd_index = i;
+    uint32_t *pd_entry = &current_page_directory[current_pd_index];
+    uint32_t *table = get_table(pd_entry);
+
+    for (uint32_t j = 0; j < PAGE_TABLE_SIZE; j++) {
+      uint32_t *pt_entry = &table[j];
+      if (PTE_IS_PRESENT(pt_entry))
+        continue;
+      /* We found our starting pt_entry */
+
+      printk("debug", "Starting: 0x%x", pt_entry);
+      uint32_t count = 0;
+      for (uint32_t k = j; k <= PAGE_TABLE_SIZE; k++) {
+        /* If we overflow, switch to the consecutive page directory entry */
+        if (k == PAGE_TABLE_SIZE) {
+          pd_entry = &current_page_directory[++current_pd_index];
+          table = get_table(pd_entry);
+          printk("debug", "Switching pd_entry: 0x%x", pd_entry);
+          k = 0;
+        }
+
+        uint32_t *pt_entry = &table[k];
+        if (PTE_IS_PRESENT(pt_entry)) {
+          count = 0;
+          current_pd_index = i;
+          pd_entry = &current_page_directory[current_pd_index];
+          j += count;
+          break;
+        }
+
+        // printk("debug", "Found page: 0x%x", &table[k]);
+        count++;
+        if (count == n) {
+          printk("debug", "Found starting page at: 0x%x", &table[j]);
+          return;
+        }
+      }
+    }
+  }
+}

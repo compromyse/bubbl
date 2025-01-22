@@ -83,4 +83,6 @@ void virtual_mm_initialize(void);
  */
 void virtual_mm_map_page(void *physical_address, void *virtual_address);
 
+void virtual_mm_find_free_virtual_addresses(uint32_t n);
+
 #endif
