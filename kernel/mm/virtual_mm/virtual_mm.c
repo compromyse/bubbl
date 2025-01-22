@@ -62,10 +62,9 @@ virtual_mm_initialize(void)
   uint32_t *table = physical_mm_allocate_block();
   if (!table)
     ASSERT_NOT_REACHED();
-  printk("debug", "Page table is at: 0x%x", table);
 
   for (uint32_t i = 0; i < 1024; i++)
-    table[i] = 0x2;
+    table[i] = 0;
 
   /* Identity map the first 4MiB, excluding the 4th MiB
    * (maps 4KiB 1024 times) */
@@ -85,4 +84,29 @@ virtual_mm_initialize(void)
 
   virtual_mm_switch_page_directory(page_directory);
   virtual_mm_enable_paging();
+}
+
+void
+virtual_mm_map_page(void *physical_address, void *virtual_address)
+{
+  uint32_t *pd_entry = &current_page_directory[GET_PDE_FRAME(virtual_address)];
+
+  uint32_t *table = 0;
+  /* If the pd_entry isn't present, allocate a block for it, zero the table,
+   * and set the pd_entry's frame to the table's address. */
+  if (!PDE_IS_PRESENT(pd_entry)) {
+    table = physical_mm_allocate_block();
+    if (!table)
+      ASSERT_NOT_REACHED();
+
+    for (uint32_t i = 0; i < 1024; i++)
+      table[i] = 0;
+
+    *pd_entry = PDE_FRAME((uint32_t) table) | PDE_PRESENT(1) | PDE_WRITABLE(1);
+  } else
+    table = (uint32_t *) PDE_GET_TABLE(pd_entry);
+
+  uint32_t *pt_entry = &table[GET_PTE_FRAME(virtual_address)];
+  *pt_entry = PTE_FRAME((uint32_t) physical_address) | PTE_PRESENT(1)
+              | PTE_WRITABLE(1);
 }

@@ -25,9 +25,6 @@
 #define PAGE_DIRECTORY_SIZE 1024
 #define PAGE_TABLE_SIZE 1024
 
-#define PAGE_DIRECTORY_INDEX(virtual_address) ((virtual_address >> 22) & 0x3ff)
-#define PAGE_TABLE_INDEX(virtual_address) ((virtual_address >> 12) & 0x3ff)
-
 #define PDE_PRESENT(x) x
 #define PDE_WRITABLE(x) ((x) << 1)
 #define PDE_USER(x) ((x) << 2)
@@ -42,7 +39,9 @@
 /* Page table address */
 #define PDE_FRAME(x) ((x) &0xFFFFF000)
 
-#define GET_PDE_FRAME(x) ((*x) >> 12)
+#define PDE_IS_PRESENT(pd_entry) ((*pd_entry) & 1)
+#define GET_PDE_FRAME(virtual_address) (((uint32_t) virtual_address) >> 22)
+#define PDE_GET_TABLE(pd_entry) ((*pd_entry) & ~0xfff)
 
 #define PTE_PRESENT(x) x
 #define PTE_WRITABLE(x) ((x) << 1)
@@ -58,8 +57,9 @@
 /* Left shift by 12 because we only need the bits from the twelfth bit. */
 #define PTE_FRAME(x) ((x) << 12)
 
-#define PTE_IS_PRESENT(x) ((x) &1)
-#define GET_PTE_FRAME(x) ((*x) >> 12)
+#define PTE_IS_PRESENT(pt_entry) ((*pt_entry) & 1)
+#define GET_PTE_FRAME(virtual_address)                                        \
+  ((((uint32_t) virtual_address) >> 12) & 0x3ff)
 
 #define ADD_ATTRIB(entry, attribute) (*entry |= (attribute))
 
@@ -77,5 +77,10 @@ bool virtual_mm_switch_page_directory(uint32_t *page_directory);
  * Initialize the virtual memory manager
  */
 void virtual_mm_initialize(void);
+
+/*
+ * Map a physical address to a virtual address
+ */
+void virtual_mm_map_page(void *physical_address, void *virtual_address);
 
 #endif
