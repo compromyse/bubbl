@@ -107,6 +107,9 @@ virtual_mm_map_page(void *physical_address, void *virtual_address)
     table = (uint32_t *) PDE_GET_TABLE(pd_entry);
 
   uint32_t *pt_entry = &table[GET_PTE_FRAME(virtual_address)];
+  if (PTE_IS_PRESENT(pt_entry))
+    ASSERT_NOT_REACHED(); /* TODO: Mapping previously mapped memory */
+
   *pt_entry = PTE_FRAME((uint32_t) physical_address) | PTE_PRESENT(1)
               | PTE_WRITABLE(1);
 }

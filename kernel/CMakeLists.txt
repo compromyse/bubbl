@@ -41,6 +41,7 @@ set(C_COMPILE_OPTIONS
   -pedantic
   # -Werror
 
+  # TODO: This doesn't actually work right now because of the linker script :')
   -g
 )
 

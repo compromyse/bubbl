@@ -22,6 +22,7 @@
 
 /* TODO: Stack based allocation? */
 
+#include <stdatomic.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -31,6 +32,7 @@
 #include <mm/physical_mm.h>
 
 #include <kernel/halt.h>
+#include <kernel/spinlock.h>
 
 extern uint32_t kernel_start;
 extern uint32_t kernel_end;
@@ -38,6 +40,8 @@ extern uint32_t kernel_end;
 uint32_t block_count = 0;
 uint32_t total_free_blocks = 0;
 uint32_t memory_map[MAX_BLOCKS / BITMAP_ENTRY_SIZE];
+
+atomic_flag memory_map_lock;
 
 ALWAYS_INLINE static void
 physical_mm_log_memory_map(free_memory_regions_t *free_memory_regions)
@@ -93,6 +97,8 @@ physical_mm_init(void)
   free_memory_regions_t *free_memory_regions = memory_map_get_free_regions();
   physical_mm_log_memory_map(free_memory_regions);
 
+  spinlock_acquire(&memory_map_lock);
+
   /* All blocks are initially used */
   /* TODO: Move this block to a place after block_count is set. This is why
    * using block_count instead of MAX_BLOCKS wasn't working. */
@@ -108,6 +114,8 @@ physical_mm_init(void)
 
   uint32_t kernel_size = ((uint32_t) &kernel_end) - ((uint32_t) &kernel_start);
   physical_mm_deinitialize_region((uint32_t) &kernel_start, kernel_size);
+
+  spinlock_release(&memory_map_lock);
 
   total_free_memory -= kernel_size;
   block_count = total_free_memory / BLOCK_SIZE;
@@ -157,9 +165,12 @@ physical_mm_allocate_block(void)
     return NULL;
   }
 
-  uint32_t block = physical_mm_find_first_free_block();
+  spinlock_acquire(&memory_map_lock);
 
+  uint32_t block = physical_mm_find_first_free_block();
   physical_mm_set_used(block, &total_free_blocks, memory_map);
+
+  spinlock_release(&memory_map_lock);
 
   uint32_t physical_address = block * BLOCK_SIZE;
   return (void *) physical_address;
