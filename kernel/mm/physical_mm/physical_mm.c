@@ -72,7 +72,7 @@ physical_mm_initialize_region(uint32_t start, uint32_t length)
     if (physical_mm_test_bit(bit, memory_map))
       physical_mm_set_usable(bit++, &total_free_blocks, memory_map);
 
-  /* First block is always used (first 64 KiB) */
+  /* First block is always used (first 64KiB) */
   if (!physical_mm_test_bit(0, memory_map))
     physical_mm_set_used(0, &total_free_blocks, memory_map);
 }

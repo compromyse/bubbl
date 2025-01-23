@@ -40,7 +40,7 @@
 #define PDE_FRAME(x) ((x) &0xFFFFF000)
 
 #define PDE_IS_PRESENT(pd_entry) ((*pd_entry) & 1)
-#define GET_PDE_FRAME(virtual_address) (((uint32_t) virtual_address) >> 22)
+#define GET_PD_INDEX(virtual_address) (((uint32_t) virtual_address) >> 22)
 #define PDE_GET_TABLE(pd_entry) ((*pd_entry) & ~0xfff)
 
 #define PTE_PRESENT(x) x
@@ -58,7 +58,8 @@
 #define PTE_FRAME(x) ((x) << 12)
 
 #define PTE_IS_PRESENT(pt_entry) ((*pt_entry) & 1)
-#define GET_PTE_FRAME(virtual_address)                                        \
+#define GET_PTE_FRAME(x) ((x) >> 12)
+#define GET_PT_INDEX(virtual_address)                                         \
   ((((uint32_t) virtual_address) >> 12) & 0x3ff)
 
 #define ADD_ATTRIB(entry, attribute) (*entry |= (attribute))

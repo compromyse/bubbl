@@ -36,4 +36,17 @@
     halt();                                                                   \
   }
 
+#define ASSERT(condition)                                                     \
+  {                                                                           \
+    if (!(condition)) {                                                       \
+      printk("ASSERTION FAILED",                                              \
+             "[%s]:%lu IS RENDERED FALSE.",                                   \
+             __func__,                                                        \
+             __LINE__);                                                       \
+      /* TODO: We should probably remove this exit() eventually */            \
+      exit();                                                                 \
+      halt();                                                                 \
+    }                                                                         \
+  }
+
 #endif
