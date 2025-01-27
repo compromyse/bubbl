@@ -64,6 +64,9 @@
 
 #define ADD_ATTRIB(entry, attribute) (*entry |= (attribute))
 
+#define VIRTUAL_ADDRESS(pd_index, pt_index)                                   \
+  (((pd_index) << 22) | ((pt_index) << 12))
+
 /*
  * Loads a given page directory into CR0
  */
@@ -84,6 +87,9 @@ void virtual_mm_initialize(void);
  */
 void virtual_mm_map_page(void *physical_address, void *virtual_address);
 
-void virtual_mm_find_free_virtual_addresses(uint32_t n);
+/*
+ * Find a virtual address with n consecutive free addresses. AWIUFHAILWFHIALW
+ */
+uint32_t virtual_mm_find_free_virtual_addresses(uint32_t n);
 
 #endif

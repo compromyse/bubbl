@@ -135,54 +135,51 @@ get_or_make_table(uint32_t *pd_entry)
   return table;
 }
 
-ALWAYS_INLINE void
+uint32_t
 virtual_mm_find_free_virtual_addresses(uint32_t n)
 {
   /* Skip the first page directory, we don't wanna touch the first 4MiB. */
-  for (uint32_t i = 1; i < PAGE_DIRECTORY_SIZE; i++) {
-    uint32_t *pd_entry = &current_page_directory[i];
+  for (uint32_t pd_index = 1; pd_index < PAGE_DIRECTORY_SIZE; pd_index++) {
+    uint32_t starting_pd_index = pd_index;
+    uint32_t *pd_entry = &current_page_directory[pd_index];
     uint32_t *table = get_or_make_table(pd_entry);
 
-    for (uint32_t j = 0; j < PAGE_TABLE_SIZE; j++) {
-      uint32_t *pt_entry = &table[j];
+    for (uint32_t starting_pt_index = 0; starting_pt_index < PAGE_TABLE_SIZE;
+         starting_pt_index++) {
+      uint32_t *pt_entry = &table[starting_pt_index];
       if (PTE_IS_PRESENT(pt_entry))
         continue;
 
       /* We found our starting pt_entry */
-      printk("debug", "Starting: 0x%x", pt_entry);
       uint32_t count = 0;
-      for (uint32_t k = j; k <= PAGE_TABLE_SIZE; k++) {
+      for (uint32_t pt_index = starting_pt_index; pt_index <= PAGE_TABLE_SIZE;
+           pt_index++) {
         /* If we overflow, switch to the consecutive page directory entry */
-        if (k == PAGE_TABLE_SIZE) {
-          if (++i == PAGE_DIRECTORY_SIZE)
-            ASSERT_NOT_REACHED(); /* Ran out of pd_entries */
+        if (pt_index == PAGE_TABLE_SIZE) {
+          if (++pd_index == PAGE_DIRECTORY_SIZE)
+            return 0; /* Ran out of pd_entries */
 
-          pd_entry = &current_page_directory[i];
-          printk("debug", "Switching pd_entry: 0x%x", pd_entry);
-
+          pd_entry = &current_page_directory[pd_index];
           table = get_or_make_table(pd_entry);
-          k = 0;
+          pt_index = 0;
         }
 
         /* If page table entry is already used, break from the current loop */
-        uint32_t *pt_entry = &table[k];
+        uint32_t *pt_entry = &table[pt_index];
         if (PTE_IS_PRESENT(pt_entry)) {
           /* Since we have some used address at some point between j and count,
            * we can't find n consecutive free addresses in between j and the
            * used block (j + count + 1) */
-          j += count;
+          starting_pt_index += count;
           break;
         }
 
-        // printk("debug", "Found page: 0x%x", &table[k]);
-        count++;
-        if (count == n) {
-          /* TODO: Convert this into a virtual_address using the pd_index &
-           * pt_index */
-          printk("debug", "Found starting page at: 0x%x", &table[j]);
-          return;
-        }
+        if (++count == n)
+          return VIRTUAL_ADDRESS(starting_pd_index, starting_pt_index);
       }
     }
   }
+
+  ASSERT_NOT_REACHED();
+  return 0;
 }

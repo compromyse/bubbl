@@ -49,7 +49,7 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   printk("\nKernel", "Started.");
 
   // virtual_mm_map_page((void *) 0x0C00000, (void *) 0x3000);
-  virtual_mm_find_free_virtual_addresses(10000);
+  virtual_mm_find_free_virtual_addresses(3);
 
   exit();
   halt(); /* If exit() fails (on real hardware) */
