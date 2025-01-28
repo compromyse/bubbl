@@ -116,6 +116,22 @@ virtual_mm_map_page(void *physical_address, void *virtual_address)
               | PTE_WRITABLE(1);
 }
 
+void
+virtual_mm_unmap_page(void *virtual_address)
+{
+  uint32_t *pd_entry = &current_page_directory[GET_PD_INDEX(virtual_address)];
+
+  uint32_t *table = 0;
+  /* If the pd_entry isn't present, return */
+  if (!PDE_IS_PRESENT(pd_entry))
+    return;
+
+  table = (uint32_t *) PDE_GET_TABLE(pd_entry);
+
+  uint32_t *pt_entry = &table[GET_PT_INDEX(virtual_address)];
+  *pt_entry = 0;
+}
+
 ALWAYS_INLINE uint32_t *
 get_or_make_table(uint32_t *pd_entry)
 {
@@ -142,6 +158,7 @@ virtual_mm_find_free_virtual_addresses(uint32_t n)
   for (uint32_t pd_index = 1; pd_index < PAGE_DIRECTORY_SIZE; pd_index++) {
     uint32_t starting_pd_index = pd_index;
     uint32_t *pd_entry = &current_page_directory[pd_index];
+    /* Ideally, we shouldn't be allocating tables here */
     uint32_t *table = get_or_make_table(pd_entry);
 
     for (uint32_t starting_pt_index = 0; starting_pt_index < PAGE_TABLE_SIZE;
@@ -164,12 +181,13 @@ virtual_mm_find_free_virtual_addresses(uint32_t n)
           pt_index = 0;
         }
 
-        /* If page table entry is already used, break from the current loop */
+        /* If page table entry is already used, break from the current loop
+         */
         uint32_t *pt_entry = &table[pt_index];
         if (PTE_IS_PRESENT(pt_entry)) {
-          /* Since we have some used address at some point between j and count,
-           * we can't find n consecutive free addresses in between j and the
-           * used block (j + count + 1) */
+          /* Since we have some used address at some point between j and
+           * count, we can't find n consecutive free addresses in between j
+           * and the used block (j + count + 1) */
           starting_pt_index += count;
           break;
         }
@@ -182,4 +200,26 @@ virtual_mm_find_free_virtual_addresses(uint32_t n)
 
   ASSERT_NOT_REACHED();
   return 0;
+}
+
+void *
+virtual_mm_alloc_pages(uint32_t n_pages)
+{
+  uint32_t starting_address = virtual_mm_find_free_virtual_addresses(n_pages);
+  if (starting_address == 0)
+    return 0;
+
+  for (uint32_t i = 0; i < n_pages; i++)
+    virtual_mm_map_page(physical_mm_allocate_block(),
+                        (void *) (starting_address + (i * 4096)));
+
+  return (void *) starting_address;
+}
+
+void
+virtual_mm_free_pages(void *starting_address, uint32_t n_pages)
+{
+  for (uint32_t i = 0; i < n_pages; i++)
+    virtual_mm_unmap_page(
+        (void *) (((uint32_t) starting_address) + (i * 4096)));
 }

@@ -46,10 +46,10 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   physical_mm_init();
   virtual_mm_initialize();
 
-  printk("\nKernel", "Started.");
+  void *starting_address = virtual_mm_alloc_pages(1);
+  virtual_mm_free_pages(starting_address, 2);
 
-  // virtual_mm_map_page((void *) 0x0C00000, (void *) 0x3000);
-  virtual_mm_find_free_virtual_addresses(3);
+  printk("\nKernel", "Started.");
 
   exit();
   halt(); /* If exit() fails (on real hardware) */

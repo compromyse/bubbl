@@ -88,8 +88,18 @@ void virtual_mm_initialize(void);
 void virtual_mm_map_page(void *physical_address, void *virtual_address);
 
 /*
- * Find a virtual address with n consecutive free addresses. AWIUFHAILWFHIALW
+ * Find a virtual address with n consecutive free addresses.
  */
-uint32_t virtual_mm_find_free_virtual_addresses(uint32_t n);
+uint32_t virtual_mm_find_free_virtual_addresses(uint32_t n_pages);
+
+/*
+ * Allocate and map n pages.
+ */
+void *virtual_mm_alloc_pages(uint32_t n_pages);
+
+/*
+ * Free n pages from the starting address.
+ */
+void virtual_mm_free_pages(void *starting_address, uint32_t n_pages);
 
 #endif
