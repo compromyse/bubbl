@@ -18,6 +18,7 @@ set(SRC
   libk/printf.c
   libk/printk.c
   libk/strlen.c
+  libk/kmalloc.c
 
   mm/memory_map.c
   mm/physical_mm/memory_map.c

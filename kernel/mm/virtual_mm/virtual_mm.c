@@ -129,6 +129,7 @@ virtual_mm_unmap_page(void *virtual_address)
   table = (uint32_t *) PDE_GET_TABLE(pd_entry);
 
   uint32_t *pt_entry = &table[GET_PT_INDEX(virtual_address)];
+  printk("debug", "Freeing: 0x%x", pt_entry);
   *pt_entry = 0;
 }
 

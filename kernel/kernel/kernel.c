@@ -18,17 +18,15 @@
 
 #include <boot/gdt.h>
 
+#include <drivers/serial.h>
+#include <drivers/vga_text_buffer.h>
+#include <kernel/halt.h>
+#include <libk/kmalloc.h>
+#include <libk/stdio.h>
 #include <mm/memory_map.h>
 #include <mm/multiboot.h>
 #include <mm/physical_mm.h>
 #include <mm/virtual_mm.h>
-
-#include <kernel/halt.h>
-
-#include <libk/stdio.h>
-
-#include <drivers/serial.h>
-#include <drivers/vga_text_buffer.h>
 
 void
 kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
@@ -46,8 +44,15 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   physical_mm_init();
   virtual_mm_initialize();
 
-  void *starting_address = virtual_mm_alloc_pages(1);
-  virtual_mm_free_pages(starting_address, 2);
+  int *a = kmalloc(sizeof(int));
+  printk("debug", "Kmalloc allocated: 0x%x", a);
+  *a = 7;
+
+  for (int i = 0; i < 1000; i++) {
+    a = kmalloc(sizeof(int));
+    printk("debug", "%d: Kmalloc allocated: 0x%x", i, a);
+    *a = 79;
+  }
 
   printk("\nKernel", "Started.");
 
