@@ -38,3 +38,17 @@ printk(const char *from, const char *msg, ...)
   serial_write_string(str);
   serial_write_string("\033[0m\n");
 }
+
+void
+printk_raw(const char *msg, ...)
+{
+  /* TODO: Dynamic Memory Allocation */
+  char str[256];
+
+  va_list ap;
+  va_start(ap, msg);
+  vsnprintf(str, sizeof(str), msg, ap);
+  va_end(ap);
+
+  serial_write_string(str);
+}

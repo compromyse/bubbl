@@ -37,5 +37,6 @@ int vsprintf(char *str, const char *fmt, va_list ap);
 int vsnprintf(char *str, size_t len, const char *fmt, va_list ap);
 
 void printk(const char *from, const char *msg, ...);
+void printk_raw(const char *msg, ...);
 
 #endif

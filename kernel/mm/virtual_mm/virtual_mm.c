@@ -86,25 +86,30 @@ virtual_mm_initialize(void)
   virtual_mm_enable_paging();
 }
 
-void
-virtual_mm_map_page(void *physical_address, void *virtual_address)
+ALWAYS_INLINE uint32_t *
+get_or_make_table(uint32_t *pd_entry)
 {
-  uint32_t *pd_entry = &current_page_directory[GET_PD_INDEX(virtual_address)];
-
-  uint32_t *table = 0;
-  /* If the pd_entry isn't present, allocate a block for it, zero the table,
-   * and set the pd_entry's frame to the table's address. */
+  uint32_t *table;
   if (!PDE_IS_PRESENT(pd_entry)) {
     table = physical_mm_allocate_block();
     if (!table)
       ASSERT_NOT_REACHED();
 
     for (uint32_t i = 0; i < 1024; i++)
-      table[i] = 0;
+      table[i] = 0x0;
 
     *pd_entry = PDE_FRAME((uint32_t) table) | PDE_PRESENT(1) | PDE_WRITABLE(1);
   } else
     table = (uint32_t *) PDE_GET_TABLE(pd_entry);
+
+  return table;
+}
+
+void
+virtual_mm_map_page(void *physical_address, void *virtual_address)
+{
+  uint32_t *pd_entry = &current_page_directory[GET_PD_INDEX(virtual_address)];
+  uint32_t *table = get_or_make_table(pd_entry);
 
   uint32_t *pt_entry = &table[GET_PT_INDEX(virtual_address)];
   if (PTE_IS_PRESENT(pt_entry)) {
@@ -129,26 +134,8 @@ virtual_mm_unmap_page(void *virtual_address)
   table = (uint32_t *) PDE_GET_TABLE(pd_entry);
 
   uint32_t *pt_entry = &table[GET_PT_INDEX(virtual_address)];
+  printk("debug", "Freeing: 0x%x", pt_entry);
   *pt_entry = 0;
-}
-
-ALWAYS_INLINE uint32_t *
-get_or_make_table(uint32_t *pd_entry)
-{
-  uint32_t *table;
-  if (!PDE_IS_PRESENT(pd_entry)) {
-    table = physical_mm_allocate_block();
-    if (!table)
-      ASSERT_NOT_REACHED();
-
-    for (uint32_t i = 0; i < 1024; i++)
-      table[i] = 0x0;
-
-    *pd_entry = PDE_FRAME((uint32_t) table) | PDE_PRESENT(1) | PDE_WRITABLE(1);
-  } else
-    table = (uint32_t *) PDE_GET_TABLE(pd_entry);
-
-  return table;
 }
 
 uint32_t
@@ -173,7 +160,8 @@ virtual_mm_find_free_virtual_addresses(uint32_t n)
            pt_index++) {
         /* If we overflow, switch to the consecutive page directory entry */
         if (pt_index == PAGE_TABLE_SIZE) {
-          if (++pd_index == PAGE_DIRECTORY_SIZE)
+          pd_index++;
+          if (pd_index == PAGE_DIRECTORY_SIZE)
             return 0; /* Ran out of pd_entries */
 
           pd_entry = &current_page_directory[pd_index];
