@@ -21,6 +21,7 @@
 
 #define ALWAYS_INLINE __attribute__((always_inline)) inline
 #define PACKED __attribute__((packed))
+#define ALIGNED(x) __attribute__((aligned(x)))
 
 #define KiB 1024
 #define MiB (KiB * KiB)

@@ -16,19 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdint.h>
-
 #include <kernel/halt.h>
-
 #include <libk/stdio.h>
-
 #include <mm/physical_mm.h>
 #include <mm/virtual_mm.h>
+#include <stdint.h>
 
 extern uint32_t kernel_start;
 extern uint32_t kernel_end;
 
 uint32_t *current_page_directory = 0;
+
+/* Kernel's page directory */
+uint32_t page_directory[1024] ALIGNED(4096);
+/* Page table for the first 4 MiB */
+uint32_t table[1024] ALIGNED(4096);
 
 ALWAYS_INLINE void
 virtual_mm_load_page_directory(uint32_t *page_directory)
@@ -59,10 +61,6 @@ virtual_mm_enable_paging(void)
 void
 virtual_mm_initialize(void)
 {
-  uint32_t *table = physical_mm_allocate_block();
-  if (!table)
-    ASSERT_NOT_REACHED();
-
   for (uint32_t i = 0; i < 1024; i++)
     table[i] = 0;
 
@@ -70,11 +68,6 @@ virtual_mm_initialize(void)
    * (maps 4KiB 1024 times) */
   for (uint32_t i = 0; i < 1024; i++)
     table[i] = PTE_FRAME(i) | PTE_PRESENT(1) | PTE_WRITABLE(1);
-
-  uint32_t *page_directory = physical_mm_allocate_block();
-  if (!page_directory)
-    ASSERT_NOT_REACHED();
-  printk("debug", "Page directory is at: 0x%x", page_directory);
 
   for (uint32_t i = 0; i < 1024; i++)
     page_directory[i] = 0;

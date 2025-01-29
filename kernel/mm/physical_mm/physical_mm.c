@@ -22,17 +22,14 @@
 
 /* TODO: Stack based allocation? */
 
+#include <kernel/halt.h>
+#include <kernel/spinlock.h>
+#include <libk/stdio.h>
+#include <mm/memory_map.h>
+#include <mm/physical_mm.h>
 #include <stdatomic.h>
 #include <stdbool.h>
 #include <stdint.h>
-
-#include <libk/stdio.h>
-
-#include <mm/memory_map.h>
-#include <mm/physical_mm.h>
-
-#include <kernel/halt.h>
-#include <kernel/spinlock.h>
 
 extern uint32_t kernel_start;
 extern uint32_t kernel_end;
