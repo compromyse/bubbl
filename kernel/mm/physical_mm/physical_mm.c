@@ -46,6 +46,7 @@ atomic_flag memory_map_lock;
 ALWAYS_INLINE static void
 physical_mm_log_memory_map(free_memory_regions_t *free_memory_regions)
 {
+  printk("\nphysical_mm", "memory_map is at 0x%x", memory_map);
   printk("\nphysical_mm", "Free Memory Regions:");
   for (int i = 0; i < free_memory_regions->n_regions; i++)
     printk("physical_mm",
@@ -87,8 +88,7 @@ physical_mm_deinitialize_region(uint32_t start, uint32_t length)
     n_blocks++;
 
   for (; n_blocks > 0; n_blocks--)
-    if (!physical_mm_test_bit(bit, memory_map))
-      physical_mm_set_used(bit++, &total_free_blocks, memory_map);
+    physical_mm_set_used(bit++, &total_free_blocks, memory_map);
 }
 
 void
@@ -114,6 +114,9 @@ physical_mm_init(void)
 
   uint32_t kernel_size = ((uint32_t) &kernel_end) - ((uint32_t) &kernel_start);
   physical_mm_deinitialize_region((uint32_t) &kernel_start, kernel_size);
+
+  /* Deinitialize first 4MiB */
+  physical_mm_deinitialize_region(0, 4 * MiB);
 
   spinlock_release(&memory_map_lock);
 
