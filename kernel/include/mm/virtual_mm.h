@@ -97,7 +97,7 @@ void virtual_mm_unmap_page(void *virtual_address);
 /*
  * Find a virtual address with n consecutive free addresses.
  */
-void *virtual_mm_find_free_virtual_addresses(uint32_t n_pages);
+void *virtual_mm_find_free_addresses(uint32_t n_pages);
 
 /*
  * Allocate and map n pages.

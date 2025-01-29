@@ -44,15 +44,20 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   physical_mm_init();
   virtual_mm_initialize();
 
-  /* int *x = physical_mm_allocate_block(); */
+  void *x = virtual_mm_find_free_addresses(1046999);
+  printk("debug", "x(0x%x)", x);
+
+#if 0
+  int *x = physical_mm_allocate_block();
   /* *x = 20; */
-  /* printk("debug", "x(%lu)", *x); */
+  printk("debug", "x(0x%x)", x);
 
   /* virtual_mm_alloc_pages(1); */
   /* void *x = kmalloc(12); */
   /* printk("debug", "x(0x%x)", x); */
 
   printk("\nKernel", "Started.");
+#endif
 
   exit();
   halt(); /* If exit() fails (on real hardware) */

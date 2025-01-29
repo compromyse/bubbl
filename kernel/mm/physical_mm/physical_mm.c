@@ -102,10 +102,8 @@ physical_mm_init(void)
   for (uint32_t i = 0; i < MAX_BLOCKS / BITMAP_ENTRY_SIZE; i++)
     memory_map[i] = 0xffffffff;
 
-  uint32_t total_free_memory = 0;
   for (int i = 0; i < free_memory_regions->n_regions; i++) {
     multiboot_memory_map_t *region = free_memory_regions->region_list[i];
-    total_free_memory += region->len_low;
     physical_mm_initialize_region(region->addr_low, region->len_low);
   }
 
@@ -117,26 +115,16 @@ physical_mm_init(void)
 
   spinlock_release(&memory_map_lock);
 
-  total_free_memory -= kernel_size;
-  block_count = total_free_memory / BLOCK_SIZE;
-  printk("\nphysical_mm", "Total blocks: 0x%x", block_count);
-  printk("physical_mm", "Total free blocks: 0x%x", total_free_blocks);
-
-#if 0
   /* Manually loop through and calculate the number of free blocks. */
-  uint32_t free_blcks = 0;
   for (uint32_t i = 0; i < MAX_BLOCKS / BITMAP_ENTRY_SIZE; i++)
     /* At least one block in the entry isn't in use */
     if (memory_map[i] != 0xffffffff)
       /* Test each bit to see if it's zero */
       for (uint32_t j = 0; j < BITMAP_ENTRY_SIZE; j++)
         if (!physical_mm_test_bit(i * BITMAP_ENTRY_SIZE + j, memory_map))
-          free_blcks++;
+          total_free_blocks++;
 
-  printk("physical_mm",
-         "Experimentally calculated free blocks: 0x%x",
-         free_blcks);
-#endif
+  printk("physical_mm", "Total free blocks: 0x%x", total_free_blocks);
 }
 
 uint32_t
