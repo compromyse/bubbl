@@ -19,11 +19,13 @@
 #ifndef __mm_virtual_mm_h
 #define __mm_virtual_mm_h
 
+#include <common.h>
 #include <stdbool.h>
 #include <stdint.h>
 
 #define PAGE_DIRECTORY_SIZE 1024
 #define PAGE_TABLE_SIZE 1024
+#define PAGE_SIZE (4 * KiB)
 
 #define PDE_PRESENT(x) x
 #define PDE_WRITABLE(x) ((x) << 1)
@@ -88,9 +90,14 @@ void virtual_mm_initialize(void);
 void virtual_mm_map_page(void *physical_address, void *virtual_address);
 
 /*
+ * Unmap a page starting at virtual address
+ */
+void virtual_mm_unmap_page(void *virtual_address);
+
+/*
  * Find a virtual address with n consecutive free addresses.
  */
-uint32_t virtual_mm_find_free_virtual_addresses(uint32_t n_pages);
+void *virtual_mm_find_free_virtual_addresses(uint32_t n_pages);
 
 /*
  * Allocate and map n pages.

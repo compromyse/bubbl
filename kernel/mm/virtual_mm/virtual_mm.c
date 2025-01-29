@@ -138,7 +138,7 @@ virtual_mm_unmap_page(void *virtual_address)
   *pt_entry = 0;
 }
 
-uint32_t
+void *
 virtual_mm_find_free_virtual_addresses(uint32_t n)
 {
   /* Skip the first page directory, we don't wanna touch the first 4MiB. */
@@ -181,7 +181,8 @@ virtual_mm_find_free_virtual_addresses(uint32_t n)
         }
 
         if (++count == n)
-          return VIRTUAL_ADDRESS(starting_pd_index, starting_pt_index);
+          return (void *) VIRTUAL_ADDRESS(starting_pd_index,
+                                          starting_pt_index);
       }
     }
   }
@@ -193,13 +194,16 @@ virtual_mm_find_free_virtual_addresses(uint32_t n)
 void *
 virtual_mm_alloc_pages(uint32_t n_pages)
 {
-  uint32_t starting_address = virtual_mm_find_free_virtual_addresses(n_pages);
+  uint32_t starting_address
+      = (uint32_t) virtual_mm_find_free_virtual_addresses(n_pages);
   if (starting_address == 0)
     return 0;
 
-  for (uint32_t i = 0; i < n_pages; i++)
-    virtual_mm_map_page(physical_mm_allocate_block(),
-                        (void *) (starting_address + (i * 4096)));
+  for (uint32_t i = 0; i < n_pages; i++) {
+    void *virtual_address = (void *) (starting_address + (i * PAGE_SIZE));
+    void *physical_address = physical_mm_allocate_block();
+    virtual_mm_map_page(physical_address, virtual_address);
+  }
 
   return (void *) starting_address;
 }
