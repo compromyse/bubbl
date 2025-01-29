@@ -44,12 +44,13 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   physical_mm_init();
   virtual_mm_initialize();
 
-  int *a;
-  for (int i = 0; i < 3; i++) {
-    a = kmalloc(1);
-    printk("debug", "%d: Kmalloc allocated: 0x%x", i, a);
-    *a = 79;
-  }
+  /* int *x = physical_mm_allocate_block(); */
+  /* *x = 20; */
+  /* printk("debug", "x(%lu)", *x); */
+
+  /* virtual_mm_alloc_pages(1); */
+  /* void *x = kmalloc(12); */
+  /* printk("debug", "x(0x%x)", x); */
 
   printk("\nKernel", "Started.");
 
