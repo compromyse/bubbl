@@ -16,20 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdint.h>
-
 #include <common.h>
-
 #include <kernel/halt.h>
 #include <libk/stdio.h>
-
 #include <mm/memory_map.h>
 #include <mm/multiboot.h>
+#include <stdint.h>
+
+namespace MemoryMap
+{
 
 static free_memory_regions_t free_memory_regions = { 0 };
 
 ALWAYS_INLINE static char *
-memory_map_fetch_type(multiboot_memory_map_t *mmap)
+fetch_type(multiboot_memory_map_t *mmap)
 {
   switch (mmap->type) {
   case MULTIBOOT_MEMORY_AVAILABLE:
@@ -48,7 +48,7 @@ memory_map_fetch_type(multiboot_memory_map_t *mmap)
 }
 
 void
-memory_map_load(multiboot_info_t *multiboot_info)
+load(multiboot_info_t *multiboot_info)
 {
   printk("mm", "Loading Memory Map:");
 
@@ -86,15 +86,17 @@ memory_map_load(multiboot_info_t *multiboot_info)
            "start: 0x%.08x | length: 0x%.08x | type: %s",
            mmap->addr_low,
            mmap->len_low,
-           memory_map_fetch_type(mmap));
+           fetch_type(mmap));
   }
 
   printk("mm", "Total Memory: %lu MiB", total_mem / MiB);
   printk("mm", "Total Available Memory: %lu MiB", total_available_mem / MiB);
 }
 
-ALWAYS_INLINE free_memory_regions_t *
-memory_map_get_free_regions(void)
+free_memory_regions_t *
+get_free_regions(void)
 {
   return &free_memory_regions;
+}
+
 }

@@ -93,7 +93,7 @@ deinitialize_region(uint32_t start, uint32_t length)
 void
 init(void)
 {
-  free_memory_regions_t *free_memory_regions = memory_map_get_free_regions();
+  free_memory_regions_t *free_memory_regions = MemoryMap::get_free_regions();
   log_memory_map(free_memory_regions);
 
   Spinlock::acquire(&memory_map_lock);

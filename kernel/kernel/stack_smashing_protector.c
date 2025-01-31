@@ -16,11 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdint.h>
-
-#include <libk/stdio.h>
-
 #include <kernel/halt.h>
+#include <libk/stdio.h>
+#include <stdint.h>
 
 /* TODO: Randomize */
 #define STACK_CHK_GUARD 0xe2dee396

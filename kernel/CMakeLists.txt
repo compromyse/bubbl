@@ -17,10 +17,10 @@ set(SRC
 
   libk/printf.c
   libk/printk.cc
-  libk/strlen.c
+  libk/strlen.cc
   libk/kmalloc.cc
 
-  mm/memory_map.c
+  mm/memory_map.cc
   mm/physical_mm/memory_map.cc
   mm/physical_mm/physical_mm.cc
   mm/virtual_mm/virtual_mm.cc
@@ -50,6 +50,9 @@ set(CXX_COMPILE_OPTIONS
   -fno-exceptions
   -fno-rtti
   -std=c++98
+
+  -Wno-write-strings
+  -Wno-missing-field-initializers
 )
 
 target_compile_options(kernel PRIVATE 

@@ -25,20 +25,17 @@
 /* TODO: Practically, do we need more than 32? */
 #define MAX_FREE_REGIONS 32
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct {
   uint8_t n_regions;
   multiboot_memory_map_t *region_list[MAX_FREE_REGIONS];
 } free_memory_regions_t;
 
-void memory_map_load(multiboot_info_t *mmap);
-free_memory_regions_t *memory_map_get_free_regions(void);
+namespace MemoryMap
+{
 
-#ifdef __cplusplus
+void load(multiboot_info_t *mmap);
+free_memory_regions_t *get_free_regions(void);
+
 }
-#endif
 
 #endif
