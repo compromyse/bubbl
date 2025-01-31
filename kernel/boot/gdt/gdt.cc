@@ -16,13 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <boot/gdt.h>
+#include <kernel/io.h>
 #include <stdint.h>
 
-#include <kernel/io.h>
+namespace GDT
+{
 
-#include <boot/gdt.h>
-
-GDT_entry_t GDT_entries[] = {
+entry_t entries[] = {
   /* NULL Descriptor */
   GDT_ENTRY(0, 0, 0, 0),
 
@@ -42,10 +43,12 @@ GDT_entry_t GDT_entries[] = {
   /* TODO: LDT? */
 };
 
-GDT_descriptor_t GDT_descriptor = { sizeof(GDT_entries) - 1, GDT_entries };
+descriptor_t descriptor = { sizeof(entries) - 1, entries };
 
 void
-GDT_load(void)
+load(void)
 {
-  _GDT_flush(&GDT_descriptor);
+  _GDT_flush(&descriptor);
+}
+
 }

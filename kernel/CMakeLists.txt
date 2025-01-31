@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 project(kernel C ASM)
 
 set(SRC
-  boot/gdt/gdt.c
+  boot/gdt/gdt.cc
   boot/gdt/gdt.s
   boot/init/boot.s
 

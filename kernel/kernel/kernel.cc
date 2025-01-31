@@ -39,7 +39,7 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
     halt();
   }
 
-  GDT_load();
+  GDT::load();
   memory_map_load(multiboot_info);
   physical_mm_init();
   virtual_mm_initialize();

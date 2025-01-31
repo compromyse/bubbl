@@ -87,9 +87,8 @@
         ((base >> 24) & 0xff)                     /* base_high */             \
   }
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace GDT
+{
 
 typedef struct {
   uint16_t limit_low;
@@ -98,18 +97,16 @@ typedef struct {
   uint8_t access_flags;
   uint8_t flags_limit_high;
   uint8_t base_high;
-} PACKED GDT_entry_t;
+} PACKED entry_t;
 
 typedef struct {
-  uint16_t limit;   /* sizeof(GDT) - 1 */
-  GDT_entry_t *ptr; /* Address of GDT */
-} PACKED GDT_descriptor_t;
+  uint16_t limit; /* sizeof(GDT) - 1 */
+  entry_t *ptr;   /* Address of GDT */
+} PACKED descriptor_t;
 
-extern void _GDT_flush(GDT_descriptor_t *GDT_descriptor);
-void GDT_load(void);
+extern "C" void _GDT_flush(descriptor_t *descriptor);
+void load(void);
 
-#ifdef __cplusplus
 }
-#endif
 
 #endif
