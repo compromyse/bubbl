@@ -9,13 +9,13 @@ set(SRC
   drivers/serial.cc
   drivers/vga_text_buffer.cc
 
-  kernel/halt.c
-  kernel/io.c
+  kernel/halt.cc
+  kernel/io.cc
   kernel/kernel.cc
   kernel/spinlock.cc
-  kernel/stack_smashing_protector.c
+  kernel/stack_smashing_protector.cc
 
-  libk/printf.c
+  libk/printf.cc
   libk/printk.cc
   libk/strlen.cc
   libk/kmalloc.cc

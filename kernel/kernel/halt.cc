@@ -17,18 +17,20 @@
  */
 
 #include <kernel/halt.h>
+#include <kernel/io.h>
 #include <libk/stdio.h>
-#include <stdint.h>
-
-/* TODO: Randomize */
-#define STACK_CHK_GUARD 0xe2dee396
-
-uintptr_t __stack_chk_guard = STACK_CHK_GUARD;
 
 void
-__stack_chk_fail(void)
+halt(void)
 {
-  /* TODO: Panic the kernel */
-  printk("Stack Smashing Protector", "Stack smashing detected!");
-  halt();
+  printk("Kernel", "Halted.");
+
+  for (;;)
+    ;
+}
+
+void
+exit(void)
+{
+  outb(0xf4, 0x1);
 }

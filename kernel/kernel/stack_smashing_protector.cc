@@ -16,22 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libk/stdio.h>
-
 #include <kernel/halt.h>
-#include <kernel/io.h>
+#include <libk/stdio.h>
+#include <stdint.h>
 
-void
-halt(void)
+/* TODO: Randomize */
+#define STACK_CHK_GUARD 0xe2dee396
+
+uintptr_t __stack_chk_guard = STACK_CHK_GUARD;
+
+extern "C" void
+__stack_chk_fail(void)
 {
-  printk("Kernel", "Halted.");
-
-  for (;;)
-    ;
-}
-
-void
-exit(void)
-{
-  outb(0xf4, 0x1);
+  /* TODO: Panic the kernel */
+  printk("Stack Smashing Protector", "Stack smashing detected!");
+  halt();
 }

@@ -1,10 +1,14 @@
+#include <libk/stdio.h>
+#include <libk/string.h>
 #include <limits.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
 
-#include <libk/stdio.h>
-#include <libk/string.h>
+/* warning: narrowing conversion of 'uc' from 'unsigned char' to 'char' is
+ * ill-formed in C++11 [-Wnarrowing] */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnarrowing"
 
 int
 sprintf(char *str, const char *fmt, ...)
@@ -39,7 +43,7 @@ struct _output_args {
 static int
 _vsnprintf_output(const char *str, size_t len, void *state)
 {
-  struct _output_args *args = state;
+  struct _output_args *args = (struct _output_args *) state;
   size_t count = 0;
   while (count < len) {
     if (args->pos < args->len) {
@@ -80,15 +84,12 @@ vsnprintf(char *str, size_t len, const char *fmt, va_list ap)
 #define LEADZEROFLAG 0x00001000
 #define BLANKPOSFLAG 0x00002000
 static char *
-longlong_to_string(char *buf,
-                   unsigned long long n,
-                   size_t len,
-                   unsigned int flag,
-                   char *signchar)
+longlong_to_string(
+    char *buf, uint64_t n, size_t len, unsigned int flag, char *signchar)
 {
   size_t pos = len;
   int negative = 0;
-  if ((flag & SIGNEDFLAG) && (long long) n < 0) {
+  if ((flag & SIGNEDFLAG) && (int64_t) n < 0) {
     negative = 1;
     n = -n;
   }
@@ -115,10 +116,7 @@ static const char hextable[] = { '0', '1', '2', '3', '4', '5', '6', '7',
 static const char hextable_caps[] = { '0', '1', '2', '3', '4', '5', '6', '7',
                                       '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 static char *
-longlong_to_hexstring(char *buf,
-                      unsigned long long u,
-                      size_t len,
-                      unsigned int flag)
+longlong_to_hexstring(char *buf, uint64_t u, size_t len, unsigned int flag)
 {
   size_t pos = len;
   const char *table = (flag & CAPSFLAG) ? hextable_caps : hextable;
@@ -368,7 +366,7 @@ _printf_engine(_printf_engine_output_func out,
   unsigned char uc;
   const char *s;
   size_t string_len;
-  unsigned long long n;
+  uint64_t n;
   void *ptr;
   int flags;
   unsigned int format_num;
@@ -477,7 +475,7 @@ _printf_engine(_printf_engine_output_func out,
       goto next_format;
     case 'i':
     case 'd':
-      n = (flags & LONGLONGFLAG)   ? va_arg(ap, long long)
+      n = (flags & LONGLONGFLAG)   ? va_arg(ap, int64_t)
           : (flags & LONGFLAG)     ? va_arg(ap, long)
           : (flags & HALFHALFFLAG) ? (signed char) va_arg(ap, int)
           : (flags & HALFFLAG)     ? (short) va_arg(ap, int)
@@ -490,7 +488,7 @@ _printf_engine(_printf_engine_output_func out,
           num_buffer, n, sizeof(num_buffer), flags, &signchar);
       goto _output_string;
     case 'u':
-      n = (flags & LONGLONGFLAG)   ? va_arg(ap, unsigned long long)
+      n = (flags & LONGLONGFLAG)   ? va_arg(ap, uint64_t)
           : (flags & LONGFLAG)     ? va_arg(ap, unsigned long)
           : (flags & HALFHALFFLAG) ? (unsigned char) va_arg(ap, unsigned int)
           : (flags & HALFFLAG)     ? (unsigned short) va_arg(ap, unsigned int)
@@ -509,7 +507,7 @@ _printf_engine(_printf_engine_output_func out,
       /* fallthrough */
     hex:
     case 'x':
-      n = (flags & LONGLONGFLAG)   ? va_arg(ap, unsigned long long)
+      n = (flags & LONGLONGFLAG)   ? va_arg(ap, uint64_t)
           : (flags & LONGFLAG)     ? va_arg(ap, unsigned long)
           : (flags & HALFHALFFLAG) ? (unsigned char) va_arg(ap, unsigned int)
           : (flags & HALFFLAG)     ? (unsigned short) va_arg(ap, unsigned int)
@@ -530,7 +528,7 @@ _printf_engine(_printf_engine_output_func out,
     case 'n':
       ptr = va_arg(ap, void *);
       if (flags & LONGLONGFLAG)
-        *(long long *) ptr = chars_written;
+        *(int64_t *) ptr = chars_written;
       else if (flags & LONGFLAG)
         *(long *) ptr = chars_written;
       else if (flags & HALFHALFFLAG)
@@ -613,3 +611,5 @@ _printf_engine(_printf_engine_output_func out,
 exit:
   return (err < 0) ? err : (int) chars_written;
 }
+
+#pragma GCC diagnostic pop

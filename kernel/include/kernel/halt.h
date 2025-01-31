@@ -19,15 +19,7 @@
 #ifndef __kernel_halt_h
 #define __kernel_halt_h
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 void halt(void);
 void exit(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
