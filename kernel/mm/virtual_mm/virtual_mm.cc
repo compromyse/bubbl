@@ -23,6 +23,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+namespace VirtualMM
+{
+
 extern uint32_t kernel_start;
 extern uint32_t kernel_end;
 
@@ -34,24 +37,24 @@ uint32_t page_directory[1024] ALIGNED(4096);
 uint32_t page_table[1024] ALIGNED(4096);
 
 ALWAYS_INLINE void
-virtual_mm_load_page_directory(uint32_t *page_directory)
+load_page_directory(uint32_t *page_directory)
 {
   __asm__("movl %0, %%cr3" ::"r"(page_directory));
 }
 
 bool
-virtual_mm_switch_page_directory(uint32_t *page_directory)
+switch_page_directory(uint32_t *page_directory)
 {
   if (!page_directory)
     return false;
   current_page_directory = page_directory;
-  virtual_mm_load_page_directory(page_directory);
+  load_page_directory(page_directory);
 
   return true;
 }
 
 ALWAYS_INLINE static void
-virtual_mm_enable_paging(void)
+enable_paging(void)
 {
   __asm__("movl %%cr0, %%eax;"
           "orl $0x80000000, %%eax;"
@@ -60,7 +63,7 @@ virtual_mm_enable_paging(void)
 }
 
 void
-virtual_mm_initialize(void)
+init(void)
 {
   for (uint32_t i = 0; i < 1024; i++)
     page_table[i] = 0;
@@ -77,8 +80,8 @@ virtual_mm_initialize(void)
   *pd_entry
       = PDE_FRAME((uint32_t) page_table) | PDE_PRESENT(1) | PDE_WRITABLE(1);
 
-  virtual_mm_switch_page_directory(page_directory);
-  virtual_mm_enable_paging();
+  switch_page_directory(page_directory);
+  enable_paging();
 }
 
 ALWAYS_INLINE uint32_t *
@@ -86,7 +89,7 @@ get_or_make_table(uint32_t *pd_entry)
 {
   uint32_t *table;
   if (!PDE_IS_PRESENT(pd_entry)) {
-    table = physical_mm_allocate_block();
+    table = (uint32_t *) PhysicalMM::allocate_block();
     if (!table)
       ASSERT_NOT_REACHED();
 
@@ -101,7 +104,7 @@ get_or_make_table(uint32_t *pd_entry)
 }
 
 void
-virtual_mm_map_page(void *physical_address, void *virtual_address)
+map_page(void *physical_address, void *virtual_address)
 {
   uint32_t *pd_entry = &current_page_directory[GET_PD_INDEX(virtual_address)];
   uint32_t *table = get_or_make_table(pd_entry);
@@ -117,7 +120,7 @@ virtual_mm_map_page(void *physical_address, void *virtual_address)
 }
 
 void
-virtual_mm_unmap_page(void *virtual_address)
+unmap_page(void *virtual_address)
 {
   uint32_t *pd_entry = &current_page_directory[GET_PD_INDEX(virtual_address)];
 
@@ -134,7 +137,7 @@ virtual_mm_unmap_page(void *virtual_address)
 }
 
 void *
-virtual_mm_find_free_addresses(uint32_t n)
+find_free_addresses(uint32_t n)
 {
   /* Skip the first page directory, we don't wanna touch the first 4MiB. */
   for (uint32_t pd_index = 1; pd_index < PAGE_DIRECTORY_SIZE; pd_index++) {
@@ -192,26 +195,26 @@ virtual_mm_find_free_addresses(uint32_t n)
 }
 
 void *
-virtual_mm_alloc_pages(uint32_t n_pages)
+alloc_pages(uint32_t n_pages)
 {
-  uint32_t starting_address
-      = (uint32_t) virtual_mm_find_free_addresses(n_pages);
+  uint32_t starting_address = (uint32_t) find_free_addresses(n_pages);
   if (starting_address == 0)
     return 0;
 
   for (uint32_t i = 0; i < n_pages; i++) {
     void *virtual_address = (void *) (starting_address + (i * PAGE_SIZE));
-    void *physical_address = physical_mm_allocate_block();
-    virtual_mm_map_page(physical_address, virtual_address);
+    void *physical_address = PhysicalMM::allocate_block();
+    map_page(physical_address, virtual_address);
   }
 
   return (void *) starting_address;
 }
 
 void
-virtual_mm_free_pages(void *starting_address, uint32_t n_pages)
+free_pages(void *starting_address, uint32_t n_pages)
 {
   for (uint32_t i = 0; i < n_pages; i++)
-    virtual_mm_unmap_page(
-        (void *) (((uint32_t) starting_address) + (i * 4096)));
+    unmap_page((void *) (((uint32_t) starting_address) + (i * 4096)));
+}
+
 }

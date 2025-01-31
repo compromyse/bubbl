@@ -21,10 +21,6 @@
 
 #include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define MIN_PAGES 4
 
 typedef struct memory_chunk_t {
@@ -35,9 +31,5 @@ typedef struct memory_chunk_t {
 } memory_chunk_t;
 
 void *kmalloc(uint32_t size);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

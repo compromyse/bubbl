@@ -31,27 +31,22 @@
 /* This is the maximum number of blocks for a 4GiB system. */
 #define MAX_BLOCKS 1048576
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace PhysicalMM
+{
 
-void physical_mm_init(void);
+void init(void);
+uint32_t find_free_block(void);
+void *allocate_block(void);
+void free_block(void *physical_address);
 
-uint32_t physical_mm_find_free_block(void);
+void set_used(const uint32_t bit,
+              uint32_t *total_free_blocks,
+              uint32_t *memory_map);
+void set_usable(const uint32_t bit,
+                uint32_t *total_free_blocks,
+                uint32_t *memory_map);
+bool test_bit(const uint32_t bit, uint32_t *memory_map);
 
-void *physical_mm_allocate_block(void);
-void physical_mm_free_block(void *physical_address);
-
-void physical_mm_set_used(const uint32_t bit,
-                          uint32_t *total_free_blocks,
-                          uint32_t *memory_map);
-void physical_mm_set_usable(const uint32_t bit,
-                            uint32_t *total_free_blocks,
-                            uint32_t *memory_map);
-bool physical_mm_test_bit(const uint32_t bit, uint32_t *memory_map);
-
-#ifdef __cplusplus
 }
-#endif
 
 #endif

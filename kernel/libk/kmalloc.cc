@@ -28,7 +28,7 @@ memory_chunk_t *starting_mc = NULL;
 static memory_chunk_t *
 add_block(void *address, uint32_t size)
 {
-  memory_chunk_t *mc = address;
+  memory_chunk_t *mc = (memory_chunk_t *) address;
   mc->next = NULL;
   mc->prev = NULL;
 
@@ -47,7 +47,7 @@ add_block(void *address, uint32_t size)
 static void
 kmalloc_init(void)
 {
-  int *initial_region = virtual_mm_alloc_pages(MIN_PAGES);
+  int *initial_region = (int *) VirtualMM::alloc_pages(MIN_PAGES);
   printk("debug", "%x", initial_region);
   /* *initial_region = 10; */
 

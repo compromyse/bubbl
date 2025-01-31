@@ -19,17 +19,16 @@
 #ifndef __kernel_spinlock_h
 #define __kernel_spinlock_h
 
-#include <stdatomic.h>
+#include <stdint.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+typedef uint8_t spinlock_t;
 
-void spinlock_acquire(atomic_flag *lock);
-void spinlock_release(atomic_flag *lock);
+namespace Spinlock
+{
 
-#ifdef __cplusplus
+void acquire(spinlock_t volatile *lock);
+void release(spinlock_t volatile *lock);
+
 }
-#endif
 
 #endif

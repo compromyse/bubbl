@@ -16,17 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <mm/physical_mm.h>
 #include <stdbool.h>
 #include <stdint.h>
 
-#include <mm/memory_map.h>
-#include <mm/physical_mm.h>
+namespace PhysicalMM
+{
 
 /* Marks the block as 'used' */
-ALWAYS_INLINE void
-physical_mm_set_used(const uint32_t bit,
-                     uint32_t *total_free_blocks,
-                     uint32_t *memory_map)
+void
+set_used(const uint32_t bit, uint32_t *total_free_blocks, uint32_t *memory_map)
 {
   uint32_t memory_map_index = bit / BITMAP_ENTRY_SIZE;
   uint32_t bitmask = 1 << (bit % BITMAP_ENTRY_SIZE);
@@ -35,10 +34,10 @@ physical_mm_set_used(const uint32_t bit,
 }
 
 /* Marks the block as 'unused' */
-ALWAYS_INLINE void
-physical_mm_set_usable(const uint32_t bit,
-                       uint32_t *total_free_blocks,
-                       uint32_t *memory_map)
+void
+set_usable(const uint32_t bit,
+           uint32_t *total_free_blocks,
+           uint32_t *memory_map)
 {
   uint32_t memory_map_index = bit / BITMAP_ENTRY_SIZE;
   uint32_t bitmask = 1 << (bit % BITMAP_ENTRY_SIZE);
@@ -50,10 +49,12 @@ physical_mm_set_usable(const uint32_t bit,
  * True if the bit is set (block is in use)
  * False if the bit is unset (block isn't in use)
  */
-ALWAYS_INLINE bool
-physical_mm_test_bit(const uint32_t bit, uint32_t *memory_map)
+bool
+test_bit(const uint32_t bit, uint32_t *memory_map)
 {
   uint32_t memory_map_index = bit / BITMAP_ENTRY_SIZE;
   uint32_t bitmask = 1 << (bit % BITMAP_ENTRY_SIZE);
   return memory_map[memory_map_index] & bitmask;
+}
+
 }

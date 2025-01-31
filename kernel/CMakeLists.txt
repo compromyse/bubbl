@@ -12,18 +12,18 @@ set(SRC
   kernel/halt.c
   kernel/io.c
   kernel/kernel.cc
-  kernel/spinlock.c
+  kernel/spinlock.cc
   kernel/stack_smashing_protector.c
 
   libk/printf.c
   libk/printk.cc
   libk/strlen.c
-  libk/kmalloc.c
+  libk/kmalloc.cc
 
   mm/memory_map.c
-  mm/physical_mm/memory_map.c
-  mm/physical_mm/physical_mm.c
-  mm/virtual_mm/virtual_mm.c
+  mm/physical_mm/memory_map.cc
+  mm/physical_mm/physical_mm.cc
+  mm/virtual_mm/virtual_mm.cc
 )
 
 add_executable(kernel ${SRC})

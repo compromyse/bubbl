@@ -16,20 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdatomic.h>
+#include <common.h>
+#include <kernel/spinlock.h>
+
+namespace Spinlock
+{
 
 void
-spinlock_acquire(atomic_flag *lock)
+acquire(spinlock_t volatile *plock)
 {
   __asm__ volatile("cli");
-
-  while (atomic_flag_test_and_set_explicit(lock, memory_order_acquire))
-    __asm__ volatile("rep; nop");
+  while (!__sync_bool_compare_and_swap(plock, 0, 1))
+    while (*plock)
+      __asm__ volatile("rep; nop");
 }
 
 void
-spinlock_release(atomic_flag *lock)
+release(spinlock_t volatile *plock)
 {
-  atomic_flag_clear_explicit(lock, memory_order_release);
+  __sync_bool_compare_and_swap(plock, 1, 0);
   /* TODO: Enable interrupts here */
+}
+
 }

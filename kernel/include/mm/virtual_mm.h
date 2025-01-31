@@ -69,52 +69,49 @@
 #define VIRTUAL_ADDRESS(pd_index, pt_index)                                   \
   (((pd_index) << 22) | ((pt_index) << 12))
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace VirtualMM
+{
 
 /*
  * Loads a given page directory into CR0
  */
-void virtual_mm_load_page_directory(uint32_t *page_directory);
+void load_page_directory(uint32_t *page_directory);
 
 /*
  * Switches the current page directory to a given page directory
  */
-bool virtual_mm_switch_page_directory(uint32_t *page_directory);
+bool switch_page_directory(uint32_t *page_directory);
 
 /*
  * Initialize the virtual memory manager
  */
-void virtual_mm_initialize(void);
+void init(void);
 
 /*
  * Map a physical address to a virtual address
  */
-void virtual_mm_map_page(void *physical_address, void *virtual_address);
+void map_page(void *physical_address, void *virtual_address);
 
 /*
  * Unmap a page starting at virtual address
  */
-void virtual_mm_unmap_page(void *virtual_address);
+void unmap_page(void *virtual_address);
 
 /*
  * Find a virtual address with n consecutive free addresses.
  */
-void *virtual_mm_find_free_addresses(uint32_t n_pages);
+void *find_free_addresses(uint32_t n_pages);
 
 /*
  * Allocate and map n pages.
  */
-void *virtual_mm_alloc_pages(uint32_t n_pages);
+void *alloc_pages(uint32_t n_pages);
 
 /*
  * Free n pages from the starting address.
  */
-void virtual_mm_free_pages(void *starting_address, uint32_t n_pages);
+void free_pages(void *starting_address, uint32_t n_pages);
 
-#ifdef __cplusplus
 }
-#endif
 
 #endif
