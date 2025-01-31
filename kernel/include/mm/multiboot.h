@@ -23,6 +23,8 @@
 #ifndef _mm_multiboot_h
 #define _mm_multiboot_h
 
+#include <stdint.h>
+
 /* How many bytes from the start of the file we search for the header. */
 #define MULTIBOOT_SEARCH 8192
 #define MULTIBOOT_HEADER_ALIGN 4
@@ -92,10 +94,14 @@
 
 #ifndef ASM_FILE
 
-typedef unsigned char multiboot_uint8_t;
-typedef unsigned short multiboot_uint16_t;
-typedef unsigned int multiboot_uint32_t;
-typedef unsigned long long multiboot_uint64_t;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef uint8_t multiboot_uint8_t;
+typedef uint16_t multiboot_uint16_t;
+typedef uint32_t multiboot_uint32_t;
+typedef uint64_t multiboot_uint64_t;
 
 struct multiboot_header {
   /* Must be MULTIBOOT_MAGIC - see above. */
@@ -197,6 +203,9 @@ struct multiboot_info {
 #define MULTIBOOT_FRAMEBUFFER_TYPE_RGB 1
 #define MULTIBOOT_FRAMEBUFFER_TYPE_EGA_TEXT 2
   multiboot_uint8_t framebuffer_type;
+/* warning: ISO C++ prohibits anonymous structs [-Wpedantic] */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
   union {
     struct {
       multiboot_uint32_t framebuffer_palette_addr;
@@ -211,6 +220,7 @@ struct multiboot_info {
       multiboot_uint8_t framebuffer_blue_mask_size;
     };
   };
+#pragma GCC diagnostic pop
 };
 typedef struct multiboot_info multiboot_info_t;
 
@@ -260,6 +270,10 @@ struct multiboot_apm_info {
   multiboot_uint16_t cseg_16_len;
   multiboot_uint16_t dseg_len;
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* ! ASM_FILE */
 

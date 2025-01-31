@@ -19,9 +19,8 @@
 #ifndef __boot_gdt_h
 #define __boot_gdt_h
 
-#include <stdint.h>
-
 #include <common.h>
+#include <stdint.h>
 
 /* Access Flags:
  * 7 PRESENT
@@ -88,6 +87,10 @@
         ((base >> 24) & 0xff)                     /* base_high */             \
   }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
   uint16_t limit_low;
   uint16_t base_low;
@@ -104,5 +107,9 @@ typedef struct {
 
 extern void _GDT_flush(GDT_descriptor_t *GDT_descriptor);
 void GDT_load(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

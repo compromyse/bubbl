@@ -69,6 +69,10 @@
 #define VIRTUAL_ADDRESS(pd_index, pt_index)                                   \
   (((pd_index) << 22) | ((pt_index) << 12))
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * Loads a given page directory into CR0
  */
@@ -108,5 +112,9 @@ void *virtual_mm_alloc_pages(uint32_t n_pages);
  * Free n pages from the starting address.
  */
 void virtual_mm_free_pages(void *starting_address, uint32_t n_pages);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

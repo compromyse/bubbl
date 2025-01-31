@@ -21,7 +21,15 @@
 
 #include <stdatomic.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void spinlock_acquire(atomic_flag *lock);
 void spinlock_release(atomic_flag *lock);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

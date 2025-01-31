@@ -17,7 +17,6 @@
  */
 
 #include <boot/gdt.h>
-
 #include <drivers/serial.h>
 #include <drivers/vga_text_buffer.h>
 #include <kernel/halt.h>
@@ -27,8 +26,9 @@
 #include <mm/multiboot.h>
 #include <mm/physical_mm.h>
 #include <mm/virtual_mm.h>
+#include <stdint.h>
 
-void
+extern "C" void
 kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
 {
   serial_initialize();

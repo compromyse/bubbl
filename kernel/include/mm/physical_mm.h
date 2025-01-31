@@ -19,10 +19,9 @@
 #ifndef __mm_physical_mm_h
 #define __mm_physical_mm_h
 
+#include <common.h>
 #include <stdbool.h>
 #include <stdint.h>
-
-#include <common.h>
 
 /* TODO: Update this to 2MiB when PAE is enabled */
 #define BLOCK_SIZE (4 * KiB)
@@ -31,6 +30,10 @@
 
 /* This is the maximum number of blocks for a 4GiB system. */
 #define MAX_BLOCKS 1048576
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void physical_mm_init(void);
 
@@ -46,5 +49,9 @@ void physical_mm_set_usable(const uint32_t bit,
                             uint32_t *total_free_blocks,
                             uint32_t *memory_map);
 bool physical_mm_test_bit(const uint32_t bit, uint32_t *memory_map);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

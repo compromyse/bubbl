@@ -27,6 +27,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 
@@ -47,7 +51,7 @@ typedef enum {
   VGA_COLOR_LIGHT_RED = 12,
   VGA_COLOR_LIGHT_MAGENTA = 13,
   VGA_COLOR_LIGHT_BROWN = 14,
-  VGA_COLOR_WHITE = 15,
+  VGA_COLOR_WHITE = 15
 } vga_color;
 
 /*
@@ -69,5 +73,9 @@ void vga_text_buffer_initialize(void);
 void vga_text_buffer_write_char(const char);
 void vga_text_buffer_write_string(const char *string);
 void vga_text_buffer_printf(const char *string, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

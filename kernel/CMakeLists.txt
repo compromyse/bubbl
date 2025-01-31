@@ -11,7 +11,7 @@ set(SRC
 
   kernel/halt.c
   kernel/io.c
-  kernel/kernel.c
+  kernel/kernel.cc
   kernel/spinlock.c
   kernel/stack_smashing_protector.c
 
@@ -46,8 +46,15 @@ set(C_COMPILE_OPTIONS
   -g
 )
 
+set(CXX_COMPILE_OPTIONS
+  -fno-exceptions
+  -fno-rtti
+  -std=c++98
+)
+
 target_compile_options(kernel PRIVATE 
   $<$<COMPILE_LANGUAGE:C>: ${C_COMPILE_OPTIONS}>
+  $<$<COMPILE_LANGUAGE:CXX>: ${C_COMPILE_OPTIONS} ${CXX_COMPILE_OPTIONS}>
 )
 
 set(LINKER_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/boot/linker.ld")
@@ -56,13 +63,13 @@ set(LINKER_FLAGS
   -nostdlib
 )
 
-execute_process(COMMAND ${CMAKE_C_COMPILER}
+execute_process(COMMAND ${CMAKE_CXX_COMPILER}
   -print-file-name=crtbegin.o
   OUTPUT_VARIABLE CRTBEGIN_O
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-execute_process(COMMAND ${CMAKE_C_COMPILER}
+execute_process(COMMAND ${CMAKE_CXX_COMPILER}
   -print-file-name=crtend.o
   OUTPUT_VARIABLE CRTEND_O
   OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -81,7 +88,7 @@ set(CRTI_O "${CRTI_OUT}/CMakeFiles/crti.dir/${CRTI_SRC}.o")
 set(CRTN_O "${CRTN_OUT}/CMakeFiles/crtn.dir/${CRTN_SRC}.o")
 
 # FIXME: This isn't a good way of setting the link order.
-set(CMAKE_C_LINK_EXECUTABLE "${CMAKE_C_COMPILER} <CMAKE_C_LINK_FLAGS> <FLAGS> <LINK_FLAGS> \
+set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_COMPILER} <CMAKE_CXX_LINK_FLAGS> <FLAGS> <LINK_FLAGS> \
   ${CRTI_O} \
   ${CRTBEGIN_O} \
   <OBJECTS> \
