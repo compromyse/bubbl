@@ -32,11 +32,11 @@ printk(const char *from, const char *msg, ...)
   vsnprintf(str, sizeof(str), msg, ap);
   va_end(ap);
 
-  serial_write_string("\033[33m");
-  serial_write_string(from);
-  serial_write_string(":\033[0m ");
-  serial_write_string(str);
-  serial_write_string("\033[0m\n");
+  Serial::write_string("\033[33m");
+  Serial::write_string(from);
+  Serial::write_string(":\033[0m ");
+  Serial::write_string(str);
+  Serial::write_string("\033[0m\n");
 }
 
 void
@@ -50,5 +50,5 @@ printk_raw(const char *msg, ...)
   vsnprintf(str, sizeof(str), msg, ap);
   va_end(ap);
 
-  serial_write_string(str);
+  Serial::write_string(str);
 }

@@ -6,7 +6,7 @@ set(SRC
   boot/gdt/gdt.s
   boot/init/boot.s
 
-  drivers/serial/serial.c
+  drivers/serial.cc
   drivers/vga_text_buffer/vga_text_buffer.c
 
   kernel/halt.c
@@ -16,7 +16,7 @@ set(SRC
   kernel/stack_smashing_protector.c
 
   libk/printf.c
-  libk/printk.c
+  libk/printk.cc
   libk/strlen.c
   libk/kmalloc.c
 

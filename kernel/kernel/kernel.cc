@@ -31,7 +31,7 @@
 extern "C" void
 kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
 {
-  serial_initialize();
+  Serial::initialize();
   vga_text_buffer_initialize();
 
   if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {

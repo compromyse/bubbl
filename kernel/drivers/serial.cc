@@ -16,19 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdbool.h>
-
-#include <libk/string.h>
-
-#include <kernel/io.h>
-
+#include <common.h>
 #include <drivers/serial.h>
+#include <kernel/io.h>
+#include <libk/string.h>
+#include <stdbool.h>
 
 /* Implementation adapted from
  * https://wiki.osdev.org/Inline_Assembly/Examples */
 
+namespace Serial
+{
+
 bool
-serial_initialize(void)
+initialize(void)
 {
   outb(PORT + 1, 0x00); // Disable all interrupts
   outb(PORT + 3, 0x80); // Enable DLAB (set baud rate divisor)
@@ -53,14 +54,14 @@ serial_initialize(void)
   return true;
 }
 
-static int
-is_transmit_empty()
+ALWAYS_INLINE static int
+is_transmit_empty(void)
 {
   return inb(PORT + 5) & 0x20;
 }
 
 void
-serial_write_char(const char chr)
+write_char(const char chr)
 {
   while (is_transmit_empty() == 0)
     ;
@@ -69,9 +70,11 @@ serial_write_char(const char chr)
 }
 
 void
-serial_write_string(const char *string)
+write_string(const char *string)
 {
   size_t size = strlen(string);
   for (size_t i = 0; i < size; i++)
-    serial_write_char(string[i]);
+    write_char(string[i]);
+}
+
 }
