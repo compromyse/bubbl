@@ -32,7 +32,7 @@ extern "C" void
 kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
 {
   Serial::initialize();
-  vga_text_buffer_initialize();
+  VGATextBuffer::initialize();
 
   if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
     printk("Kernel", "Invalid Multiboot Magic: %x", magic);
@@ -44,8 +44,8 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   physical_mm_init();
   virtual_mm_initialize();
 
-  void *x = virtual_mm_find_free_addresses(1046999);
-  printk("debug", "x(0x%x)", x);
+  // void *x = virtual_mm_find_free_addresses(1046999);
+  // printk("debug", "x(0x%x)", x);
 
 #if 0
   int *x = physical_mm_allocate_block();

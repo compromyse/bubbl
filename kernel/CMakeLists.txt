@@ -7,7 +7,7 @@ set(SRC
   boot/init/boot.s
 
   drivers/serial.cc
-  drivers/vga_text_buffer/vga_text_buffer.c
+  drivers/vga_text_buffer.cc
 
   kernel/halt.c
   kernel/io.c
