@@ -23,6 +23,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+namespace LibAlloc
+{
+
 /** This is a boundary tag which is prepended to the
  * page or section of a page which we have allocated. It is
  * used to identify valid memory blocks that the
@@ -41,8 +44,11 @@ struct boundary_tag {
   struct boundary_tag *prev; //< Linked list info.
 };
 
-bool kmalloc_initialized(void);
-void kmalloc_initialize(void);
+bool initialized(void);
+void initialize(void);
+
 void *kmalloc(size_t);
+
+}
 
 #endif

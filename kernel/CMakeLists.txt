@@ -18,7 +18,7 @@ set(SRC
   libk/printf.cc
   libk/printk.cc
   libk/strlen.cc
-  libk/kmalloc.cc
+  libk/liballoc.cc
 
   mm/memory_map.cc
   mm/physical_mm/bitmap.cc

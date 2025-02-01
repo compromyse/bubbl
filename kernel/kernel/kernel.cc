@@ -20,7 +20,7 @@
 #include <drivers/serial.h>
 #include <drivers/vga_text_buffer.h>
 #include <kernel/halt.h>
-#include <libk/kmalloc.h>
+#include <libk/liballoc.h>
 #include <libk/stdio.h>
 #include <mm/memory_map.h>
 #include <mm/multiboot.h>
@@ -43,14 +43,14 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   MemoryMap::load(multiboot_info);
   PhysicalMM::initialize();
   VirtualMM::initialize();
-  kmalloc_initialize();
+  LibAlloc::initialize();
 
-  int *x = (int *) kmalloc(sizeof(int) * 8192);
+  int *x = (int *) LibAlloc::kmalloc(sizeof(int) * 8192);
   for (uint32_t i = 0; i < 8192; i++)
     x[i] = i;
   printk("debug", "x(0x%x) *x(0x%x)", x, x[12]);
 
-  int *y = (int *) kmalloc(sizeof(int) * 8192);
+  int *y = (int *) LibAlloc::kmalloc(sizeof(int) * 8192);
   for (uint32_t i = 0; i < 8192; i++)
     y[i] = i;
   printk("debug", "y(0x%x) *x(0x%x)", y, y[14]);

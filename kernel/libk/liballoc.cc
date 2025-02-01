@@ -18,7 +18,7 @@
  */
 
 #include <kernel/spinlock.h>
-#include <libk/kmalloc.h>
+#include <libk/liballoc.h>
 #include <libk/stdio.h>
 #include <mm/virtual_mm.h>
 #include <stddef.h>
@@ -36,6 +36,9 @@
 
 #define MODE MODE_BEST
 
+namespace LibAlloc
+{
+
 struct boundary_tag *l_freePages[MAXEXP]; //< Allowing for 2^MAXEXP blocks
 int l_completePages[MAXEXP];              //< Allowing for 2^MAXEXP blocks
 
@@ -44,7 +47,7 @@ static unsigned int l_pageSize = 4096; //< Individual page size
 static unsigned int l_pageCount = 1;   //< Minimum number of pages to allocate.
 
 spinlock_t lock;
-bool initialized;
+bool kmalloc_initialized;
 
 #define liballoc_alloc VirtualMM::alloc_pages
 #define liballoc_free VirtualMM::free_pages
@@ -64,22 +67,22 @@ liballoc_unlock(void)
 }
 
 bool
-kmalloc_initialized(void)
+initialized(void)
 {
-  return initialized;
+  return kmalloc_initialized;
 }
 
 void
-kmalloc_initialize(void)
+initialize(void)
 {
   // void *x =
   kmalloc(1);
-  initialized = true;
+  kmalloc_initialized = true;
   // kfree(x);
 }
 
 static inline int
-getexp(unsigned int size)
+getexp(int size)
 {
   if (size < (1 << MINEXP)) {
     return -1; // Smaller than the quantum.
@@ -272,4 +275,6 @@ kmalloc(size_t size)
   ptr = (void *) ((unsigned int) tag + sizeof(struct boundary_tag));
   liballoc_unlock();
   return ptr;
+}
+
 }

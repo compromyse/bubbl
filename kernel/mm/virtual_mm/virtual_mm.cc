@@ -17,7 +17,7 @@
  */
 
 #include <kernel/halt.h>
-#include <libk/kmalloc.h>
+#include <libk/liballoc.h>
 #include <libk/stdio.h>
 #include <mm/physical_mm.h>
 #include <mm/virtual_mm.h>
@@ -102,7 +102,7 @@ uint32_t *
 make_table(uint32_t *pd_entry)
 {
   uint32_t *table = 0;
-  if (!kmalloc_initialized()) {
+  if (!LibAlloc::initialized()) {
     /* If we don't have a dynamic memory allocator yet (this will happen only
      * once, when we initialize the dynamic allocator), then we hard code the
      * next page table to be at 7MiB */
@@ -110,7 +110,7 @@ make_table(uint32_t *pd_entry)
     printk("virtual_mm",
            "Using our hard coded table; this should happen only once.");
   } else
-    table = (uint32_t *) kmalloc(sizeof(uint32_t) * 1024);
+    table = (uint32_t *) LibAlloc::kmalloc(sizeof(uint32_t) * 1024);
 
   for (uint32_t i = 0; i < 1024; i++)
     table[i] = 0x0;
