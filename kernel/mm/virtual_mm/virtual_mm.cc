@@ -175,7 +175,7 @@ find_free_addresses(uint32_t n)
     uint32_t *table = 0;
 
     bool table_is_present = PDE_IS_PRESENT(pd_entry);
-    if (!table_is_present)
+    if (table_is_present)
       table = (uint32_t *) PDE_GET_TABLE(pd_entry);
 
     for (uint32_t starting_pt_index = 0; starting_pt_index < PAGE_TABLE_SIZE;
