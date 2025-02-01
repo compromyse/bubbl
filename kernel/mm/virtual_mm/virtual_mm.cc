@@ -102,14 +102,15 @@ uint32_t *
 make_table(uint32_t *pd_entry)
 {
   uint32_t *table = 0;
-  if (!kmalloc_initialized())
+  if (!kmalloc_initialized()) {
     /* If we don't have a dynamic memory allocator yet (this will happen only
      * once, when we initialize the dynamic allocator), then we hard code the
      * next page table to be at 7MiB */
     table = (uint32_t *) (7 * MiB);
-  else
-    // table = (uint32_t *) kmalloc(sizeof(uint32_t) * 1024);
-    ASSERT_NOT_REACHED();
+    printk("virtual_mm",
+           "Using our hard coded table; this should happen only once.");
+  } else
+    table = (uint32_t *) kmalloc(sizeof(uint32_t) * 1024);
 
   for (uint32_t i = 0; i < 1024; i++)
     table[i] = 0x0;

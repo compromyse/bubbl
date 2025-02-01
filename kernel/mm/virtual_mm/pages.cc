@@ -29,13 +29,14 @@ namespace VirtualMM
 void *
 alloc_pages(uint32_t n_pages)
 {
+  printk("virtual_mm", "Allocating 0x%x pages", n_pages);
   uint32_t starting_address = (uint32_t) find_free_addresses(n_pages);
   if (!starting_address)
     return NULL;
 
   for (uint32_t i = 0; i < n_pages; i++) {
-    void *virtual_address = (void *) (starting_address + (i * PAGE_SIZE));
     void *physical_address = PhysicalMM::allocate_block();
+    void *virtual_address = (void *) (starting_address + (i * PAGE_SIZE));
     map_page(physical_address, virtual_address);
   }
 

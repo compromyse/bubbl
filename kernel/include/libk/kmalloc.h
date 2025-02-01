@@ -41,10 +41,8 @@ struct boundary_tag {
   struct boundary_tag *prev; //< Linked list info.
 };
 
-#define liballoc_alloc VirtualMM::alloc_pages
-#define liballoc_free VirtualMM::free_pages
-
 bool kmalloc_initialized(void);
+void kmalloc_initialize(void);
 void *kmalloc(size_t);
 
 #endif

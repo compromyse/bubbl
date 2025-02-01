@@ -43,10 +43,17 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   MemoryMap::load(multiboot_info);
   PhysicalMM::initialize();
   VirtualMM::initialize();
+  kmalloc_initialize();
 
-  int *x = (int *) kmalloc(12);
-  *x = 132;
-  printk("debug", "x(0x%x) *x(0x%x)", x, *x);
+  int *x = (int *) kmalloc(sizeof(int) * 8192);
+  for (uint32_t i = 0; i < 8192; i++)
+    x[i] = i;
+  printk("debug", "x(0x%x) *x(0x%x)", x, x[12]);
+
+  int *y = (int *) kmalloc(sizeof(int) * 8192);
+  for (uint32_t i = 0; i < 8192; i++)
+    y[i] = i;
+  printk("debug", "y(0x%x) *x(0x%x)", y, y[14]);
 
   printk("\nKernel", "Started.");
 

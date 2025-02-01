@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <kernel/spinlock.h>
 #include <libk/kmalloc.h>
 #include <libk/stdio.h>
 #include <mm/virtual_mm.h>
@@ -24,14 +25,6 @@
 #include <stdint.h>
 
 /* TODO: Kmalloc must have space for a page table *at all times*. */
-
-bool initialized = false;
-
-bool
-kmalloc_initialized(void)
-{
-  return initialized;
-}
 
 #define LIBALLOC_MAGIC 0xc001c0de
 #define MAXCOMPLETE 5
@@ -43,21 +36,47 @@ kmalloc_initialized(void)
 
 #define MODE MODE_BEST
 
-#ifdef DEBUG
-#include <stdio.h>
-#endif
-
 struct boundary_tag *l_freePages[MAXEXP]; //< Allowing for 2^MAXEXP blocks
 int l_completePages[MAXEXP];              //< Allowing for 2^MAXEXP blocks
-
-#ifdef DEBUG
-unsigned int l_allocated = 0; //< The real amount of memory allocated.
-unsigned int l_inuse = 0;     //< The amount of memory in use (malloc'ed).
-#endif
 
 static unsigned int l_initialized = 0; //< Flag to indicate initialization.
 static unsigned int l_pageSize = 4096; //< Individual page size
 static unsigned int l_pageCount = 1;   //< Minimum number of pages to allocate.
+
+spinlock_t lock;
+bool initialized;
+
+#define liballoc_alloc VirtualMM::alloc_pages
+#define liballoc_free VirtualMM::free_pages
+
+inline int
+liballoc_lock(void)
+{
+  Spinlock::acquire(&lock);
+  return 0;
+}
+
+inline int
+liballoc_unlock(void)
+{
+  Spinlock::release(&lock);
+  return 0;
+}
+
+bool
+kmalloc_initialized(void)
+{
+  return initialized;
+}
+
+void
+kmalloc_initialize(void)
+{
+  // void *x =
+  kmalloc(1);
+  initialized = true;
+  // kfree(x);
+}
 
 static inline int
 getexp(unsigned int size)
@@ -189,7 +208,7 @@ kmalloc(size_t size)
   void *ptr;
   struct boundary_tag *tag = NULL;
 
-  // liballoc_lock();
+  liballoc_lock();
 
   if (l_initialized == 0) {
     for (index = 0; index < MAXEXP; index++) {
@@ -218,7 +237,7 @@ kmalloc(size_t size)
   // No page found. Make one.
   if (tag == NULL) {
     if ((tag = allocate_new_tag(size)) == NULL) {
-      // liballoc_unlock();
+      liballoc_unlock();
       return NULL;
     }
 
@@ -251,6 +270,6 @@ kmalloc(size_t size)
   }
 
   ptr = (void *) ((unsigned int) tag + sizeof(struct boundary_tag));
-  // liballoc_unlock();
+  liballoc_unlock();
   return ptr;
 }
