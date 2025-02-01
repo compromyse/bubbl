@@ -157,8 +157,8 @@ unmap_page(void *virtual_address)
 void *
 find_free_addresses(uint32_t n)
 {
-  /* Skip the first page directory, we don't wanna touch the first 4MiB. */
-  for (uint32_t pd_index = 1; pd_index < PAGE_DIRECTORY_SIZE; pd_index++) {
+  /* Skip the first page directory, we don't wanna touch the first 8MiB. */
+  for (uint32_t pd_index = 2; pd_index < PAGE_DIRECTORY_SIZE; pd_index++) {
     uint32_t starting_pd_index = pd_index;
     uint32_t *pd_entry = &current_page_directory[pd_index];
     uint32_t *table = 0;
