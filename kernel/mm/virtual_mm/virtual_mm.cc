@@ -34,7 +34,14 @@ uint32_t *current_page_directory = 0;
 /* Kernel's page directory */
 uint32_t page_directory[1024] ALIGNED(4096);
 /* Page table for the first 4 MiB */
-uint32_t page_table[1024] ALIGNED(4096);
+uint32_t fourMiB_page_table[1024] ALIGNED(4096);
+/* Page table for the next 4 MiB */
+uint32_t eightMiB_page_table[1024] ALIGNED(4096);
+
+/* Let's reserve a page table at the end of each new page table we allocate, so
+ * that we know that at any point time, we will always have space for a new
+ * page table */
+uint32_t *next_page_table;
 
 ALWAYS_INLINE void
 load_page_directory(uint32_t *page_directory)
@@ -65,26 +72,37 @@ enable_paging(void)
 void
 initialize(void)
 {
-  for (uint32_t i = 0; i < 1024; i++)
-    page_table[i] = 0;
+  /* Zero out the page tables and directories */
+  for (uint32_t i = 0; i < 1024; i++) {
+    fourMiB_page_table[i] = 0;
+    eightMiB_page_table[i] = 0;
+    page_directory[i] = 0;
+  }
 
   /* Identity map the first 4MiB, excluding the 4th MiB
    * (maps 4KiB 1024 times) */
   for (uint32_t i = 0; i < 1024; i++)
-    page_table[i] = PTE_FRAME(i) | PTE_PRESENT(1) | PTE_WRITABLE(1);
+    fourMiB_page_table[i] = PTE_FRAME(i) | PTE_PRESENT(1) | PTE_WRITABLE(1);
 
+  /* Identity map the next 4MiB */
   for (uint32_t i = 0; i < 1024; i++)
-    page_directory[i] = 0;
+    eightMiB_page_table[i]
+        = PTE_FRAME(i + 1024) | PTE_PRESENT(1) | PTE_WRITABLE(1);
 
-  uint32_t *pd_entry = &page_directory[0];
-  *pd_entry
-      = PDE_FRAME((uint32_t) page_table) | PDE_PRESENT(1) | PDE_WRITABLE(1);
+  /* Set up the page directory entries */
+  uint32_t *fourMiB_pd_entry = &page_directory[0];
+  *fourMiB_pd_entry = PDE_FRAME((uint32_t) fourMiB_page_table) | PDE_PRESENT(1)
+                      | PDE_WRITABLE(1);
+
+  uint32_t *eightMiB_pd_entry = &page_directory[1];
+  *eightMiB_pd_entry = PDE_FRAME((uint32_t) eightMiB_page_table)
+                       | PDE_PRESENT(1) | PDE_WRITABLE(1);
 
   switch_page_directory(page_directory);
   enable_paging();
 }
 
-ALWAYS_INLINE uint32_t *
+uint32_t *
 get_or_make_table(uint32_t *pd_entry)
 {
   uint32_t *table;
@@ -170,7 +188,8 @@ find_free_addresses(uint32_t n)
           pt_index = 0;
         }
 
-        if (table_is_present) {
+        /* If the table is present, and if the PTE is present, then break */
+        if (table_is_present)
           if (PTE_IS_PRESENT(&table[pt_index])) {
             /* Since we have some used address at some point between j and
              * count, we can't find n consecutive free addresses in between j
@@ -179,9 +198,9 @@ find_free_addresses(uint32_t n)
             break;
           }
 
-          count++;
-        } else
-          count++;
+        /* TODO: This can be easily optimized if the table is not present.
+         * (count += 4096, since we know that the table is not present) */
+        count++;
 
         if (count == n)
           return (void *) VIRTUAL_ADDRESS(starting_pd_index,
@@ -192,29 +211,6 @@ find_free_addresses(uint32_t n)
 
   ASSERT_NOT_REACHED();
   return 0;
-}
-
-void *
-alloc_pages(uint32_t n_pages)
-{
-  uint32_t starting_address = (uint32_t) find_free_addresses(n_pages);
-  if (starting_address == 0)
-    return 0;
-
-  for (uint32_t i = 0; i < n_pages; i++) {
-    void *virtual_address = (void *) (starting_address + (i * PAGE_SIZE));
-    void *physical_address = PhysicalMM::allocate_block();
-    map_page(physical_address, virtual_address);
-  }
-
-  return (void *) starting_address;
-}
-
-void
-free_pages(void *starting_address, uint32_t n_pages)
-{
-  for (uint32_t i = 0; i < n_pages; i++)
-    unmap_page((void *) (((uint32_t) starting_address) + (i * 4096)));
 }
 
 }

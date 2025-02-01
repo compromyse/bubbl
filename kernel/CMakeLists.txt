@@ -24,6 +24,7 @@ set(SRC
   mm/physical_mm/bitmap.cc
   mm/physical_mm/physical_mm.cc
   mm/virtual_mm/virtual_mm.cc
+  mm/virtual_mm/pages.cc
 )
 
 add_executable(kernel ${SRC})
