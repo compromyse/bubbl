@@ -49,6 +49,7 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   for (uint32_t i = 0; i < 8192; i++)
     x[i] = i;
   printk("debug", "x(0x%x) *x(0x%x)", x, x[12]);
+  LibAlloc::kfree(x);
 
   int *y = (int *) LibAlloc::kmalloc(sizeof(int) * 8192);
   for (uint32_t i = 0; i < 8192; i++)

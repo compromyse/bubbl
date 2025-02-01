@@ -72,13 +72,15 @@ initialized(void)
   return kmalloc_initialized;
 }
 
+/* This looks incredibly odd, yes. But it needs to be done, since we need a
+ * single page allocated at first (because of the hardcoded initial page table
+ * in VirtualMM)! */
 void
 initialize(void)
 {
-  // void *x =
-  kmalloc(1);
+  void *x = kmalloc(1);
   kmalloc_initialized = true;
-  // kfree(x);
+  kfree(x);
 }
 
 static inline int
@@ -97,6 +99,40 @@ getexp(int size)
   }
 
   return shift - 1;
+}
+
+static void *
+liballoc_memset(void *s, int c, size_t n)
+{
+  size_t i;
+  for (i = 0; i < n; i++)
+    ((char *) s)[i] = c;
+
+  return s;
+}
+
+static void *
+liballoc_memcpy(void *s1, const void *s2, size_t n)
+{
+  char *cdest;
+  char *csrc;
+  unsigned int *ldest = (unsigned int *) s1;
+  unsigned int *lsrc = (unsigned int *) s2;
+
+  while (n >= sizeof(unsigned int)) {
+    *ldest++ = *lsrc++;
+    n -= sizeof(unsigned int);
+  }
+
+  cdest = (char *) ldest;
+  csrc = (char *) lsrc;
+
+  while (n > 0) {
+    *cdest++ = *csrc++;
+    n -= 1;
+  }
+
+  return s1;
 }
 
 static inline void
@@ -135,6 +171,34 @@ remove_tag(struct boundary_tag *tag)
   tag->next = NULL;
   tag->prev = NULL;
   tag->index = -1;
+}
+static inline struct boundary_tag *
+melt_left(struct boundary_tag *tag)
+{
+  struct boundary_tag *left = tag->split_left;
+
+  left->real_size += tag->real_size;
+  left->split_right = tag->split_right;
+
+  if (tag->split_right != NULL)
+    tag->split_right->split_left = left;
+
+  return left;
+}
+static inline struct boundary_tag *
+absorb_right(struct boundary_tag *tag)
+{
+  struct boundary_tag *right = tag->split_right;
+
+  remove_tag(right); // Remove right from free pages.
+
+  tag->real_size += right->real_size;
+
+  tag->split_right = right->split_right;
+  if (right->split_right != NULL)
+    right->split_right->split_left = tag;
+
+  return tag;
 }
 
 static inline struct boundary_tag *
@@ -274,6 +338,151 @@ kmalloc(size_t size)
 
   ptr = (void *) ((unsigned int) tag + sizeof(struct boundary_tag));
   liballoc_unlock();
+  return ptr;
+}
+
+void
+kfree(void *ptr)
+{
+  int index;
+  struct boundary_tag *tag;
+
+  if (ptr == NULL)
+    return;
+
+  liballoc_lock();
+
+  tag = (struct boundary_tag *) ((unsigned int) ptr
+                                 - sizeof(struct boundary_tag));
+
+  if (tag->magic != LIBALLOC_MAGIC) {
+    liballoc_unlock(); // release the lock
+    return;
+  }
+
+#ifdef DEBUG
+  l_inuse -= tag->size;
+  printf("free: %x, %i, %i\n",
+         ptr,
+         (int) l_inuse / 1024,
+         (int) l_allocated / 1024);
+#endif
+
+  // MELT LEFT...
+  while ((tag->split_left != NULL) && (tag->split_left->index >= 0)) {
+#ifdef DEBUG
+    printf("Melting tag left into available memory. Left was %i, becomes %i "
+           "(%i)\n",
+           tag->split_left->real_size,
+           tag->split_left->real_size + tag->real_size,
+           tag->split_left->real_size);
+#endif
+    tag = melt_left(tag);
+    remove_tag(tag);
+  }
+
+  // MELT RIGHT...
+  while ((tag->split_right != NULL) && (tag->split_right->index >= 0)) {
+#ifdef DEBUG
+    printf("Melting tag right into available memory. This was was %i, becomes "
+           "%i (%i)\n",
+           tag->real_size,
+           tag->split_right->real_size + tag->real_size,
+           tag->split_right->real_size);
+#endif
+    tag = absorb_right(tag);
+  }
+
+  // Where is it going back to?
+  index = getexp(tag->real_size - sizeof(struct boundary_tag));
+  if (index < MINEXP)
+    index = MINEXP;
+
+  // A whole, empty block?
+  if ((tag->split_left == NULL) && (tag->split_right == NULL)) {
+
+    if (l_completePages[index] == MAXCOMPLETE) {
+      // Too many standing by to keep. Free this one.
+      unsigned int pages = tag->real_size / l_pageSize;
+
+      if ((tag->real_size % l_pageSize) != 0)
+        pages += 1;
+      if (pages < l_pageCount)
+        pages = l_pageCount;
+
+      liballoc_free(tag, pages);
+
+#ifdef DEBUG
+      l_allocated -= pages * l_pageSize;
+      printf("Resource freeing %x of %i pages\n", tag, pages);
+      dump_array();
+#endif
+
+      liballoc_unlock();
+      return;
+    }
+
+    l_completePages[index] += 1; // Increase the count of complete pages.
+  }
+
+  // ..........
+
+  insert_tag(tag, index);
+
+#ifdef DEBUG
+  printf("Returning tag with %i bytes (requested %i bytes), which has "
+         "exponent: %i\n",
+         tag->real_size,
+         tag->size,
+         index);
+  dump_array();
+#endif
+
+  liballoc_unlock();
+}
+
+void *
+kcalloc(size_t nobj, size_t size)
+{
+  int real_size;
+  void *p;
+
+  real_size = nobj * size;
+
+  p = kmalloc(real_size);
+
+  liballoc_memset(p, 0, real_size);
+
+  return p;
+}
+
+void *
+krealloc(void *p, size_t size)
+{
+  void *ptr;
+  struct boundary_tag *tag;
+  size_t real_size;
+
+  if (size == 0) {
+    kfree(p);
+    return NULL;
+  }
+  if (p == NULL)
+    return kmalloc(size);
+
+  liballoc_lock(); // lockit
+  tag = (struct boundary_tag *) ((unsigned int) p
+                                 - sizeof(struct boundary_tag));
+  real_size = tag->size;
+  liballoc_unlock();
+
+  if (real_size > size)
+    real_size = size;
+
+  ptr = kmalloc(size);
+  liballoc_memcpy(ptr, p, real_size);
+  kfree(p);
+
   return ptr;
 }
 
