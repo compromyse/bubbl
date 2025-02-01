@@ -108,7 +108,8 @@ make_table(uint32_t *pd_entry)
      * next page table to be at 7MiB */
     table = (uint32_t *) (7 * MiB);
   else
-    table = (uint32_t *) kmalloc(sizeof(uint32_t) * 1024);
+    // table = (uint32_t *) kmalloc(sizeof(uint32_t) * 1024);
+    ASSERT_NOT_REACHED();
 
   for (uint32_t i = 0; i < 1024; i++)
     table[i] = 0x0;

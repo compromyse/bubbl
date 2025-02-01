@@ -19,17 +19,32 @@
 #ifndef __libk_kmalloc_h
 #define __libk_kmalloc_h
 
+#include <mm/virtual_mm.h>
+#include <stddef.h>
 #include <stdint.h>
 
-typedef struct memory_chunk_t {
-  struct memory_chunk_t *next;
-  struct memory_chunk_t *prev;
+/** This is a boundary tag which is prepended to the
+ * page or section of a page which we have allocated. It is
+ * used to identify valid memory blocks that the
+ * application is trying to free.
+ */
+struct boundary_tag {
+  unsigned int magic;     //< It's a kind of ...
+  unsigned int size;      //< Requested size.
+  unsigned int real_size; //< Actual size.
+  int index;              //< Location in the page table.
 
-  uint32_t size;
-} memory_chunk_t;
+  struct boundary_tag *split_left;  //< Linked-list info for broken pages.
+  struct boundary_tag *split_right; //< The same.
+
+  struct boundary_tag *next; //< Linked list info.
+  struct boundary_tag *prev; //< Linked list info.
+};
+
+#define liballoc_alloc VirtualMM::alloc_pages
+#define liballoc_free VirtualMM::free_pages
 
 bool kmalloc_initialized(void);
-void kmalloc_initialize(void);
-void *kmalloc(uint32_t size);
+void *kmalloc(size_t);
 
 #endif

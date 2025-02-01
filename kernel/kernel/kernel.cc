@@ -43,26 +43,12 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   MemoryMap::load(multiboot_info);
   PhysicalMM::initialize();
   VirtualMM::initialize();
-  kmalloc_initialize();
 
-  uint32_t *x = (uint32_t *) (5 * MiB);
-  *x = 8;
-  printk("debug", "x(0x%x)", *x);
+  int *x = (int *) kmalloc(12);
+  *x = 132;
+  printk("debug", "x(0x%x) *x(0x%x)", x, *x);
 
-  //   void *x = VirtualMM::find_free_addresses(1046999);
-  //   printk("debug", "x(0x%x)", x);
-
-  // #if 0
-  //   int *x = PhysicalMM::allocate_block();
-  //   /* *x = 20; */
-  //   printk("debug", "x(0x%x)", x);
-
-  //   /* virtual_mm_alloc_pages(1); */
-  //   /* void *x = kmalloc(12); */
-  //   /* printk("debug", "x(0x%x)", x); */
-
-  //   printk("\nKernel", "Started.");
-  // #endif
+  printk("\nKernel", "Started.");
 
   exit();
   halt(); /* If exit() fails (on real hardware) */
