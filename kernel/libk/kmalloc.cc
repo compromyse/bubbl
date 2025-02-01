@@ -25,7 +25,7 @@
 
 memory_chunk_t *starting_mc = NULL;
 
-static memory_chunk_t *
+memory_chunk_t *
 add_block(void *address, uint32_t size)
 {
   memory_chunk_t *mc = (memory_chunk_t *) address;

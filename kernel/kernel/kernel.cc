@@ -41,11 +41,11 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
 
   GDT::load();
   MemoryMap::load(multiboot_info);
-  PhysicalMM::init();
-  VirtualMM::init();
+  PhysicalMM::initialize();
+  VirtualMM::initialize();
 
-  // void *x = virtual_mm_find_free_addresses(1046999);
-  // printk("debug", "x(0x%x)", x);
+  void *x = VirtualMM::find_free_addresses(1046999);
+  printk("debug", "x(0x%x)", x);
 
 #if 0
   int *x = PhysicalMM::allocate_block();

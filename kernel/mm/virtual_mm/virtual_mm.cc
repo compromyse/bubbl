@@ -63,7 +63,7 @@ enable_paging(void)
 }
 
 void
-init(void)
+initialize(void)
 {
   for (uint32_t i = 0; i < 1024; i++)
     page_table[i] = 0;

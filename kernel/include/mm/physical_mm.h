@@ -34,7 +34,7 @@
 namespace PhysicalMM
 {
 
-void init(void);
+void initialize(void);
 uint32_t find_free_block(void);
 void *allocate_block(void);
 void free_block(void *physical_address);

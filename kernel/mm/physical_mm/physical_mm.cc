@@ -91,7 +91,7 @@ deinitialize_region(uint32_t start, uint32_t length)
 }
 
 void
-init(void)
+initialize(void)
 {
   free_memory_regions_t *free_memory_regions = MemoryMap::get_free_regions();
   log_memory_map(free_memory_regions);

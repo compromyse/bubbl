@@ -85,7 +85,7 @@ bool switch_page_directory(uint32_t *page_directory);
 /*
  * Initialize the virtual memory manager
  */
-void init(void);
+void initialize(void);
 
 /*
  * Map a physical address to a virtual address
