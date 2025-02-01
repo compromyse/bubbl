@@ -21,8 +21,6 @@
 
 #include <stdint.h>
 
-#define MIN_PAGES 4
-
 typedef struct memory_chunk_t {
   struct memory_chunk_t *next;
   struct memory_chunk_t *prev;
@@ -30,6 +28,8 @@ typedef struct memory_chunk_t {
   uint32_t size;
 } memory_chunk_t;
 
+bool kmalloc_initialized(void);
+void kmalloc_initialize(void);
 void *kmalloc(uint32_t size);
 
 #endif

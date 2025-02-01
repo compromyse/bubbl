@@ -30,8 +30,8 @@ void *
 alloc_pages(uint32_t n_pages)
 {
   uint32_t starting_address = (uint32_t) find_free_addresses(n_pages);
-  if (starting_address == 0)
-    return 0;
+  if (!starting_address)
+    return NULL;
 
   for (uint32_t i = 0; i < n_pages; i++) {
     void *virtual_address = (void *) (starting_address + (i * PAGE_SIZE));

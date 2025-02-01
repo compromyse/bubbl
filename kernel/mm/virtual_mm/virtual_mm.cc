@@ -17,6 +17,7 @@
  */
 
 #include <kernel/halt.h>
+#include <libk/kmalloc.h>
 #include <libk/stdio.h>
 #include <mm/physical_mm.h>
 #include <mm/virtual_mm.h>
@@ -37,11 +38,6 @@ uint32_t page_directory[1024] ALIGNED(4096);
 uint32_t fourMiB_page_table[1024] ALIGNED(4096);
 /* Page table for the next 4 MiB */
 uint32_t eightMiB_page_table[1024] ALIGNED(4096);
-
-/* Let's reserve a page table at the end of each new page table we allocate, so
- * that we know that at any point time, we will always have space for a new
- * page table */
-uint32_t *next_page_table;
 
 ALWAYS_INLINE void
 load_page_directory(uint32_t *page_directory)
@@ -103,19 +99,32 @@ initialize(void)
 }
 
 uint32_t *
+make_table(uint32_t *pd_entry)
+{
+  uint32_t *table = 0;
+  if (!kmalloc_initialized())
+    /* If we don't have a dynamic memory allocator yet (this will happen only
+     * once, when we initialize the dynamic allocator), then we hard code the
+     * next page table to be at 7MiB */
+    table = (uint32_t *) (7 * MiB);
+  else
+    table = (uint32_t *) kmalloc(sizeof(uint32_t) * 1024);
+
+  for (uint32_t i = 0; i < 1024; i++)
+    table[i] = 0x0;
+
+  *pd_entry = PDE_FRAME((uint32_t) table) | PDE_PRESENT(1) | PDE_WRITABLE(1);
+  return table;
+}
+
+ALWAYS_INLINE static uint32_t *
 get_or_make_table(uint32_t *pd_entry)
 {
-  uint32_t *table;
-  if (!PDE_IS_PRESENT(pd_entry)) {
-    table = (uint32_t *) PhysicalMM::allocate_block();
-    if (!table)
-      ASSERT_NOT_REACHED();
+  uint32_t *table = 0;
 
-    for (uint32_t i = 0; i < 1024; i++)
-      table[i] = 0x0;
-
-    *pd_entry = PDE_FRAME((uint32_t) table) | PDE_PRESENT(1) | PDE_WRITABLE(1);
-  } else
+  if (!PDE_IS_PRESENT(pd_entry))
+    table = make_table(pd_entry);
+  else
     table = (uint32_t *) PDE_GET_TABLE(pd_entry);
 
   return table;
@@ -157,7 +166,8 @@ unmap_page(void *virtual_address)
 void *
 find_free_addresses(uint32_t n)
 {
-  /* Skip the first page directory, we don't wanna touch the first 8MiB. */
+  /* Skip the first two page directory entries; we don't wanna touch the first
+   * 8MiB. */
   for (uint32_t pd_index = 2; pd_index < PAGE_DIRECTORY_SIZE; pd_index++) {
     uint32_t starting_pd_index = pd_index;
     uint32_t *pd_entry = &current_page_directory[pd_index];

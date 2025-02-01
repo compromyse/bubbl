@@ -43,6 +43,7 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   MemoryMap::load(multiboot_info);
   PhysicalMM::initialize();
   VirtualMM::initialize();
+  kmalloc_initialize();
 
   uint32_t *x = (uint32_t *) (5 * MiB);
   *x = 8;
