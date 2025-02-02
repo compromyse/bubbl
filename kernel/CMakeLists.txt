@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.21)
-project(kernel C ASM)
+project(kernel C ASM_NASM)
 
 set(SRC
+  boot/init/crti.s
+  
   boot/gdt/gdt.cc
   boot/gdt/gdt.s
   boot/init/boot.s
@@ -25,6 +27,8 @@ set(SRC
   mm/physical_mm/physical_mm.cc
   mm/virtual_mm/virtual_mm.cc
   mm/virtual_mm/pages.cc
+
+  boot/init/crtn.s
 )
 
 add_executable(kernel ${SRC})
@@ -62,32 +66,7 @@ target_compile_options(kernel PRIVATE
 )
 
 set(LINKER_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/boot/linker.ld")
-set(LINKER_FLAGS
+target_link_options(kernel PRIVATE
   -T ${LINKER_SCRIPT}
   -nostdlib
-  -fuse-ld=lld
-  --target=i686-elf
 )
-
-add_library(crti OBJECT boot/init/crti.s)
-add_library(crtn OBJECT boot/init/crtn.s)
-add_dependencies(kernel crti crtn)
-
-get_target_property(CRTI_SRC crti SOURCES)
-get_target_property(CRTN_SRC crtn SOURCES)
-get_target_property(CRTI_OUT crti BINARY_DIR)
-get_target_property(CRTN_OUT crtn BINARY_DIR)
-
-set(CRTI_O "${CRTI_OUT}/CMakeFiles/crti.dir/${CRTI_SRC}.o")
-set(CRTN_O "${CRTN_OUT}/CMakeFiles/crtn.dir/${CRTN_SRC}.o")
-
-# FIXME: This isn't a good way of setting the link order.
-set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_COMPILER} <CMAKE_CXX_LINK_FLAGS> <FLAGS> <LINK_FLAGS> \
-  ${CRTI_O} \
-  <OBJECTS> \
-  ${CRTN_O} \
-  -o <TARGET> <LINK_LIBRARIES>"
-)
-
-target_link_options(kernel PRIVATE ${LINKER_FLAGS})
-target_link_libraries(kernel PRIVATE gcc)
