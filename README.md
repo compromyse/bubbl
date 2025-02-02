@@ -4,11 +4,9 @@ An Operating System for The x86 Architecture.
 
 ## Building
 
-### Dependencies:
+> Dependencies: nix with flakes enabled and (optionally) direnv
 
-> nix with flakes enabled and (optionally) direnv
-
-After entering the devshell,
+After entering the devshell (with direnv or `nix develop`),
 
 ```sh
 source env.sh
