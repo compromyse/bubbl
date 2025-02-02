@@ -58,6 +58,7 @@ set(CXX_COMPILE_OPTIONS
 
   -Wno-write-strings
   -Wno-missing-field-initializers
+  -Wno-c++11-long-long
 )
 
 target_compile_options(kernel PRIVATE 

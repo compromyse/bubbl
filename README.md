@@ -7,7 +7,6 @@ An Operating System for The x86 Architecture.
 ### Dependencies:
 
 ```sh
-sudo apt install cmake ninja-build aria2 xorriso grub-common qemu-system-x86
 ./scripts/fetch-toolchain.sh
 
 source env.sh

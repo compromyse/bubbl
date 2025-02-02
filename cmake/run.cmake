@@ -1,4 +1,3 @@
-set(BOCHS_CMD bochs)
 set(QEMU_SYSTEM_CMD qemu-system-i386)
 
 set(QEMU_ARGUMENTS
@@ -27,14 +26,6 @@ add_custom_target(run-headless
   -nographic
 
   ${IGNORE_EXIT}
-
-  DEPENDS iso
-  USES_TERMINAL
-)
-
-add_custom_target(run-bochs
-  ${BOCHS_CMD}
-  -f ${CMAKE_SOURCE_DIR}/.bochsrc
 
   DEPENDS iso
   USES_TERMINAL
