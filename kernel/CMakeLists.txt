@@ -65,18 +65,8 @@ set(LINKER_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/boot/linker.ld")
 set(LINKER_FLAGS
   -T ${LINKER_SCRIPT}
   -nostdlib
-)
-
-execute_process(COMMAND ${CMAKE_CXX_COMPILER}
-  -print-file-name=crtbegin.o
-  OUTPUT_VARIABLE CRTBEGIN_O
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
-execute_process(COMMAND ${CMAKE_CXX_COMPILER}
-  -print-file-name=crtend.o
-  OUTPUT_VARIABLE CRTEND_O
-  OUTPUT_STRIP_TRAILING_WHITESPACE
+  -fuse-ld=lld
+  --target=i686-elf
 )
 
 add_library(crti OBJECT boot/init/crti.s)
@@ -94,9 +84,7 @@ set(CRTN_O "${CRTN_OUT}/CMakeFiles/crtn.dir/${CRTN_SRC}.o")
 # FIXME: This isn't a good way of setting the link order.
 set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_COMPILER} <CMAKE_CXX_LINK_FLAGS> <FLAGS> <LINK_FLAGS> \
   ${CRTI_O} \
-  ${CRTBEGIN_O} \
   <OBJECTS> \
-  ${CRTEND_O} \
   ${CRTN_O} \
   -o <TARGET> <LINK_LIBRARIES>"
 )

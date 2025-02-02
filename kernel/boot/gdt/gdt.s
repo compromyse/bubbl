@@ -1,26 +1,24 @@
-.intel_syntax noprefix
-
 .global _GDT_flush
 .type _GDT_flush, @function
 _GDT_flush:
   /* First Argument (Pointer to the GDT) */
-  mov eax, [esp + 4]
+  movl 4(%esp), %eax
   
   /* Load GDT */
-  lgdt [eax]
+  lgdt (%eax)
 
   /* Offset For Kernel Data Segment (16 bits) */
-  mov eax, 0x10
+  mov $0x10, %eax
 
   /* Set the Data Segment Selectors */
-  mov ds, ax
-  mov es, ax
-  mov fs, ax
-  mov gs, ax
-  mov ss, ax
+  mov %ax, %ds
+  mov %ax, %es
+  mov %ax, %fs
+  mov %ax, %gs
+  mov %ax, %ss
 
   /* Set the Code Segment Selector */
-  jmp 0x08:.flush
+  jmp $0x08, $.flush
 
 .flush:
   ret
