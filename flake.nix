@@ -17,6 +17,7 @@
 
           qemu_kvm
           clang-tools
+          ccls
         ];
       };
     };

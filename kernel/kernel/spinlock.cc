@@ -16,26 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <common.h>
 #include <kernel/spinlock.h>
 
-namespace Spinlock
-{
-
 void
-acquire(spinlock_t volatile *plock)
+Spinlock::acquire(void)
 {
   __asm__ volatile("cli");
-  while (!__sync_bool_compare_and_swap(plock, 0, 1))
-    while (*plock)
+  while (!__sync_bool_compare_and_swap(&m_lock, 0, 1))
+    while (m_lock)
       __asm__ volatile("rep; nop");
 }
 
 void
-release(spinlock_t volatile *plock)
+Spinlock::release(void)
 {
-  __sync_bool_compare_and_swap(plock, 1, 0);
+  __sync_bool_compare_and_swap(&m_lock, 1, 0);
   /* TODO: Enable interrupts here */
-}
-
 }

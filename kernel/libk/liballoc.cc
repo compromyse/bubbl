@@ -26,43 +26,23 @@
 
 /* TODO: Kmalloc must have space for a page table *at all times*. */
 
-#define LIBALLOC_MAGIC 0xc001c0de
-#define MAXCOMPLETE 5
-#define MAXEXP 32
-#define MINEXP 8
-
-#define MODE_BEST 0
-#define MODE_INSTANT 1
-
-#define MODE MODE_BEST
-
 namespace LibAlloc
 {
 
-struct boundary_tag *l_freePages[MAXEXP]; //< Allowing for 2^MAXEXP blocks
-int l_completePages[MAXEXP];              //< Allowing for 2^MAXEXP blocks
-
-static unsigned int l_initialized = 0; //< Flag to indicate initialization.
-static unsigned int l_pageSize = 4096; //< Individual page size
-static unsigned int l_pageCount = 1;   //< Minimum number of pages to allocate.
-
-spinlock_t lock;
+Spinlock lock;
 bool kmalloc_initialized;
-
-#define liballoc_alloc VirtualMM::alloc_pages
-#define liballoc_free VirtualMM::free_pages
 
 inline int
 liballoc_lock(void)
 {
-  Spinlock::acquire(&lock);
+  lock.acquire();
   return 0;
 }
 
 inline int
 liballoc_unlock(void)
 {
-  Spinlock::release(&lock);
+  lock.release();
   return 0;
 }
 
@@ -82,6 +62,26 @@ initialize(void)
   kmalloc_initialized = true;
   kfree(x);
 }
+
+#define liballoc_alloc VirtualMM::alloc_pages
+#define liballoc_free VirtualMM::free_pages
+
+#define LIBALLOC_MAGIC 0xc001c0de
+#define MAXCOMPLETE 5
+#define MAXEXP 32
+#define MINEXP 8
+
+#define MODE_BEST 0
+#define MODE_INSTANT 1
+
+#define MODE MODE_BEST
+
+struct boundary_tag *l_freePages[MAXEXP]; //< Allowing for 2^MAXEXP blocks
+int l_completePages[MAXEXP];              //< Allowing for 2^MAXEXP blocks
+
+static unsigned int l_initialized = 0; //< Flag to indicate initialization.
+static unsigned int l_pageSize = 4096; //< Individual page size
+static unsigned int l_pageCount = 1;   //< Minimum number of pages to allocate.
 
 static inline int
 getexp(int size)

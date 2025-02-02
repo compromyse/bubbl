@@ -40,7 +40,7 @@ uint32_t block_count = 0;
 uint32_t total_free_blocks = 0;
 uint32_t memory_map[MAX_BLOCKS / BITMAP_ENTRY_SIZE];
 
-spinlock_t memory_map_lock;
+Spinlock lock;
 
 ALWAYS_INLINE static void
 log_memory_map(free_memory_regions_t *free_memory_regions)
@@ -96,7 +96,7 @@ initialize(void)
   free_memory_regions_t *free_memory_regions = MemoryMap::get_free_regions();
   log_memory_map(free_memory_regions);
 
-  Spinlock::acquire(&memory_map_lock);
+  lock.acquire();
 
   /* All blocks are initially used */
   /* TODO: Move this block to a place after block_count is set. This is why
@@ -115,7 +115,7 @@ initialize(void)
   /* Deinitialize first 4MiB */
   deinitialize_region(0, 4 * MiB);
 
-  Spinlock::release(&memory_map_lock);
+  lock.release();
 
   /* Manually loop through and calculate the number of free blocks. */
   for (uint32_t i = 0; i < MAX_BLOCKS / BITMAP_ENTRY_SIZE; i++)
@@ -155,12 +155,12 @@ allocate_block(void)
     return NULL;
   }
 
-  Spinlock::acquire(&memory_map_lock);
+  lock.acquire();
 
   uint32_t block = find_free_block();
   set_used(block, &total_free_blocks, memory_map);
 
-  Spinlock::release(&memory_map_lock);
+  lock.release();
 
   uint32_t physical_address = block * BLOCK_SIZE;
   return (void *) physical_address;
