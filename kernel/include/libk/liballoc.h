@@ -29,8 +29,6 @@ class Block
 {
 public:
   Block *m_next;
-  Block *m_prev;
-
   uint32_t m_size;
 
 public:

@@ -45,6 +45,18 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   VirtualMM::initialize();
   LibAlloc::initialize();
 
+  uint32_t *page = (uint32_t *) VirtualMM::alloc_pages(1);
+  printk("debug", "page(0x%x)", page);
+  page = (uint32_t *) VirtualMM::alloc_pages(1);
+  printk("debug", "page(0x%x)", page);
+
+  for (uint32_t i = 0; i < 1024; i++)
+    page[i] = i;
+
+  // for (uint32_t i = 0; i < 1024; i++)
+  // if (page[i] != i)
+  // printk("debug", "page[i](%lu) i(%lu)", page[i], i);
+
   // int *x = (int *) LibAlloc::kmalloc(sizeof(int) * 8192);
   // for (uint32_t i = 0; i < 8192; i++)
   //   x[i] = i;

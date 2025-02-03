@@ -29,15 +29,12 @@ namespace LibAlloc
 {
 
 /* Block */
+
 void
 Block::initialize(uint32_t size)
 {
-  memset(this, 0, sizeof(Block));
-
   m_size = size - sizeof(Block);
-
   m_next = NULL;
-  m_prev = NULL;
 }
 
 inline void *
