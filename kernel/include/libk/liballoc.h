@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __libk_kmalloc_h
-#define __libk_kmalloc_h
+#ifndef __libk_liballoc_h
+#define __libk_liballoc_h
 
 #include <stddef.h>
 #include <stdint.h>
