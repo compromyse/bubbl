@@ -16,9 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stddef.h>
-
 #include <libk/string.h>
+#include <stddef.h>
 
 size_t
 strlen(const char *str)

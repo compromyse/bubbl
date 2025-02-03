@@ -18,12 +18,11 @@
 
 #include <boot/gdt.h>
 #include <kernel/io.h>
-#include <stdint.h>
 
 namespace GDT
 {
 
-entry_t entries[] = {
+entry_t l_entries[] = {
   /* NULL Descriptor */
   GDT_ENTRY(0, 0, 0, 0),
 
@@ -43,7 +42,7 @@ entry_t entries[] = {
   /* TODO: LDT? */
 };
 
-descriptor_t descriptor = { sizeof(entries) - 1, entries };
+descriptor_t descriptor = { sizeof(l_entries) - 1, l_entries };
 
 void
 load(void)

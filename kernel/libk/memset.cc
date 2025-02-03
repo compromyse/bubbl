@@ -16,32 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __libk_kmalloc_h
-#define __libk_kmalloc_h
-
+#include <libk/string.h>
 #include <stddef.h>
-#include <stdint.h>
 
-namespace LibAlloc
+void *
+memset(void *s, int c, size_t n)
 {
-
-class Block
-{
-public:
-  Block *m_next;
-  Block *m_prev;
-
-  uint32_t m_size;
-
-public:
-  void initialize(uint32_t size);
-
-  void *get_chunk(void);
-};
-
-bool initialized(void);
-void initialize(void);
-
+  unsigned char *p = (unsigned char *) s;
+  while (n--)
+    *p++ = (unsigned char) c;
+  return s;
 }
-
-#endif

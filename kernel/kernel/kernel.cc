@@ -45,16 +45,10 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   VirtualMM::initialize();
   LibAlloc::initialize();
 
-  int *x = (int *) LibAlloc::kmalloc(sizeof(int) * 8192);
-  for (uint32_t i = 0; i < 8192; i++)
-    x[i] = i;
-  printk("debug", "x(0x%x) *x(0x%x)", x, x[12]);
-  LibAlloc::kfree(x);
-
-  int *y = (int *) LibAlloc::kmalloc(sizeof(int) * 8192);
-  for (uint32_t i = 0; i < 8192; i++)
-    y[i] = i;
-  printk("debug", "y(0x%x) *x(0x%x)", y, y[14]);
+  // int *x = (int *) LibAlloc::kmalloc(sizeof(int) * 8192);
+  // for (uint32_t i = 0; i < 8192; i++)
+  //   x[i] = i;
+  // printk("debug", "x(0x%x) *x(0x%x)", x, x[12]);
 
   printk("\nKernel", "Started.");
 

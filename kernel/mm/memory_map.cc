@@ -26,7 +26,7 @@
 namespace MemoryMap
 {
 
-static free_memory_regions_t free_memory_regions = { 0 };
+static free_memory_regions_t l_free_memory_regions = { 0 };
 
 ALWAYS_INLINE static char *
 fetch_type(multiboot_memory_map_t *mmap)
@@ -76,8 +76,9 @@ load(multiboot_info_t *multiboot_info)
 
     total_mem += mmap->len_low;
     if (mmap->type == MULTIBOOT_MEMORY_AVAILABLE) {
-      free_memory_regions.region_list[free_memory_regions.n_regions] = mmap;
-      free_memory_regions.n_regions++;
+      l_free_memory_regions.region_list[l_free_memory_regions.n_regions]
+          = mmap;
+      l_free_memory_regions.n_regions++;
 
       total_available_mem += mmap->len_low;
     }
@@ -96,7 +97,7 @@ load(multiboot_info_t *multiboot_info)
 free_memory_regions_t *
 get_free_regions(void)
 {
-  return &free_memory_regions;
+  return &l_free_memory_regions;
 }
 
 }

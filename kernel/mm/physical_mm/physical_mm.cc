@@ -36,16 +36,16 @@ namespace PhysicalMM
 extern "C" uint32_t kernel_start;
 extern "C" uint32_t kernel_end;
 
-uint32_t block_count = 0;
-uint32_t total_free_blocks = 0;
-uint32_t memory_map[MAX_BLOCKS / BITMAP_ENTRY_SIZE];
+uint32_t l_block_count = 0;
+uint32_t l_total_free_blocks = 0;
+uint32_t l_memory_map[MAX_BLOCKS / BITMAP_ENTRY_SIZE];
 
-Spinlock lock;
+Spinlock l_lock;
 
 ALWAYS_INLINE static void
 log_memory_map(free_memory_regions_t *free_memory_regions)
 {
-  printk("\nphysical_mm", "memory_map is at 0x%x", memory_map);
+  printk("\nphysical_mm", "memory_map is at 0x%x", l_memory_map);
   printk("\nphysical_mm", "Free Memory Regions:");
   for (int i = 0; i < free_memory_regions->n_regions; i++)
     printk("physical_mm",
@@ -69,12 +69,12 @@ initialize_region(uint32_t start, uint32_t length)
   uint32_t n_blocks = length / BLOCK_SIZE;
 
   for (; n_blocks > 0; n_blocks--)
-    if (test_bit(bit, memory_map))
-      set_usable(bit++, &total_free_blocks, memory_map);
+    if (test_bit(bit, l_memory_map))
+      set_usable(bit++, &l_total_free_blocks, l_memory_map);
 
   /* First block is always used (first 64KiB) */
-  if (!test_bit(0, memory_map))
-    set_used(0, &total_free_blocks, memory_map);
+  if (!test_bit(0, l_memory_map))
+    set_used(0, &l_total_free_blocks, l_memory_map);
 }
 
 ALWAYS_INLINE static void
@@ -87,7 +87,7 @@ deinitialize_region(uint32_t start, uint32_t length)
     n_blocks++;
 
   for (; n_blocks > 0; n_blocks--)
-    set_used(bit++, &total_free_blocks, memory_map);
+    set_used(bit++, &l_total_free_blocks, l_memory_map);
 }
 
 void
@@ -96,13 +96,13 @@ initialize(void)
   free_memory_regions_t *free_memory_regions = MemoryMap::get_free_regions();
   log_memory_map(free_memory_regions);
 
-  lock.acquire();
+  l_lock.acquire();
 
   /* All blocks are initially used */
   /* TODO: Move this block to a place after block_count is set. This is why
    * using block_count instead of MAX_BLOCKS wasn't working. */
   for (uint32_t i = 0; i < MAX_BLOCKS / BITMAP_ENTRY_SIZE; i++)
-    memory_map[i] = 0xffffffff;
+    l_memory_map[i] = 0xffffffff;
 
   for (int i = 0; i < free_memory_regions->n_regions; i++) {
     multiboot_memory_map_t *region = free_memory_regions->region_list[i];
@@ -115,18 +115,18 @@ initialize(void)
   /* Deinitialize first 4MiB */
   deinitialize_region(0, 4 * MiB);
 
-  lock.release();
+  l_lock.release();
 
   /* Manually loop through and calculate the number of free blocks. */
   for (uint32_t i = 0; i < MAX_BLOCKS / BITMAP_ENTRY_SIZE; i++)
     /* At least one block in the entry isn't in use */
-    if (memory_map[i] != 0xffffffff)
+    if (l_memory_map[i] != 0xffffffff)
       /* Test each bit to see if it's zero */
       for (uint32_t j = 0; j < BITMAP_ENTRY_SIZE; j++)
-        if (!test_bit(i * BITMAP_ENTRY_SIZE + j, memory_map))
-          total_free_blocks++;
+        if (!test_bit(i * BITMAP_ENTRY_SIZE + j, l_memory_map))
+          l_total_free_blocks++;
 
-  printk("physical_mm", "Total free blocks: 0x%x", total_free_blocks);
+  printk("physical_mm", "Total free blocks: 0x%x", l_total_free_blocks);
 }
 
 uint32_t
@@ -135,10 +135,10 @@ find_free_block(void)
   /* TODO: Why doesn't using block_count instead of MAX_BLOCKS work? */
   for (uint32_t i = 0; i < MAX_BLOCKS / BITMAP_ENTRY_SIZE; i++)
     /* At least one block in the entry isn't in use */
-    if (memory_map[i] != 0xffffffff)
+    if (l_memory_map[i] != 0xffffffff)
       /* Test each bit to see if it's zero */
       for (uint32_t j = 0; j < BITMAP_ENTRY_SIZE; j++)
-        if (!test_bit(i * BITMAP_ENTRY_SIZE + j, memory_map))
+        if (!test_bit(i * BITMAP_ENTRY_SIZE + j, l_memory_map))
           return i * BITMAP_ENTRY_SIZE + j;
 
   /* Shouldn't be reached, since we're keeping track of the number of free
@@ -150,17 +150,17 @@ find_free_block(void)
 void *
 allocate_block(void)
 {
-  if (total_free_blocks == 0) {
+  if (l_total_free_blocks == 0) {
     printk("physical_mm", "No more free blocks!");
     return NULL;
   }
 
-  lock.acquire();
+  l_lock.acquire();
 
   uint32_t block = find_free_block();
-  set_used(block, &total_free_blocks, memory_map);
+  set_used(block, &l_total_free_blocks, l_memory_map);
 
-  lock.release();
+  l_lock.release();
 
   uint32_t physical_address = block * BLOCK_SIZE;
   return (void *) physical_address;
@@ -170,7 +170,7 @@ void
 free_block(void *physical_address)
 {
   uint32_t block = ((uint32_t) physical_address) / BLOCK_SIZE;
-  set_usable(block, &total_free_blocks, memory_map);
+  set_usable(block, &l_total_free_blocks, l_memory_map);
 }
 
 }

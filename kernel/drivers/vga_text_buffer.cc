@@ -32,11 +32,11 @@
 namespace VGATextBuffer
 {
 
-static uint16_t *buffer = (uint16_t *) 0xB8000;
-static uint8_t row = 0;
-static uint8_t column = 0;
-static uint8_t color = vga_entry_color(VGATextBuffer::COLOR_LIGHT_GREY,
-                                       VGATextBuffer::COLOR_BLACK);
+static uint16_t *l_buffer = (uint16_t *) 0xB8000;
+static uint8_t l_row = 0;
+static uint8_t l_column = 0;
+static uint8_t l_color = vga_entry_color(VGATextBuffer::COLOR_LIGHT_GREY,
+                                         VGATextBuffer::COLOR_BLACK);
 
 ALWAYS_INLINE static void
 write_entry_at(const char c,
@@ -45,7 +45,7 @@ write_entry_at(const char c,
                const uint8_t y)
 {
   size_t index = y * VGA_WIDTH + x;
-  buffer[index] = vga_entry(c, color);
+  l_buffer[index] = vga_entry(c, color);
 }
 
 void
@@ -60,22 +60,22 @@ initialize(void)
 
   for (uint8_t y = 0; y < VGA_HEIGHT; y++)
     for (uint8_t x = 0; x < VGA_WIDTH; x++)
-      write_entry_at(' ', color, x, y);
+      write_entry_at(' ', l_color, x, y);
 }
 
 void
 write_char(const char c)
 {
   if (c == '\n') {
-    row++;
-    column = 0;
+    l_row++;
+    l_column = 0;
   } else {
-    write_entry_at(c, color, column, row);
+    write_entry_at(c, l_color, l_column, l_row);
 
-    if (++column == VGA_WIDTH) {
-      column = 0;
-      if (++row == VGA_HEIGHT)
-        row = 0;
+    if (++l_column == VGA_WIDTH) {
+      l_column = 0;
+      if (++l_row == VGA_HEIGHT)
+        l_row = 0;
     }
   }
 }

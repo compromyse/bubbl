@@ -30,14 +30,14 @@ namespace VirtualMM
 extern uint32_t kernel_start;
 extern uint32_t kernel_end;
 
-uint32_t *current_page_directory = 0;
+uint32_t *l_current_page_directory = 0;
 
 /* Kernel's page directory */
-uint32_t page_directory[1024] ALIGNED(4096);
+uint32_t l_page_directory[1024] ALIGNED(4096);
 /* Page table for the first 4 MiB */
-uint32_t fourMiB_page_table[1024] ALIGNED(4096);
+uint32_t l_fourMiB_page_table[1024] ALIGNED(4096);
 /* Page table for the next 4 MiB */
-uint32_t eightMiB_page_table[1024] ALIGNED(4096);
+uint32_t l_eightMiB_page_table[1024] ALIGNED(4096);
 
 ALWAYS_INLINE void
 load_page_directory(uint32_t *page_directory)
@@ -50,7 +50,7 @@ switch_page_directory(uint32_t *page_directory)
 {
   if (!page_directory)
     return false;
-  current_page_directory = page_directory;
+  l_current_page_directory = page_directory;
   load_page_directory(page_directory);
 
   return true;
@@ -70,31 +70,31 @@ initialize(void)
 {
   /* Zero out the page tables and directories */
   for (uint32_t i = 0; i < 1024; i++) {
-    fourMiB_page_table[i] = 0;
-    eightMiB_page_table[i] = 0;
-    page_directory[i] = 0;
+    l_fourMiB_page_table[i] = 0;
+    l_eightMiB_page_table[i] = 0;
+    l_page_directory[i] = 0;
   }
 
   /* Identity map the first 4MiB, excluding the 4th MiB
    * (maps 4KiB 1024 times) */
   for (uint32_t i = 0; i < 1024; i++)
-    fourMiB_page_table[i] = PTE_FRAME(i) | PTE_PRESENT(1) | PTE_WRITABLE(1);
+    l_fourMiB_page_table[i] = PTE_FRAME(i) | PTE_PRESENT(1) | PTE_WRITABLE(1);
 
   /* Identity map the next 4MiB */
   for (uint32_t i = 0; i < 1024; i++)
-    eightMiB_page_table[i]
+    l_eightMiB_page_table[i]
         = PTE_FRAME(i + 1024) | PTE_PRESENT(1) | PTE_WRITABLE(1);
 
   /* Set up the page directory entries */
-  uint32_t *fourMiB_pd_entry = &page_directory[0];
-  *fourMiB_pd_entry = PDE_FRAME((uint32_t) fourMiB_page_table) | PDE_PRESENT(1)
-                      | PDE_WRITABLE(1);
+  uint32_t *fourMiB_pd_entry = &l_page_directory[0];
+  *fourMiB_pd_entry = PDE_FRAME((uint32_t) l_fourMiB_page_table)
+                      | PDE_PRESENT(1) | PDE_WRITABLE(1);
 
-  uint32_t *eightMiB_pd_entry = &page_directory[1];
-  *eightMiB_pd_entry = PDE_FRAME((uint32_t) eightMiB_page_table)
+  uint32_t *eightMiB_pd_entry = &l_page_directory[1];
+  *eightMiB_pd_entry = PDE_FRAME((uint32_t) l_eightMiB_page_table)
                        | PDE_PRESENT(1) | PDE_WRITABLE(1);
 
-  switch_page_directory(page_directory);
+  switch_page_directory(l_page_directory);
   enable_paging();
 }
 
@@ -110,7 +110,9 @@ make_table(uint32_t *pd_entry)
     printk("virtual_mm",
            "Using our hard coded table; this should happen only once.");
   } else
-    table = (uint32_t *) LibAlloc::kmalloc(sizeof(uint32_t) * 1024);
+    /* TODO: Uncomment this */
+    // table = (uint32_t *) LibAlloc::kmalloc(sizeof(uint32_t) * 1024);
+    ;
 
   for (uint32_t i = 0; i < 1024; i++)
     table[i] = 0x0;
@@ -135,7 +137,8 @@ get_or_make_table(uint32_t *pd_entry)
 void
 map_page(void *physical_address, void *virtual_address)
 {
-  uint32_t *pd_entry = &current_page_directory[GET_PD_INDEX(virtual_address)];
+  uint32_t *pd_entry
+      = &l_current_page_directory[GET_PD_INDEX(virtual_address)];
   uint32_t *table = get_or_make_table(pd_entry);
 
   uint32_t *pt_entry = &table[GET_PT_INDEX(virtual_address)];
@@ -151,7 +154,8 @@ map_page(void *physical_address, void *virtual_address)
 void
 unmap_page(void *virtual_address)
 {
-  uint32_t *pd_entry = &current_page_directory[GET_PD_INDEX(virtual_address)];
+  uint32_t *pd_entry
+      = &l_current_page_directory[GET_PD_INDEX(virtual_address)];
 
   uint32_t *table = 0;
   /* If the pd_entry isn't present, return */
@@ -172,7 +176,7 @@ find_free_addresses(uint32_t n)
    * 8MiB. */
   for (uint32_t pd_index = 2; pd_index < PAGE_DIRECTORY_SIZE; pd_index++) {
     uint32_t starting_pd_index = pd_index;
-    uint32_t *pd_entry = &current_page_directory[pd_index];
+    uint32_t *pd_entry = &l_current_page_directory[pd_index];
     uint32_t *table = 0;
 
     bool table_is_present = PDE_IS_PRESENT(pd_entry);
@@ -195,7 +199,7 @@ find_free_addresses(uint32_t n)
           if (pd_index == PAGE_DIRECTORY_SIZE)
             return 0; /* Ran out of pd_entries */
 
-          pd_entry = &current_page_directory[pd_index];
+          pd_entry = &l_current_page_directory[pd_index];
           table_is_present = PDE_IS_PRESENT(pd_entry);
           pt_index = 0;
         }

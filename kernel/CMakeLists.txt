@@ -17,16 +17,17 @@ set(SRC
   kernel/spinlock.cc
   kernel/stack_smashing_protector.cc
 
+  libk/liballoc.cc
+  libk/memset.cc
   libk/printf.cc
   libk/printk.cc
   libk/strlen.cc
-  libk/liballoc.cc
 
   mm/memory_map.cc
   mm/physical_mm/bitmap.cc
   mm/physical_mm/physical_mm.cc
-  mm/virtual_mm/virtual_mm.cc
   mm/virtual_mm/pages.cc
+  mm/virtual_mm/virtual_mm.cc
 
   boot/init/crtn.s
 )
