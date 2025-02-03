@@ -1,4 +1,6 @@
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/cmake/toolchain.cmake)
+set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+# The checks don't work on cross compilers
 set(CMAKE_C_COMPILER_WORKS TRUE)
 set(CMAKE_CXX_COMPILER_WORKS TRUE)
 
