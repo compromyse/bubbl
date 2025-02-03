@@ -39,7 +39,7 @@
 /* NOTE: Unused by the CPU, free to be used by us! */
 #define PDE_UNUSED(x) ((x) << 8)
 /* Page table address */
-#define PDE_FRAME(x) ((x) &0xFFFFF000)
+#define PDE_FRAME(x) ((x) & 0x7ffff000)
 
 #define PDE_IS_PRESENT(pd_entry) ((*pd_entry) & 1)
 #define GET_PD_INDEX(virtual_address) (((uint32_t) virtual_address) >> 22)
@@ -57,7 +57,7 @@
 /* NOTE: Unused by the CPU, free to be used by us! */
 #define PTE_UNUSED(x) ((x) << 9)
 /* Left shift by 12 because we only need the bits from the twelfth bit. */
-#define PTE_FRAME(x) ((x) << 12)
+#define PTE_FRAME(x) ((x) & 0x7ffff000)
 
 #define PTE_IS_PRESENT(pt_entry) ((*pt_entry) & 1)
 #define GET_PTE_FRAME(x) ((x) >> 12)

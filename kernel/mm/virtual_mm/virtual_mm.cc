@@ -78,12 +78,13 @@ initialize(void)
   /* Identity map the first 4MiB, excluding the 4th MiB
    * (maps 4KiB 1024 times) */
   for (uint32_t i = 0; i < 1024; i++)
-    l_fourMiB_page_table[i] = PTE_FRAME(i) | PTE_PRESENT(1) | PTE_WRITABLE(1);
+    l_fourMiB_page_table[i]
+        = PTE_FRAME(i << 12) | PTE_PRESENT(1) | PTE_WRITABLE(1);
 
   /* Identity map the next 4MiB */
   for (uint32_t i = 0; i < 1024; i++)
     l_eightMiB_page_table[i]
-        = PTE_FRAME(i + 1024) | PTE_PRESENT(1) | PTE_WRITABLE(1);
+        = PTE_FRAME((i + 1024) << 12) | PTE_PRESENT(1) | PTE_WRITABLE(1);
 
   /* Set up the page directory entries */
   uint32_t *fourMiB_pd_entry = &l_page_directory[0];
@@ -142,10 +143,9 @@ map_page(void *physical_address, void *virtual_address)
   uint32_t *table = get_or_make_table(pd_entry);
 
   uint32_t *pt_entry = &table[GET_PT_INDEX(virtual_address)];
-  if (PTE_IS_PRESENT(pt_entry)) {
-    printk("debug", "Mapping previously mapped memory: 0x%x", pt_entry);
+  if (PTE_IS_PRESENT(pt_entry))
+    /* Mapping previously mapped memory */
     ASSERT_NOT_REACHED();
-  }
 
   *pt_entry = PTE_FRAME((uint32_t) physical_address) | PTE_PRESENT(1)
               | PTE_WRITABLE(1);

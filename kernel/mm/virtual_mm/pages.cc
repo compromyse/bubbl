@@ -29,7 +29,6 @@ namespace VirtualMM
 void *
 alloc_pages(uint32_t n_pages)
 {
-  printk("virtual_mm", "Allocating 0x%x pages", n_pages);
   uint32_t starting_address = (uint32_t) find_free_addresses(n_pages);
   if (!starting_address)
     return NULL;

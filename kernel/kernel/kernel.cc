@@ -53,9 +53,11 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   for (uint32_t i = 0; i < 1024; i++)
     page[i] = i;
 
-  // for (uint32_t i = 0; i < 1024; i++)
-  // if (page[i] != i)
-  // printk("debug", "page[i](%lu) i(%lu)", page[i], i);
+  for (uint32_t i = 0; i < 1024; i++)
+    if (page[i] != i) {
+      printk("debug", "i(%lu) page[i](%lu)", i, page[i]);
+      halt();
+    }
 
   // int *x = (int *) LibAlloc::kmalloc(sizeof(int) * 8192);
   // for (uint32_t i = 0; i < 8192; i++)
