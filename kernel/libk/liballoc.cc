@@ -27,20 +27,8 @@ namespace LibAlloc
 
 Spinlock lock;
 
-inline int
-liballoc_lock(void)
-{
-  lock.acquire();
-  return 0;
-}
-
-inline int
-liballoc_unlock(void)
-{
-  lock.release();
-  return 0;
-}
-
+#define liballoc_lock lock.acquire
+#define liballoc_unlock lock.release
 #define liballoc_alloc VirtualMM::alloc_pages
 #define liballoc_free VirtualMM::free_pages
 
