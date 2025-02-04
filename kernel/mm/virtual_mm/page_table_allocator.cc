@@ -56,11 +56,6 @@ prepare(void)
   /* Initial table */
   if (l_heap == NULL)
     make_table((uint32_t *) (7 * MiB));
-
-  /* If we're gonna run out of space, allocate a new table with the remaining
-   * page */
-  if (l_table_index == 1023)
-    make_table(allocate());
 }
 
 uint32_t *
