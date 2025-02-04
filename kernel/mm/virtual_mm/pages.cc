@@ -18,6 +18,7 @@
 
 #include <kernel/halt.h>
 #include <libk/stdio.h>
+#include <mm/page_table_allocator.h>
 #include <mm/physical_mm.h>
 #include <mm/virtual_mm.h>
 #include <stdbool.h>
@@ -29,6 +30,8 @@ namespace VirtualMM
 void *
 alloc_pages(uint32_t n_pages)
 {
+  PageTableAllocator::prepare();
+
   uint32_t starting_address = (uint32_t) find_free_addresses(n_pages);
   if (!starting_address)
     return NULL;

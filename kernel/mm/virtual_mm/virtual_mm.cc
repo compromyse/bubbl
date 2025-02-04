@@ -16,9 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "common.h"
 #include <kernel/halt.h>
 #include <libk/liballoc.h>
 #include <libk/stdio.h>
+#include <mm/page_table_allocator.h>
 #include <mm/physical_mm.h>
 #include <mm/virtual_mm.h>
 #include <stdbool.h>
@@ -38,6 +40,12 @@ uint32_t l_page_directory[1024] ALIGNED(4096);
 uint32_t l_fourMiB_page_table[1024] ALIGNED(4096);
 /* Page table for the next 4 MiB */
 uint32_t l_eightMiB_page_table[1024] ALIGNED(4096);
+
+uint32_t *
+get_page_directory(void)
+{
+  return l_current_page_directory;
+}
 
 ALWAYS_INLINE void
 load_page_directory(uint32_t *page_directory)
@@ -102,18 +110,7 @@ initialize(void)
 uint32_t *
 make_table(uint32_t *pd_entry)
 {
-  uint32_t *table = 0;
-  if (!LibAlloc::initialized()) {
-    /* If we don't have a dynamic memory allocator yet (this will happen only
-     * once, when we initialize the dynamic allocator), then we hard code the
-     * next page table to be at 7MiB */
-    table = (uint32_t *) (7 * MiB);
-    printk("virtual_mm",
-           "Using our hard coded table; this should happen only once.");
-  } else
-    /* TODO: Uncomment this */
-    // table = (uint32_t *) LibAlloc::kmalloc(sizeof(uint32_t) * 1024);
-    ;
+  uint32_t *table = PageTableAllocator::allocate();
 
   for (uint32_t i = 0; i < 1024; i++)
     table[i] = 0x0;

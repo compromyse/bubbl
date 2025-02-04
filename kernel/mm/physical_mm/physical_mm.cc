@@ -112,8 +112,8 @@ initialize(void)
   uint32_t kernel_size = ((uint32_t) &kernel_end) - ((uint32_t) &kernel_start);
   deinitialize_region((uint32_t) &kernel_start, kernel_size);
 
-  /* Deinitialize first 4MiB */
-  deinitialize_region(0, 4 * MiB);
+  /* Deinitialize first 8MiB */
+  deinitialize_region(0, 8 * MiB);
 
   l_lock.release();
 

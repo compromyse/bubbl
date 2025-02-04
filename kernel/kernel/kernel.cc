@@ -24,6 +24,7 @@
 #include <libk/stdio.h>
 #include <mm/memory_map.h>
 #include <mm/multiboot.h>
+#include <mm/page_table_allocator.h>
 #include <mm/physical_mm.h>
 #include <mm/virtual_mm.h>
 #include <stdint.h>
@@ -43,21 +44,12 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   MemoryMap::load(multiboot_info);
   PhysicalMM::initialize();
   VirtualMM::initialize();
-  LibAlloc::initialize();
+  // LibAlloc::initialize();
 
-  uint32_t *page = (uint32_t *) VirtualMM::alloc_pages(1);
-  printk("debug", "page(0x%x)", page);
-  page = (uint32_t *) VirtualMM::alloc_pages(1);
-  printk("debug", "page(0x%x)", page);
+  PageTableAllocator::prepare();
 
-  for (uint32_t i = 0; i < 1024; i++)
-    page[i] = i;
-
-  for (uint32_t i = 0; i < 1024; i++)
-    if (page[i] != i) {
-      printk("debug", "i(%lu) page[i](%lu)", i, page[i]);
-      halt();
-    }
+  // uint32_t *page = (uint32_t *) VirtualMM::alloc_pages(1);
+  // printk("debug", "page(0x%x)", page);
 
   // int *x = (int *) LibAlloc::kmalloc(sizeof(int) * 8192);
   // for (uint32_t i = 0; i < 8192; i++)

@@ -72,6 +72,8 @@
 namespace VirtualMM
 {
 
+uint32_t *get_page_directory(void);
+
 /*
  * Loads a given page directory into CR0
  */

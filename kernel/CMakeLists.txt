@@ -28,6 +28,7 @@ set(SRC
   mm/physical_mm/physical_mm.cc
   mm/virtual_mm/pages.cc
   mm/virtual_mm/virtual_mm.cc
+  mm/virtual_mm/page_table_allocator.cc
 
   boot/init/crtn.s
 )
