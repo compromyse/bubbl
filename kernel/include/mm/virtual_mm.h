@@ -102,7 +102,7 @@ void unmap_page(void *virtual_address);
 /*
  * Find a virtual address with n consecutive free addresses.
  */
-void *find_free_addresses(uint32_t n_pages);
+void *find_free_pages(uint32_t n_pages);
 
 /*
  * Allocate and map n pages.

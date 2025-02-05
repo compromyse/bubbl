@@ -169,7 +169,7 @@ unmap_page(void *virtual_address)
 }
 
 void *
-find_free_addresses(uint32_t n)
+find_free_pages(uint32_t n_pages)
 {
   /* Skip the first two page directory entries; we don't wanna touch the first
    * 8MiB. */
@@ -217,7 +217,7 @@ find_free_addresses(uint32_t n)
          * (count += 4096, since we know that the table is not present) */
         count++;
 
-        if (count == n)
+        if (count == n_pages)
           return (void *) VIRTUAL_ADDRESS(starting_pd_index,
                                           starting_pt_index);
       }

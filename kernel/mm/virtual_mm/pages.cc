@@ -30,7 +30,7 @@ namespace VirtualMM
 void *
 alloc_pages(uint32_t n_pages)
 {
-  uint32_t starting_address = (uint32_t) find_free_addresses(n_pages);
+  uint32_t starting_address = (uint32_t) find_free_pages(n_pages);
   if (!starting_address)
     return NULL;
 
