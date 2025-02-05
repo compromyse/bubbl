@@ -47,7 +47,7 @@ int l_completePages[MAXEXP];              //< Allowing for 2^MAXEXP blocks
 
 static unsigned int l_initialized = 0; //< Flag to indicate initialization.
 static unsigned int l_pageSize = 4096; //< Individual page size
-static unsigned int l_pageCount = 1;   //< Minimum number of pages to allocate.
+static unsigned int l_pageCount = 16;  //< Minimum number of pages to allocate.
 
 static inline int
 getexp(int size)

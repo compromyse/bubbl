@@ -39,6 +39,7 @@ make_table(uint32_t *table_address)
     table[i] = PTE_FRAME((uint32_t) PhysicalMM::allocate_block())
                | PTE_PRESENT(1) | PTE_WRITABLE(1);
 
+  /* TODO: Just find an unused pd_entry instead */
   void *starting_address = VirtualMM::find_free_addresses(4 * KiB);
   uint32_t *pd_entry = &l_page_directory[GET_PD_INDEX(starting_address)];
   *pd_entry = PDE_FRAME((uint32_t) table) | PDE_PRESENT(1) | PDE_WRITABLE(1);
@@ -48,8 +49,11 @@ make_table(uint32_t *table_address)
 }
 
 void
-prepare(void)
+initialize(void)
 {
+  /* We can't just do this in allocate() because make_table() depends on
+   * VirtualMM::find_free_addresses() */
+
   if (l_page_directory != VirtualMM::get_page_directory())
     l_page_directory = VirtualMM::get_page_directory();
 

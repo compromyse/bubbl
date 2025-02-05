@@ -106,7 +106,7 @@ initialize(void)
   switch_page_directory(l_page_directory);
   enable_paging();
 
-  PageTableAllocator::prepare();
+  PageTableAllocator::initialize();
 }
 
 uint32_t *

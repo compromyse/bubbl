@@ -25,7 +25,7 @@ namespace PageTableAllocator
 {
 
 uint32_t *allocate(void);
-void prepare(void);
+void initialize(void);
 
 }
 
