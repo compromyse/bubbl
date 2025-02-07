@@ -1,6 +1,6 @@
 /*
  * bubbl
- * Copyright (C) 2024-2025  Raghuram Subramani <raghus2247@gmail.com>
+ * Copyright (C) 2025  Raghuram Subramani <raghus2247@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,37 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <boot/gdt.h>
+#include <boot/idt.h>
+#include <kernel/io.h>
 
-namespace GDT
+namespace IDT
 {
 
-entry_t l_entries[] = {
-  /* NULL Descriptor */
-  GDT_ENTRY(0, 0, 0, 0),
+extern "C" void *isr_stub_table[];
 
-  /* Kernel Mode Code Segment */
-  GDT_ENTRY(0, 0xfffff, KERNEL_CODE_SEGMENT_ACCESS_FLAGS, FLAGS),
-
-  /* Kernel Mode Data Segment */
-  GDT_ENTRY(0, 0xfffff, KERNEL_DATA_SEGMENT_ACCESS_FLAGS, FLAGS),
-
-  /* User Mode Code Segment */
-  // GDT_ENTRY(0, 0xfffff, USER_CODE_SEGMENT_ACCESS_FLAGS, FLAGS),
-
-  /* User Mode Data Segment */
-  // GDT_ENTRY(0, 0xfffff, USER_DATA_SEGMENT_ACCESS_FLAGS, FLAGS)
-
-  /* TODO: TSS? */
-  /* TODO: LDT? */
-};
-
+entry_t l_entries[256];
 descriptor_t descriptor = { sizeof(l_entries) - 1, l_entries };
 
 void
 load(void)
 {
-  _GDT_flush(&descriptor);
+  for (uint16_t i = 0; i < 256; i++)
+    l_entries[i] = (entry_t) { 0 };
+
+  /* The first 32 entries are exceptions */
+  for (uint8_t i = 0; i < 32; i++) {
+    entry_t idt_entry = IDT_ENTRY((uint32_t) isr_stub_table[i], 0x8E);
+    l_entries[i] = idt_entry;
+  }
+
+  __asm__ volatile("lidt %0" ::"m"(descriptor));
+  __asm__ volatile("sti");
 }
 
 }

@@ -16,20 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <kernel/spinlock.h>
+#include <boot/idt.h>
+#include <common.h>
+#include <kernel/halt.h>
+#include <libk/stdio.h>
+#include <stdbool.h>
+
+namespace IDT
+{
 
 void
-Spinlock::acquire(void)
+exception_handler(void)
 {
-  __asm__ volatile("cli");
-  while (!__sync_bool_compare_and_swap(&m_lock, 0, 1))
-    while (m_lock)
-      __asm__ volatile("rep; nop");
+  ASSERT_NOT_REACHED();
+  while (true)
+    __asm__ volatile("cli; hlt");
 }
 
-void
-Spinlock::release(void)
-{
-  __sync_bool_compare_and_swap(&m_lock, 1, 0);
-  // __asm__ volatile("sti");
 }

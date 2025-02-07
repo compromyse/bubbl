@@ -78,13 +78,12 @@
 
 #define GDT_ENTRY(base, limit, access_flags, flags)                           \
   {                                                                           \
-    (limit & 0xffff),          /* limit_low */                                \
-        (base & 0xffff),       /* base_low */                                 \
-        ((base >> 16) & 0xff), /* base_mid */                                 \
-        access_flags,          /* access_flags */                             \
-        FLAGS_LIMIT_HIGH(flags,                                               \
-                         ((limit >> 16) & 0xff)), /* flags_limit_high */      \
-        ((base >> 24) & 0xff)                     /* base_high */             \
+    (limit & 0xffff),                                /* limit_low */          \
+    (base & 0xffff),                                 /* base_low */           \
+    ((base >> 16) & 0xff),                           /* base_mid */           \
+    access_flags,                                    /* access_flags */       \
+    FLAGS_LIMIT_HIGH(flags, ((limit >> 16) & 0xff)), /* flags_limit_high */   \
+    ((base >> 24) & 0xff)                            /* base_high */          \
   }
 
 namespace GDT
@@ -105,6 +104,8 @@ typedef struct {
 } PACKED descriptor_t;
 
 extern "C" void _GDT_flush(descriptor_t *descriptor);
+
+void initialize(void);
 void load(void);
 
 }

@@ -50,7 +50,7 @@ get_page_directory(void)
 ALWAYS_INLINE void
 load_page_directory(uint32_t *page_directory)
 {
-  __asm__("movl %0, %%cr3" ::"r"(page_directory));
+  __asm__ volatile("movl %0, %%cr3" ::"r"(page_directory));
 }
 
 bool
@@ -67,10 +67,10 @@ switch_page_directory(uint32_t *page_directory)
 ALWAYS_INLINE static void
 enable_paging(void)
 {
-  __asm__("movl %%cr0, %%eax;"
-          "orl $0x80000000, %%eax;"
-          "movl %%eax, %%cr0" ::
-              : "eax");
+  __asm__ volatile("movl %%cr0, %%eax;"
+                   "orl $0x80000000, %%eax;"
+                   "movl %%eax, %%cr0" ::
+                       : "eax");
 }
 
 void

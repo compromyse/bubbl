@@ -17,6 +17,7 @@
  */
 
 #include <boot/gdt.h>
+#include <boot/idt.h>
 #include <drivers/serial.h>
 #include <drivers/vga_text_buffer.h>
 #include <kernel/halt.h>
@@ -44,6 +45,7 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   MemoryMap::load(multiboot_info);
   PhysicalMM::initialize();
   VirtualMM::initialize();
+  IDT::load();
 
   printk("\nKernel", "Started.");
 

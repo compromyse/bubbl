@@ -6,6 +6,9 @@ set(SRC
   
   boot/gdt/gdt.cc
   boot/gdt/gdt.s
+  boot/idt/exceptions.cc
+  boot/idt/idt.cc
+  boot/idt/isr.s
   boot/init/boot.s
 
   drivers/serial.cc
@@ -61,6 +64,7 @@ set(CXX_COMPILE_OPTIONS
   -Wno-write-strings
   -Wno-missing-field-initializers
   -Wno-c++11-long-long
+  -Wno-c99-extensions
 )
 
 target_compile_options(kernel PRIVATE 
