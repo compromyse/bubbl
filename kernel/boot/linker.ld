@@ -83,5 +83,21 @@ SECTIONS
     *(.eh_frame)
   }
 
+  .symtab : ALIGN(4K)
+  {
+    *(.symtab)
+  }
+
+  .shstrtab : ALIGN(4K)
+  {
+    *(.shstrtab)
+  }
+
+  .strtab : ALIGN(4K)
+  {
+    *(.strtab)
+  }
+
+
   kernel_end = .;
 }
