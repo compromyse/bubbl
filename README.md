@@ -9,16 +9,15 @@ An Operating System for The x86 Architecture.
 After entering the devshell (with direnv or `nix develop`),
 
 ```sh
-source env.sh
-b
-cm ..
-m
+mkdir build && cd build
+cmake -G Ninja ..
+ninja
 ```
 
 ## Running
 
 ```sh
-m run # or run-headless or run-gdb
+ninja run # or run-headless or run-gdb
 ```
 
 ## Authors
