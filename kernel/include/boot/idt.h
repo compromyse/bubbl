@@ -25,7 +25,7 @@
 #define IDT_ENTRY(isr, attributes)                                            \
   {                                                                           \
     (isr & 0xffff), /* isr_low */                                             \
-    0,              /* segment_selector */                                    \
+    0x08,           /* segment_selector */                                    \
     0,              /* reserved */                                            \
     attributes,     /* attributes */                                          \
     (isr >> 16)     /* isr_high */                                            \
