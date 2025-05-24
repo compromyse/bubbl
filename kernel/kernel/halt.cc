@@ -25,8 +25,7 @@ halt(void)
 {
   printk("Kernel", "Halted.");
 
-  for (;;)
-    ;
+  __asm__ volatile("cli; hlt");
 }
 
 void
