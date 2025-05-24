@@ -25,7 +25,7 @@
 namespace IDT
 {
 
-void
+extern "C" void
 exception_handler(void)
 {
   ASSERT_NOT_REACHED();
