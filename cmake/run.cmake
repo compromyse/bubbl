@@ -42,3 +42,18 @@ add_custom_target(run-gdb
   DEPENDS iso
   USES_TERMINAL
 )
+
+add_custom_target(run-debug
+  ${QEMU_SYSTEM_CMD}
+  ${QEMU_ARGUMENTS}
+  -serial stdio
+  -no-reboot
+  -no-shutdown
+  -d int
+  -M smm=off
+
+  ${IGNORE_EXIT}
+
+  DEPENDS iso
+  USES_TERMINAL
+)

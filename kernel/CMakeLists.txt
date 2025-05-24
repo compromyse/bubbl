@@ -46,6 +46,7 @@ set(C_COMPILE_OPTIONS
   -fstack-protector-all
 
   # -O3
+  -O0
 
   -Wall
   -Wextra
