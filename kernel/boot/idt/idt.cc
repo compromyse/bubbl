@@ -43,7 +43,7 @@ load(void)
   __asm__ volatile("lidt %0" ::"m"(descriptor));
   __asm__ volatile("sti");
 
-  printk("Interrupts", "Loaded IDT!");
+  printk("\nInterrupts", "Loaded IDT!");
 }
 
 }
