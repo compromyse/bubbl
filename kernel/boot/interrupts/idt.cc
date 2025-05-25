@@ -36,7 +36,9 @@ load_idt(void)
 
   /* The first 32 entries are exceptions */
   for (uint8_t i = 0; i < 32; i++)
-    l_entries[i] = (entry_t) IDT_ENTRY((uint32_t) isr_stub_table[i], 0x8E);
+    l_entries[i] = (entry_t) IDT_ENTRY((uint32_t) isr_stub_table[i],
+                                       IDT_PRESENT | IDT_KERNEL_PRIVILEGE_LEVEL
+                                           | IDT_32BIT_INTERRUPT_GATE);
 
   __asm__ volatile("lidt %0" ::"m"(descriptor));
   __asm__ volatile("sti");

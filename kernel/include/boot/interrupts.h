@@ -32,6 +32,16 @@
     (isr >> 16)             /* isr_high */                                    \
   }
 
+/* Attributes */
+#define IDT_PRESENT (1 << 7)
+#define IDT_KERNEL_PRIVILEGE_LEVEL (0)
+#define IDT_USER_PRIVILEGE_LEVEL (3 << 5)
+#define IDT_TASK_GATE (0b0101)
+#define IDT_16BIT_INTERRUPT_GATE (0b0110)
+#define IDT_16BIT_TRAP_GATE (0b0111)
+#define IDT_32BIT_INTERRUPT_GATE (0b1110)
+#define IDT_32BIT_TRAP_GATE (0b1111)
+
 namespace Interrupts
 {
 

@@ -68,6 +68,7 @@ set(CXX_COMPILE_OPTIONS
   -Wno-missing-field-initializers
   -Wno-c++11-long-long
   -Wno-c99-extensions
+  -Wno-c++14-binary-literal
 )
 
 target_compile_options(kernel PRIVATE 
