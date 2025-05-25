@@ -26,16 +26,16 @@ entry_t l_entries[] = {
   GDT_ENTRY(0, 0, 0, 0),
 
   /* Kernel Mode Code Segment */
-  GDT_ENTRY(0, 0xfffff, KERNEL_CODE_SEGMENT_ACCESS_FLAGS, FLAGS),
+  GDT_ENTRY(0, 0xfffff, GDT_KERNEL_CODE_SEGMENT_ACCESS_FLAGS, GDT_FLAGS),
 
   /* Kernel Mode Data Segment */
-  GDT_ENTRY(0, 0xfffff, KERNEL_DATA_SEGMENT_ACCESS_FLAGS, FLAGS),
+  GDT_ENTRY(0, 0xfffff, GDT_KERNEL_DATA_SEGMENT_ACCESS_FLAGS, GDT_FLAGS),
 
   /* User Mode Code Segment */
-  // GDT_ENTRY(0, 0xfffff, USER_CODE_SEGMENT_ACCESS_FLAGS, FLAGS),
+  // GDT_ENTRY(0, 0xfffff, GDT_USER_CODE_SEGMENT_ACCESS_FLAGS, FLAGS),
 
   /* User Mode Data Segment */
-  // GDT_ENTRY(0, 0xfffff, USER_DATA_SEGMENT_ACCESS_FLAGS, FLAGS)
+  // GDT_ENTRY(0, 0xfffff, GDT_USER_DATA_SEGMENT_ACCESS_FLAGS, FLAGS)
 
   /* TODO: TSS? */
   /* TODO: LDT? */

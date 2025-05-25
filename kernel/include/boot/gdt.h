@@ -33,27 +33,29 @@
  * 0 ACCESSED
  */
 
-#define PRESENT(x) (x << 7)
-#define PRIVILEGE(x) (x << 5)
-#define TYPE(x) (x << 4)
-#define EXECUTABLE(x) (x << 3)
-#define DIRECTION_CONFORMING(x) (x << 2)
-#define READABLE_WRITABLE(x) (x << 1)
-#define ACCESSED(x) x
+#define GDT_PRESENT(x) (x << 7)
+#define GDT_PRIVILEGE(x) (x << 5)
+#define GDT_TYPE(x) (x << 4)
+#define GDT_EXECUTABLE(x) (x << 3)
+#define GDT_DIRECTION_CONFORMING(x) (x << 2)
+#define GDT_READABLE_WRITABLE(x) (x << 1)
+#define GDT_ACCESSED(x) x
 
-#define CODE_SEGMENT_ACCESS_FLAGS(privilege)                                  \
-  PRESENT(1) | PRIVILEGE(privilege) | TYPE(1) | EXECUTABLE(1)                 \
-      | DIRECTION_CONFORMING(0) | READABLE_WRITABLE(1) | ACCESSED(0)
+#define GDT_CODE_SEGMENT_ACCESS_FLAGS(privilege)                              \
+  GDT_PRESENT(1) | GDT_PRIVILEGE(privilege) | GDT_TYPE(1) | GDT_EXECUTABLE(1) \
+      | GDT_DIRECTION_CONFORMING(0) | GDT_READABLE_WRITABLE(1)                \
+      | GDT_ACCESSED(0)
 
-#define DATA_SEGMENT_ACCESS_FLAGS(privilege)                                  \
-  PRESENT(1) | PRIVILEGE(privilege) | TYPE(1) | EXECUTABLE(0)                 \
-      | DIRECTION_CONFORMING(0) | READABLE_WRITABLE(1) | ACCESSED(0)
+#define GDT_DATA_SEGMENT_ACCESS_FLAGS(privilege)                              \
+  GDT_PRESENT(1) | GDT_PRIVILEGE(privilege) | GDT_TYPE(1) | GDT_EXECUTABLE(0) \
+      | GDT_DIRECTION_CONFORMING(0) | GDT_READABLE_WRITABLE(1)                \
+      | GDT_ACCESSED(0)
 
-#define KERNEL_CODE_SEGMENT_ACCESS_FLAGS CODE_SEGMENT_ACCESS_FLAGS(0)
-#define KERNEL_DATA_SEGMENT_ACCESS_FLAGS DATA_SEGMENT_ACCESS_FLAGS(0)
+#define GDT_KERNEL_CODE_SEGMENT_ACCESS_FLAGS GDT_CODE_SEGMENT_ACCESS_FLAGS(0)
+#define GDT_KERNEL_DATA_SEGMENT_ACCESS_FLAGS GDT_DATA_SEGMENT_ACCESS_FLAGS(0)
 
-#define USER_CODE_SEGMENT_ACCESS_FLAGS CODE_SEGMENT_ACCESS_FLAGS(3)
-#define USER_DATA_SEGMENT_ACCESS_FLAGS DATA_SEGMENT_ACCESS_FLAGS(3)
+#define GDT_USER_CODE_SEGMENT_ACCESS_FLAGS GDT_CODE_SEGMENT_ACCESS_FLAGS(3)
+#define GDT_USER_DATA_SEGMENT_ACCESS_FLAGS GDT_DATA_SEGMENT_ACCESS_FLAGS(3)
 
 /* Other Flags:
  * 3 GRANULARITY
@@ -62,14 +64,14 @@
  * 0 RESERVED
  */
 
-#define GRANULARITY (1 << 3)
-#define SIZE (1 << 2)
-#define LONGMODE (0 << 1)
-#define RESERVED 0
+#define GDT_GRANULARITY (1 << 3)
+#define GDT_SIZE (1 << 2)
+#define GDT_LONGMODE (0 << 1)
+#define GDT_RESERVED 0
 
-#define FLAGS (GRANULARITY | SIZE | LONGMODE | RESERVED)
+#define GDT_FLAGS (GDT_GRANULARITY | GDT_SIZE | GDT_LONGMODE | GDT_RESERVED)
 
-#define FLAGS_LIMIT_HIGH(flags, limit_high) ((flags << 4) | limit_high)
+#define GDT_FLAGS_LIMIT_HIGH(flags, limit_high) ((flags << 4) | limit_high)
 
 /* GDT Entry:
  * BASE  FLAGS  LIMIT  ACCESS_FLAGS  BASE  BASE  LIMIT
@@ -78,12 +80,13 @@
 
 #define GDT_ENTRY(base, limit, access_flags, flags)                           \
   {                                                                           \
-    (limit & 0xffff),                                /* limit_low */          \
-    (base & 0xffff),                                 /* base_low */           \
-    ((base >> 16) & 0xff),                           /* base_mid */           \
-    access_flags,                                    /* access_flags */       \
-    FLAGS_LIMIT_HIGH(flags, ((limit >> 16) & 0xff)), /* flags_limit_high */   \
-    ((base >> 24) & 0xff)                            /* base_high */          \
+    (limit & 0xffff),      /* limit_low */                                    \
+    (base & 0xffff),       /* base_low */                                     \
+    ((base >> 16) & 0xff), /* base_mid */                                     \
+    access_flags,          /* access_flags */                                 \
+    GDT_FLAGS_LIMIT_HIGH(flags,                                               \
+                         ((limit >> 16) & 0xff)), /* flags_limit_high */      \
+    ((base >> 24) & 0xff)                         /* base_high */             \
   }
 
 #define GDT_KERNEL_CODE_OFFSET 0x8
