@@ -40,6 +40,8 @@ add_executable(kernel ${SRC})
 target_include_directories(kernel PRIVATE include)
 
 set(C_COMPILE_OPTIONS
+  -march=i386
+
   -ffreestanding
 
   -fstack-protector
