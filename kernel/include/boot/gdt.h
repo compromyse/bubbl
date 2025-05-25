@@ -86,6 +86,9 @@
     ((base >> 24) & 0xff)                            /* base_high */          \
   }
 
+#define GDT_KERNEL_CODE_OFFSET 0x8
+#define GDT_KERNEL_DATA_OFFSET 0x10
+
 namespace GDT
 {
 

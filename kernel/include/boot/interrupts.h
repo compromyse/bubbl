@@ -16,22 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __boot_idt_h
-#define __boot_idt_h
+#ifndef __boot_interrupts_h
+#define __boot_interrupts_h
 
+#include <boot/gdt.h>
 #include <common.h>
 #include <stdint.h>
 
 #define IDT_ENTRY(isr, attributes)                                            \
   {                                                                           \
-    (isr & 0xffff), /* isr_low */                                             \
-    0x08,           /* segment_selector */                                    \
-    0,              /* reserved */                                            \
-    attributes,     /* attributes */                                          \
-    (isr >> 16)     /* isr_high */                                            \
+    (isr & 0xffff),         /* isr_low */                                     \
+    GDT_KERNEL_CODE_OFFSET, /* segment_selector */                            \
+    0,                      /* reserved */                                    \
+    attributes,             /* attributes */                                  \
+    (isr >> 16)             /* isr_high */                                    \
   }
 
-namespace IDT
+namespace Interrupts
 {
 
 typedef struct {
@@ -47,7 +48,7 @@ typedef struct {
   entry_t *ptr;   /* Address of IDT */
 } PACKED descriptor_t;
 
-void load(void);
+void load_idt(void);
 extern "C" NORETURN void exception_handler(void);
 
 }

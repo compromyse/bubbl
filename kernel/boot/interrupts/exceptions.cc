@@ -16,34 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <boot/idt.h>
-#include <kernel/io.h>
+#include <boot/interrupts.h>
+#include <common.h>
+#include <kernel/halt.h>
 #include <libk/stdio.h>
+#include <stdbool.h>
 
-namespace IDT
+namespace Interrupts
 {
-
-extern "C" void *isr_stub_table[];
-
-entry_t l_entries[256];
-descriptor_t descriptor = { sizeof(l_entries) - 1, l_entries };
 
 void
-load(void)
+exception_handler(void)
 {
-  for (uint16_t i = 0; i < 256; i++)
-    l_entries[i] = (entry_t) { 0 };
-
-  /* The first 32 entries are exceptions */
-  for (uint8_t i = 0; i < 32; i++) {
-    entry_t idt_entry = IDT_ENTRY((uint32_t) isr_stub_table[i], 0x8E);
-    l_entries[i] = idt_entry;
-  }
-
-  __asm__ volatile("lidt %0" ::"m"(descriptor));
-  __asm__ volatile("sti");
-
-  printk("\nInterrupts", "Loaded IDT!");
+  ASSERT_NOT_REACHED();
+  while (true)
+    __asm__ volatile("cli; hlt");
 }
 
 }

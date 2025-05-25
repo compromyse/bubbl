@@ -6,9 +6,9 @@ set(SRC
   
   boot/gdt/gdt.cc
   boot/gdt/gdt.s
-  boot/idt/exceptions.cc
-  boot/idt/idt.cc
-  boot/idt/isr.s
+  boot/interrupts/exceptions.cc
+  boot/interrupts/idt.cc
+  boot/interrupts/isr.s
   boot/init/boot.s
 
   drivers/serial.cc
