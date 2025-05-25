@@ -45,7 +45,6 @@ Spinlock l_lock;
 ALWAYS_INLINE static void
 log_memory_map(free_memory_regions_t *free_memory_regions)
 {
-  printk("\nphysical_mm", "memory_map is at 0x%x", l_memory_map);
   printk("\nphysical_mm", "Free Memory Regions:");
   for (int i = 0; i < free_memory_regions->n_regions; i++)
     printk("physical_mm",
