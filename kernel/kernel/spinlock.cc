@@ -16,12 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "boot/interrupts.h"
 #include <kernel/spinlock.h>
 
 void
 Spinlock::acquire(void)
 {
-  __asm__ volatile("cli");
+  Interrupts::disable();
   while (!__sync_bool_compare_and_swap(&m_lock, 0, 1))
     while (m_lock)
       __asm__ volatile("rep; nop");
@@ -31,5 +32,6 @@ void
 Spinlock::release(void)
 {
   __sync_bool_compare_and_swap(&m_lock, 1, 0);
-  // __asm__ volatile("sti");
+  if (Interrupts::idt_loaded())
+    Interrupts::enable();
 }
