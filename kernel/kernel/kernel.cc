@@ -45,7 +45,7 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   MemoryMap::load(multiboot_info);
   PhysicalMM::initialize();
   VirtualMM::initialize();
-  Interrupts::load_idt();
+  Interrupts::initialize();
 
   printk("\nKernel", "Started.");
 

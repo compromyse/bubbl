@@ -16,7 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "common.h"
 #include <boot/interrupts.h>
+#include <kernel/halt.h>
 #include <kernel/io.h>
 #include <libk/stdio.h>
 
@@ -27,6 +29,22 @@ extern "C" void *isr_stub_table[];
 
 entry_t l_entries[256];
 descriptor_t descriptor = { sizeof(l_entries) - 1, l_entries };
+static bool l_idt_loaded = false;
+
+bool
+idt_loaded(void)
+{
+  return l_idt_loaded;
+}
+
+void
+initialize()
+{
+  load_idt();
+  printk("\nInterrupts", "IDT Loaded.");
+  enable();
+  printk("Interrupts", "Initialized.");
+}
 
 void
 load_idt(void)
@@ -41,9 +59,27 @@ load_idt(void)
                                            | IDT_32BIT_INTERRUPT_GATE);
 
   __asm__ volatile("lidt %0" ::"m"(descriptor));
-  __asm__ volatile("sti");
 
-  printk("\ninterrupts", "Loaded IDT!");
+  l_idt_loaded = true;
+}
+
+void
+enable(void)
+{
+  if (!l_idt_loaded) {
+    printk("Interrupts", "Attempt to enable before IDT load.");
+    ASSERT_NOT_REACHED();
+  }
+
+  __asm__ volatile("sti");
+  // printk("\ninterrupts", "Enabled.");
+}
+
+void
+disable(void)
+{
+  __asm__ volatile("cli");
+  // printk("\ninterrupts", "Disabled.");
 }
 
 }

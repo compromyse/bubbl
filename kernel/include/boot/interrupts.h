@@ -58,7 +58,12 @@ typedef struct {
   entry_t *ptr;   /* Address of IDT */
 } PACKED descriptor_t;
 
+void initialize(void);
 void load_idt(void);
+void enable(void);
+void disable(void);
+bool idt_loaded(void);
+
 extern "C" NORETURN void exception_handler(void);
 
 }
