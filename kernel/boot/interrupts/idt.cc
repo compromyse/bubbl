@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "common.h"
 #include <boot/interrupts.h>
+#include <common.h>
 #include <kernel/halt.h>
 #include <kernel/io.h>
 #include <libk/stdio.h>

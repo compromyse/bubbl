@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "boot/interrupts.h"
+#include <boot/interrupts.h>
 #include <kernel/spinlock.h>
 
 void
