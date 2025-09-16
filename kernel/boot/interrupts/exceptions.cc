@@ -26,8 +26,10 @@ namespace Interrupts
 {
 
 void
-exception_handler(void)
+exception_handler(int irq_number)
 {
+  printk("interrupts", "Interrupt: %d", irq_number);
+
   ASSERT_NOT_REACHED();
   while (true)
     __asm__ volatile("cli; hlt");

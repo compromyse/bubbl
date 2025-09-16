@@ -67,7 +67,7 @@ void disable(void);
 void load_idt(void);
 bool idt_loaded(void);
 
-extern "C" NORETURN void exception_handler(void);
+extern "C" NORETURN void exception_handler(int irq_number);
 
 }
 
