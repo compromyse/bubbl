@@ -23,7 +23,6 @@
 namespace PhysicalMM
 {
 
-/* Marks the block as 'used' */
 void
 set_used(const uint32_t bit, uint32_t *total_free_blocks, uint32_t *memory_map)
 {
@@ -33,7 +32,6 @@ set_used(const uint32_t bit, uint32_t *total_free_blocks, uint32_t *memory_map)
   memory_map[memory_map_index] |= bitmask;
 }
 
-/* Marks the block as 'unused' */
 void
 set_usable(const uint32_t bit,
            uint32_t *total_free_blocks,
@@ -45,10 +43,6 @@ set_usable(const uint32_t bit,
   memory_map[memory_map_index] &= ~bitmask;
 }
 
-/* Returns:
- * True if the bit is set (block is in use)
- * False if the bit is unset (block isn't in use)
- */
 bool
 test_bit(const uint32_t bit, uint32_t *memory_map)
 {

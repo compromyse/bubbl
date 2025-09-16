@@ -89,6 +89,24 @@ deinitialize_region(uint32_t start, uint32_t length)
     set_used(bit++, &l_total_free_blocks, l_memory_map);
 }
 
+ALWAYS_INLINE static uint32_t
+find_free_block(void)
+{
+  /* TODO: Why doesn't using block_count instead of MAX_BLOCKS work? */
+  for (uint32_t i = 0; i < MAX_BLOCKS / BITMAP_ENTRY_SIZE; i++)
+    /* At least one block in the entry isn't in use */
+    if (l_memory_map[i] != 0xffffffff)
+      /* Test each bit to see if it's zero */
+      for (uint32_t j = 0; j < BITMAP_ENTRY_SIZE; j++)
+        if (!test_bit(i * BITMAP_ENTRY_SIZE + j, l_memory_map))
+          return i * BITMAP_ENTRY_SIZE + j;
+
+  /* Shouldn't be reached, since we're keeping track of the number of free
+   * blocks */
+  ASSERT_NOT_REACHED();
+  return -1;
+}
+
 void
 initialize(void)
 {
@@ -126,24 +144,6 @@ initialize(void)
           l_total_free_blocks++;
 
   printk("physical_mm", "Total free blocks: 0x%x", l_total_free_blocks);
-}
-
-uint32_t
-find_free_block(void)
-{
-  /* TODO: Why doesn't using block_count instead of MAX_BLOCKS work? */
-  for (uint32_t i = 0; i < MAX_BLOCKS / BITMAP_ENTRY_SIZE; i++)
-    /* At least one block in the entry isn't in use */
-    if (l_memory_map[i] != 0xffffffff)
-      /* Test each bit to see if it's zero */
-      for (uint32_t j = 0; j < BITMAP_ENTRY_SIZE; j++)
-        if (!test_bit(i * BITMAP_ENTRY_SIZE + j, l_memory_map))
-          return i * BITMAP_ENTRY_SIZE + j;
-
-  /* Shouldn't be reached, since we're keeping track of the number of free
-   * blocks */
-  ASSERT_NOT_REACHED();
-  return -1;
 }
 
 void *
