@@ -28,7 +28,10 @@
 
 #define BITMAP_ENTRY_SIZE 32
 
-/* This is the maximum number of blocks for a 4GiB system. */
+/*
+ * This is the maximum number of blocks for a 4GiB system
+ * => 4GiB / 4KiB
+ */
 #define MAX_BLOCKS 1048576
 
 namespace PhysicalMM
