@@ -25,33 +25,33 @@
 namespace Interrupts
 {
 
-extern "C" void *isr_stub_table[];
-
-entry_t l_entries[256];
-descriptor_t descriptor = { sizeof(l_entries) - 1, l_entries };
-static bool l_idt_loaded = false;
-
-bool
-idt_loaded(void)
+void
+initialize()
 {
-  return l_idt_loaded;
+  load_idt();
+  printk("\nInterrupts", "IDT Loaded.");
+
+  enable();
+  printk("Interrupts", "Initialized.");
 }
 
 void
-load_idt(void)
+enable(void)
 {
-  for (uint16_t i = 0; i < 256; i++)
-    l_entries[i] = (entry_t) { 0 };
+  if (!idt_loaded()) {
+    printk("Interrupts", "Attempt to enable before IDT load.");
+    ASSERT_NOT_REACHED();
+  }
 
-  /* The first 32 entries are exceptions */
-  for (uint8_t i = 0; i < 32; i++)
-    l_entries[i] = (entry_t) IDT_ENTRY((uint32_t) isr_stub_table[i],
-                                       IDT_PRESENT | IDT_KERNEL_PRIVILEGE_LEVEL
-                                           | IDT_32BIT_INTERRUPT_GATE);
+  __asm__ volatile("sti");
+  // printk("\ninterrupts", "Enabled.");
+}
 
-  __asm__ volatile("lidt %0" ::"m"(descriptor));
-
-  l_idt_loaded = true;
+void
+disable(void)
+{
+  __asm__ volatile("cli");
+  // printk("\ninterrupts", "Disabled.");
 }
 
 }

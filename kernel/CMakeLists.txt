@@ -9,6 +9,7 @@ set(SRC
   boot/init/crtn.s
   boot/interrupts/exceptions.cc
   boot/interrupts/idt.cc
+  boot/interrupts/interrupts.cc
   boot/interrupts/isr.s
   drivers/serial.cc
   drivers/vga_text_buffer.cc
