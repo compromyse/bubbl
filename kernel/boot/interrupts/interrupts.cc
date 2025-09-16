@@ -29,17 +29,17 @@ void
 initialize()
 {
   load_idt();
-  printk("\nInterrupts", "IDT Loaded.");
+  printk("\ninterrupts", "IDT Loaded.");
 
   enable();
-  printk("Interrupts", "Initialized.");
+  printk("interrupts", "Initialized.");
 }
 
 void
 enable(void)
 {
   if (!idt_loaded()) {
-    printk("Interrupts", "Attempt to enable before IDT load.");
+    printk("interrupts", "Attempt to enable before IDT load.");
     ASSERT_NOT_REACHED();
   }
 

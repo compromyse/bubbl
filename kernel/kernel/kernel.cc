@@ -37,7 +37,7 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   VGATextBuffer::initialize();
 
   if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
-    printk("Kernel", "Invalid Multiboot Magic: %x", magic);
+    printk("kernel", "Invalid Multiboot Magic: %x", magic);
     halt();
   }
 
@@ -47,7 +47,7 @@ kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
   VirtualMM::initialize();
   Interrupts::initialize();
 
-  printk("\nKernel", "Started.");
+  printk("\nkernel", "Started.");
 
   exit();
   halt(); /* If exit() fails (on real hardware) */

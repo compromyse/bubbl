@@ -23,7 +23,7 @@
 void
 halt(void)
 {
-  printk("Kernel", "Halted.");
+  printk("kernel", "Halted.");
 
   while (true)
     __asm__ volatile("cli; hlt");
