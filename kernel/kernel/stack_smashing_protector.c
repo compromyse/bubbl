@@ -1,6 +1,6 @@
 /*
  * bubbl
- * Copyright (C) 2025  Raghuram Subramani <raghus2247@gmail.com>
+ * Copyright (C) 2024-2025  Raghuram Subramani <raghus2247@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,23 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <boot/interrupts.h>
-#include <common.h>
 #include <kernel/halt.h>
 #include <libk/stdio.h>
-#include <stdbool.h>
+#include <stdint.h>
 
-namespace Interrupts
-{
+/* TODO: Randomize */
+#define STACK_CHK_GUARD 0xe2dee396
+
+uintptr_t __stack_chk_guard = STACK_CHK_GUARD;
 
 void
-exception_handler(int irq_number)
+__stack_chk_fail(void)
 {
-  printk("interrupts", "Interrupt: %d", irq_number);
-
-  ASSERT_NOT_REACHED();
-  while (true)
-    __asm__ volatile("cli; hlt");
-}
-
+  /* TODO: Panic the kernel */
+  printk("Stack Smashing Protector", "Stack smashing detected!");
+  halt();
 }

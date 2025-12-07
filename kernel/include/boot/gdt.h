@@ -92,9 +92,6 @@
 #define GDT_KERNEL_CODE_OFFSET 0x8
 #define GDT_KERNEL_DATA_OFFSET 0x10
 
-namespace GDT
-{
-
 typedef struct {
   uint16_t limit_low;
   uint16_t base_low;
@@ -102,18 +99,16 @@ typedef struct {
   uint8_t access_flags;
   uint8_t flags_limit_high;
   uint8_t base_high;
-} PACKED entry_t;
+} PACKED gdt_entry_t;
 
 typedef struct {
-  uint16_t limit; /* sizeof(GDT) - 1 */
-  entry_t *ptr;   /* Address of GDT */
-} PACKED descriptor_t;
+  uint16_t limit;   /* sizeof(GDT) - 1 */
+  gdt_entry_t *ptr; /* Address of GDT */
+} PACKED gdt_descriptor_t;
 
-extern "C" void _GDT_flush(descriptor_t *descriptor);
+void _GDT_flush(gdt_descriptor_t *descriptor);
 
-void initialize(void);
-void load(void);
-
-}
+void gdt_initialize(void);
+void gdt_load(void);
 
 #endif

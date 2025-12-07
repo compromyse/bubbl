@@ -94,10 +94,6 @@
 
 #ifndef ASM_FILE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef uint8_t multiboot_uint8_t;
 typedef uint16_t multiboot_uint16_t;
 typedef uint32_t multiboot_uint32_t;
@@ -270,10 +266,6 @@ struct multiboot_apm_info {
   multiboot_uint16_t cseg_16_len;
   multiboot_uint16_t dseg_len;
 };
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* ! ASM_FILE */
 

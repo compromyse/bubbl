@@ -34,40 +34,35 @@
  */
 #define MAX_BLOCKS 1048576
 
-namespace PhysicalMM
-{
-
 /* Initialize the memory map by getting all free regions, setting all blocks to
  * used, initializing regions marked free by the memory map provided by
  * multiboot, and deinitializing the memory used by the kernel */
-void initialize(void);
+void pmm_initialize(void);
 
 /* Find and allocate a free memory block, returning the physical address of the
  * block */
-void *allocate_block(void);
+void *pmm_allocate_block(void);
 
 /* Free an allocated memory block, given the physical address (from
  * allocate_block) */
-void free_block(void *physical_address);
+void pmm_free_block(void *physical_address);
 
 /*-- BITMAP --*/
 
 /* Marks the block as 'used' */
-void set_used(const uint32_t bit,
-              uint32_t *total_free_blocks,
-              uint32_t *memory_map);
+void pmm_set_used(const uint32_t bit,
+                  uint32_t *total_free_blocks,
+                  uint32_t *memory_map);
 
 /* Marks the block as 'unused' */
-void set_usable(const uint32_t bit,
-                uint32_t *total_free_blocks,
-                uint32_t *memory_map);
+void pmm_set_usable(const uint32_t bit,
+                    uint32_t *total_free_blocks,
+                    uint32_t *memory_map);
 
 /* Returns:
  * True if the bit is set (block is in use)
  * False if the bit is unset (block isn't in use)
  */
-bool test_bit(const uint32_t bit, uint32_t *memory_map);
-
-}
+bool pmm_test_bit(const uint32_t bit, uint32_t *memory_map);
 
 #endif

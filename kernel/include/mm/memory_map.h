@@ -30,12 +30,7 @@ typedef struct {
   multiboot_memory_map_t *region_list[MAX_FREE_REGIONS];
 } free_memory_regions_t;
 
-namespace MemoryMap
-{
-
-void load(multiboot_info_t *mmap);
-free_memory_regions_t *get_free_regions(void);
-
-}
+void mmap_load(multiboot_info_t *mmap);
+free_memory_regions_t *mmap_get_free_regions(void);
 
 #endif

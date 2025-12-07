@@ -25,11 +25,8 @@
 /* Implementation adapted from
  * https://wiki.osdev.org/Inline_Assembly/Examples */
 
-namespace Serial
-{
-
 bool
-initialize(void)
+serial_initialize(void)
 {
   outb(PORT + 1, 0x00); // Disable all interrupts
   outb(PORT + 3, 0x80); // Enable DLAB (set baud rate divisor)
@@ -61,7 +58,7 @@ is_transmit_empty(void)
 }
 
 void
-write_char(const char chr)
+serial_write_char(const char chr)
 {
   while (is_transmit_empty() == 0)
     ;
@@ -70,11 +67,9 @@ write_char(const char chr)
 }
 
 void
-write_string(const char *string)
+serial_write_string(const char *string)
 {
   size_t size = strlen(string);
   for (size_t i = 0; i < size; i++)
-    write_char(string[i]);
-}
-
+    serial_write_char(string[i]);
 }

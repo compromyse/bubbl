@@ -24,10 +24,7 @@
 #include <mm/virtual_mm.h>
 #include <stddef.h>
 
-namespace PageTableAllocator
-{
-
-uint32_t *l_page_directory = 0;
+static uint32_t *l_page_directory = 0;
 uint32_t *l_heap = NULL;
 uint16_t l_table_index = 0;
 
@@ -36,10 +33,10 @@ make_table(uint32_t *table_address)
 {
   uint32_t *table = table_address;
   for (uint32_t i = 0; i < 1024; i++)
-    table[i] = PTE_FRAME((uint32_t) PhysicalMM::allocate_block())
-               | PTE_PRESENT(1) | PTE_WRITABLE(1);
+    table[i] = PTE_FRAME((uint32_t) pmm_allocate_block()) | PTE_PRESENT(1)
+               | PTE_WRITABLE(1);
 
-  void *starting_address = VirtualMM::find_free_pages(1);
+  void *starting_address = vmm_find_free_pages(1);
   uint32_t *pd_entry = &l_page_directory[GET_PD_INDEX(starting_address)];
   *pd_entry = PDE_FRAME((uint32_t) table) | PDE_PRESENT(1) | PDE_WRITABLE(1);
 
@@ -48,13 +45,13 @@ make_table(uint32_t *table_address)
 }
 
 void
-initialize(void)
+pta_initialize(void)
 {
   /* We can't just do this in allocate() because make_table() depends on
-   * VirtualMM::find_free_pages() */
+   * find_free_pages() */
 
-  if (l_page_directory != VirtualMM::get_page_directory())
-    l_page_directory = VirtualMM::get_page_directory();
+  if (l_page_directory != vmm_get_page_directory())
+    l_page_directory = vmm_get_page_directory();
 
   /* Initial table */
   if (l_heap == NULL)
@@ -62,11 +59,9 @@ initialize(void)
 }
 
 uint32_t *
-allocate(void)
+pta_allocate(void)
 {
   uint32_t *next_table = l_heap + (l_table_index * 4 * KiB);
   l_table_index++;
   return next_table;
-}
-
 }

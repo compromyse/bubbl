@@ -23,9 +23,6 @@
 #include <mm/multiboot.h>
 #include <stdint.h>
 
-namespace MemoryMap
-{
-
 static free_memory_regions_t l_free_memory_regions = { 0 };
 
 ALWAYS_INLINE static char *
@@ -48,7 +45,7 @@ fetch_type(multiboot_memory_map_t *mmap)
 }
 
 void
-load(multiboot_info_t *multiboot_info)
+mmap_load(multiboot_info_t *multiboot_info)
 {
   printk("mm", "Loading Memory Map:");
 
@@ -95,9 +92,7 @@ load(multiboot_info_t *multiboot_info)
 }
 
 free_memory_regions_t *
-get_free_regions(void)
+mmap_get_free_regions(void)
 {
   return &l_free_memory_regions;
-}
-
 }

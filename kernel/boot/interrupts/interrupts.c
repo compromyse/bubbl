@@ -16,38 +16,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <boot/interrupts.h>
+#include <common.h>
 #include <kernel/halt.h>
+#include <kernel/io.h>
 #include <libk/stdio.h>
-#include <mm/page_table_allocator.h>
-#include <mm/physical_mm.h>
-#include <mm/virtual_mm.h>
-#include <stdbool.h>
-#include <stdint.h>
 
-namespace VirtualMM
+void
+interrupts_initialize(void)
 {
+  idt_load();
+  printk("\ninterrupts", "IDT Loaded.");
 
-void *
-alloc_pages(uint32_t n_pages)
-{
-  uint32_t starting_address = (uint32_t) find_free_pages(n_pages);
-  if (!starting_address)
-    return NULL;
-
-  for (uint32_t i = 0; i < n_pages; i++) {
-    void *physical_address = PhysicalMM::allocate_block();
-    void *virtual_address = (void *) (starting_address + (i * PAGE_SIZE));
-    map_page(physical_address, virtual_address);
-  }
-
-  return (void *) starting_address;
+  interrupts_enable();
+  printk("interrupts", "Initialized.");
 }
 
 void
-free_pages(void *starting_address, uint32_t n_pages)
+interrupts_enable(void)
 {
-  for (uint32_t i = 0; i < n_pages; i++)
-    unmap_page((void *) (((uint32_t) starting_address) + (i * 4096)));
+  if (!idt_loaded()) {
+    printk("interrupts", "Attempt to enable before IDT load.");
+    ASSERT_NOT_REACHED();
+  }
+
+  __asm__ volatile("sti");
+  // printk("\ninterrupts", "Enabled.");
 }
 
+void
+interrupts_disable(void)
+{
+  __asm__ volatile("cli");
+  // printk("\ninterrupts", "Disabled.");
 }

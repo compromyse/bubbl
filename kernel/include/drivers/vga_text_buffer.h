@@ -43,9 +43,6 @@
 #define vga_entry(character, color)                                           \
   ((uint16_t) color << 8 | (uint16_t) character)
 
-namespace VGATextBuffer
-{
-
 /* Hardware text mode color constants. */
 typedef enum {
   COLOR_BLACK = 0,
@@ -64,13 +61,11 @@ typedef enum {
   COLOR_LIGHT_MAGENTA = 13,
   COLOR_LIGHT_BROWN = 14,
   COLOR_WHITE = 15
-} colors;
+} vgatb_colors;
 
-void initialize(void);
-void write_char(const char);
-void write_string(const char *string);
-void printf(const char *string, ...);
-
-}
+void vgatb_initialize(void);
+void vgatb_write_char(const char);
+void vgatb_write_string(const char *string);
+void vgatb_printf(const char *string, ...);
 
 #endif

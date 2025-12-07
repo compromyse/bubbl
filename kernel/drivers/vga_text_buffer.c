@@ -29,14 +29,10 @@
 
 #include <drivers/vga_text_buffer.h>
 
-namespace VGATextBuffer
-{
-
 static uint16_t *l_buffer = (uint16_t *) 0xB8000;
 static uint8_t l_row = 0;
 static uint8_t l_column = 0;
-static uint8_t l_color = vga_entry_color(VGATextBuffer::COLOR_LIGHT_GREY,
-                                         VGATextBuffer::COLOR_BLACK);
+static uint8_t l_color = vga_entry_color(COLOR_LIGHT_GREY, COLOR_BLACK);
 
 ALWAYS_INLINE static void
 write_entry_at(const char c,
@@ -49,7 +45,7 @@ write_entry_at(const char c,
 }
 
 void
-initialize(void)
+vgatb_initialize(void)
 {
   /*
    * Disable the cursor
@@ -64,7 +60,7 @@ initialize(void)
 }
 
 void
-write_char(const char c)
+vgatb_write_char(const char c)
 {
   if (c == '\n') {
     l_row++;
@@ -81,15 +77,15 @@ write_char(const char c)
 }
 
 void
-write_string(const char *string)
+vgatb_write_string(const char *string)
 {
   size_t size = strlen(string);
   for (size_t i = 0; i < size; i++)
-    write_char(string[i]);
+    vgatb_write_char(string[i]);
 }
 
 void
-printf(const char *string, ...)
+vgatb_printf(const char *string, ...)
 {
   /* TODO: Dynamic Memory Allocation */
   char str[256];
@@ -99,7 +95,5 @@ printf(const char *string, ...)
   vsnprintf(str, sizeof(str), string, ap);
   va_end(ap);
 
-  write_string(str);
-}
-
+  vgatb_write_string(str);
 }

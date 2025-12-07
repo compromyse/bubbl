@@ -16,37 +16,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <boot/gdt.h>
+#include <drivers/serial.h>
+#include <drivers/vga_text_buffer.h>
 
-namespace GDT
-{
-
-entry_t l_entries[] = {
-  /* NULL Descriptor */
-  GDT_ENTRY(0, 0, 0, 0),
-
-  /* Kernel Mode Code Segment */
-  GDT_ENTRY(0, 0xfffff, GDT_KERNEL_CODE_SEGMENT_ACCESS_FLAGS, GDT_FLAGS),
-
-  /* Kernel Mode Data Segment */
-  GDT_ENTRY(0, 0xfffff, GDT_KERNEL_DATA_SEGMENT_ACCESS_FLAGS, GDT_FLAGS),
-
-  /* User Mode Code Segment */
-  // GDT_ENTRY(0, 0xfffff, GDT_USER_CODE_SEGMENT_ACCESS_FLAGS, FLAGS),
-
-  /* User Mode Data Segment */
-  // GDT_ENTRY(0, 0xfffff, GDT_USER_DATA_SEGMENT_ACCESS_FLAGS, FLAGS)
-
-  /* TODO: TSS? */
-  /* TODO: LDT? */
-};
-
-descriptor_t descriptor = { sizeof(l_entries) - 1, l_entries };
+#include <libk/stdio.h>
 
 void
-load(void)
+printk(const char *from, const char *msg, ...)
 {
-  _GDT_flush(&descriptor);
+  /* TODO: Dynamic Memory Allocation */
+  char str[256];
+
+  va_list ap;
+  va_start(ap, msg);
+  vsnprintf(str, sizeof(str), msg, ap);
+  va_end(ap);
+
+  serial_write_string("\033[33m");
+  serial_write_string(from);
+  serial_write_string(":\033[0m ");
+  serial_write_string(str);
+  serial_write_string("\033[0m\n");
 }
 
+void
+printk_raw(const char *msg, ...)
+{
+  /* TODO: Dynamic Memory Allocation */
+  char str[256];
+
+  va_list ap;
+  va_start(ap, msg);
+  vsnprintf(str, sizeof(str), msg, ap);
+  va_end(ap);
+
+  serial_write_string(str);
 }

@@ -30,22 +30,22 @@
 #include <mm/virtual_mm.h>
 #include <stdint.h>
 
-extern "C" void
+void
 kernel_main(uint32_t magic, multiboot_info_t *multiboot_info)
 {
-  Serial::initialize();
-  VGATextBuffer::initialize();
+  serial_initialize();
+  vgatb_initialize();
 
   if (magic != MULTIBOOT_BOOTLOADER_MAGIC) {
     printk("kernel", "Invalid Multiboot Magic: %x", magic);
     halt();
   }
 
-  GDT::load();
-  MemoryMap::load(multiboot_info);
-  PhysicalMM::initialize();
-  VirtualMM::initialize();
-  Interrupts::initialize();
+  gdt_load();
+  mmap_load(multiboot_info);
+  pmm_initialize();
+  vmm_initialize();
+  interrupts_initialize();
 
   printk("\nkernel", "Started.");
 

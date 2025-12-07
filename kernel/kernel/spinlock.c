@@ -1,6 +1,6 @@
 /*
  * bubbl
- * Copyright (C) 2024-2025  Raghuram Subramani <raghus2247@gmail.com>
+ * Copyright (C) 2025  Raghuram Subramani <raghus2247@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <kernel/halt.h>
-#include <kernel/io.h>
-#include <libk/stdio.h>
+#include <boot/interrupts.h>
+#include <kernel/spinlock.h>
 
 void
-halt(void)
+spinlock_acquire(spinlock_t *lock)
 {
-  printk("kernel", "Halted.");
-
-  while (true)
-    __asm__ volatile("cli; hlt");
+  interrupts_disable();
+  while (!__sync_bool_compare_and_swap(lock, 0, 1))
+    while (lock)
+      __asm__ volatile("rep; nop");
 }
 
 void
-exit(void)
+spinlock_release(spinlock_t *lock)
 {
-  outb(0xf4, 0x1);
+  __sync_bool_compare_and_swap(lock, 1, 0);
+  if (idt_loaded())
+    interrupts_enable();
 }

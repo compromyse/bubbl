@@ -23,14 +23,7 @@
 
 typedef uint8_t spinlock_t;
 
-class Spinlock
-{
-private:
-  spinlock_t m_lock;
-
-public:
-  void acquire(void);
-  void release(void);
-};
+void spinlock_acquire(spinlock_t *lock);
+void spinlock_release(spinlock_t *lock);
 
 #endif

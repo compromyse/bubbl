@@ -22,13 +22,10 @@
 #include <kernel/io.h>
 #include <libk/stdio.h>
 
-namespace Interrupts
-{
+extern void *isr_stub_table[];
 
-extern "C" void *isr_stub_table[];
-
-entry_t l_entries[256];
-descriptor_t descriptor = { sizeof(l_entries) - 1, l_entries };
+static entry_t l_entries[256];
+static descriptor_t descriptor = { sizeof(l_entries) - 1, l_entries };
 static bool l_idt_loaded = false;
 
 bool
@@ -38,7 +35,7 @@ idt_loaded(void)
 }
 
 void
-load_idt(void)
+idt_load(void)
 {
   for (uint16_t i = 0; i < 256; i++)
     l_entries[i] = (entry_t) { 0 };
@@ -52,6 +49,4 @@ load_idt(void)
   __asm__ volatile("lidt %0" ::"m"(descriptor));
 
   l_idt_loaded = true;
-}
-
 }

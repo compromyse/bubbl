@@ -23,13 +23,8 @@
 
 #define PORT 0x3f8 // COM1
 
-namespace Serial
-{
-
-bool initialize(void);
-void write_char(const char chr);
-void write_string(const char *string);
-
-}
+bool serial_initialize(void);
+void serial_write_char(const char chr);
+void serial_write_string(const char *string);
 
 #endif

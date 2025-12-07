@@ -19,39 +19,15 @@
 #include <boot/interrupts.h>
 #include <common.h>
 #include <kernel/halt.h>
-#include <kernel/io.h>
 #include <libk/stdio.h>
-
-namespace Interrupts
-{
+#include <stdbool.h>
 
 void
-initialize()
+exception_handler(int irq_number)
 {
-  load_idt();
-  printk("\ninterrupts", "IDT Loaded.");
+  printk("interrupts", "Interrupt: %d", irq_number);
 
-  enable();
-  printk("interrupts", "Initialized.");
-}
-
-void
-enable(void)
-{
-  if (!idt_loaded()) {
-    printk("interrupts", "Attempt to enable before IDT load.");
-    ASSERT_NOT_REACHED();
-  }
-
-  __asm__ volatile("sti");
-  // printk("\ninterrupts", "Enabled.");
-}
-
-void
-disable(void)
-{
-  __asm__ volatile("cli");
-  // printk("\ninterrupts", "Disabled.");
-}
-
+  ASSERT_NOT_REACHED();
+  while (true)
+    __asm__ volatile("cli; hlt");
 }

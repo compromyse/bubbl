@@ -20,11 +20,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-namespace PhysicalMM
-{
-
 void
-set_used(const uint32_t bit, uint32_t *total_free_blocks, uint32_t *memory_map)
+pmm_set_used(const uint32_t bit,
+             uint32_t *total_free_blocks,
+             uint32_t *memory_map)
 {
   uint32_t memory_map_index = bit / BITMAP_ENTRY_SIZE;
   uint32_t bitmask = 1 << (bit % BITMAP_ENTRY_SIZE);
@@ -33,9 +32,9 @@ set_used(const uint32_t bit, uint32_t *total_free_blocks, uint32_t *memory_map)
 }
 
 void
-set_usable(const uint32_t bit,
-           uint32_t *total_free_blocks,
-           uint32_t *memory_map)
+pmm_set_usable(const uint32_t bit,
+               uint32_t *total_free_blocks,
+               uint32_t *memory_map)
 {
   uint32_t memory_map_index = bit / BITMAP_ENTRY_SIZE;
   uint32_t bitmask = 1 << (bit % BITMAP_ENTRY_SIZE);
@@ -44,11 +43,9 @@ set_usable(const uint32_t bit,
 }
 
 bool
-test_bit(const uint32_t bit, uint32_t *memory_map)
+pmm_test_bit(const uint32_t bit, uint32_t *memory_map)
 {
   uint32_t memory_map_index = bit / BITMAP_ENTRY_SIZE;
   uint32_t bitmask = 1 << (bit % BITMAP_ENTRY_SIZE);
   return memory_map[memory_map_index] & bitmask;
-}
-
 }

@@ -30,17 +30,14 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-namespace PhysicalMM
-{
-
-extern "C" uint32_t kernel_start;
-extern "C" uint32_t kernel_end;
+uint32_t kernel_start;
+uint32_t kernel_end;
 
 uint32_t l_block_count = 0;
 uint32_t l_total_free_blocks = 0;
 uint32_t l_memory_map[MAX_BLOCKS / BITMAP_ENTRY_SIZE];
 
-Spinlock l_lock;
+spinlock_t l_lock;
 
 ALWAYS_INLINE static void
 log_memory_map(free_memory_regions_t *free_memory_regions)
@@ -68,12 +65,12 @@ initialize_region(uint32_t start, uint32_t length)
   uint32_t n_blocks = length / BLOCK_SIZE;
 
   for (; n_blocks > 0; n_blocks--)
-    if (test_bit(bit, l_memory_map))
-      set_usable(bit++, &l_total_free_blocks, l_memory_map);
+    if (pmm_test_bit(bit, l_memory_map))
+      pmm_set_usable(bit++, &l_total_free_blocks, l_memory_map);
 
   /* First block is always used (first 64KiB) */
-  if (!test_bit(0, l_memory_map))
-    set_used(0, &l_total_free_blocks, l_memory_map);
+  if (!pmm_test_bit(0, l_memory_map))
+    pmm_set_used(0, &l_total_free_blocks, l_memory_map);
 }
 
 ALWAYS_INLINE static void
@@ -86,7 +83,7 @@ deinitialize_region(uint32_t start, uint32_t length)
     n_blocks++;
 
   for (; n_blocks > 0; n_blocks--)
-    set_used(bit++, &l_total_free_blocks, l_memory_map);
+    pmm_set_used(bit++, &l_total_free_blocks, l_memory_map);
 }
 
 ALWAYS_INLINE static uint32_t
@@ -98,7 +95,7 @@ find_free_block(void)
     if (l_memory_map[i] != 0xffffffff)
       /* Test each bit to see if it's zero */
       for (uint32_t j = 0; j < BITMAP_ENTRY_SIZE; j++)
-        if (!test_bit(i * BITMAP_ENTRY_SIZE + j, l_memory_map))
+        if (!pmm_test_bit(i * BITMAP_ENTRY_SIZE + j, l_memory_map))
           return i * BITMAP_ENTRY_SIZE + j;
 
   /* Shouldn't be reached, since we're keeping track of the number of free
@@ -108,12 +105,12 @@ find_free_block(void)
 }
 
 void
-initialize(void)
+pmm_initialize(void)
 {
-  free_memory_regions_t *free_memory_regions = MemoryMap::get_free_regions();
+  free_memory_regions_t *free_memory_regions = mmap_get_free_regions();
   log_memory_map(free_memory_regions);
 
-  l_lock.acquire();
+  spinlock_acquire(&l_lock);
 
   /* All blocks are initially used */
   /* TODO: Move this block to a place after block_count is set. This is why
@@ -132,7 +129,7 @@ initialize(void)
   /* Deinitialize first 8MiB */
   deinitialize_region(0, 8 * MiB);
 
-  l_lock.release();
+  spinlock_release(&l_lock);
 
   /* Manually loop through and calculate the number of free blocks. */
   for (uint32_t i = 0; i < MAX_BLOCKS / BITMAP_ENTRY_SIZE; i++)
@@ -140,36 +137,34 @@ initialize(void)
     if (l_memory_map[i] != 0xffffffff)
       /* Test each bit to see if it's zero */
       for (uint32_t j = 0; j < BITMAP_ENTRY_SIZE; j++)
-        if (!test_bit(i * BITMAP_ENTRY_SIZE + j, l_memory_map))
+        if (!pmm_test_bit(i * BITMAP_ENTRY_SIZE + j, l_memory_map))
           l_total_free_blocks++;
 
   printk("physical_mm", "Total free blocks: 0x%x", l_total_free_blocks);
 }
 
 void *
-allocate_block(void)
+pmm_allocate_block(void)
 {
   if (l_total_free_blocks == 0) {
     printk("physical_mm", "No more free blocks!");
     return NULL;
   }
 
-  l_lock.acquire();
+  spinlock_acquire(&l_lock);
 
   uint32_t block = find_free_block();
-  set_used(block, &l_total_free_blocks, l_memory_map);
+  pmm_set_used(block, &l_total_free_blocks, l_memory_map);
 
-  l_lock.release();
+  spinlock_release(&l_lock);
 
   uint32_t physical_address = block * BLOCK_SIZE;
   return (void *) physical_address;
 }
 
 void
-free_block(void *physical_address)
+pmm_free_block(void *physical_address)
 {
   uint32_t block = ((uint32_t) physical_address) / BLOCK_SIZE;
-  set_usable(block, &l_total_free_blocks, l_memory_map);
-}
-
+  pmm_set_usable(block, &l_total_free_blocks, l_memory_map);
 }

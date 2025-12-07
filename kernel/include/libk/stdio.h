@@ -22,10 +22,6 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef int (*_printf_engine_output_func)(const char *str,
                                           size_t len,
                                           void *state);
@@ -42,9 +38,5 @@ int vsnprintf(char *str, size_t len, const char *fmt, va_list ap);
 
 void printk(const char *from, const char *msg, ...);
 void printk_raw(const char *msg, ...);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

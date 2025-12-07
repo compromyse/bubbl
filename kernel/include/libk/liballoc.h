@@ -21,9 +21,6 @@
 
 #include <stddef.h>
 
-namespace LibAlloc
-{
-
 /** This is a boundary tag which is prepended to the
  * page or section of a page which we have allocated. It is
  * used to identify valid memory blocks that the
@@ -46,7 +43,5 @@ void *kmalloc(size_t);
 void *krealloc(void *, size_t);
 void *kcalloc(size_t, size_t);
 void kfree(void *);
-
-}
 
 #endif

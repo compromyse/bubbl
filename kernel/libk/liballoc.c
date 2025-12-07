@@ -22,15 +22,12 @@
 #include <mm/virtual_mm.h>
 #include <stddef.h>
 
-namespace LibAlloc
-{
+spinlock_t lock;
 
-Spinlock lock;
-
-#define liballoc_lock lock.acquire
-#define liballoc_unlock lock.release
-#define liballoc_alloc VirtualMM::alloc_pages
-#define liballoc_free VirtualMM::free_pages
+#define liballoc_lock() spinlock_acquire(&lock)
+#define liballoc_unlock() spinlock_release(&lock)
+#define liballoc_alloc vmm_alloc_pages
+#define liballoc_free vmm_free_pages
 
 #define LIBALLOC_MAGIC 0xc001c0de
 #define MAXCOMPLETE 5
@@ -216,7 +213,7 @@ allocate_new_tag(unsigned int size)
   if (pages < l_pageCount)
     pages = l_pageCount;
 
-  tag = (struct boundary_tag *) liballoc_alloc(pages);
+  tag = (struct boundary_tag *) vmm_alloc_pages(pages);
 
   if (tag == NULL)
     return NULL; // uh oh, we ran out of memory.
@@ -450,6 +447,4 @@ krealloc(void *p, size_t size)
   kfree(p);
 
   return ptr;
-}
-
 }

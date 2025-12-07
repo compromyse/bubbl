@@ -16,19 +16,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <kernel/halt.h>
-#include <libk/stdio.h>
-#include <stdint.h>
+#include <boot/gdt.h>
 
-/* TODO: Randomize */
-#define STACK_CHK_GUARD 0xe2dee396
+static gdt_entry_t l_entries[] = {
+  /* NULL Descriptor */
+  GDT_ENTRY(0, 0, 0, 0),
 
-uintptr_t __stack_chk_guard = STACK_CHK_GUARD;
+  /* Kernel Mode Code Segment */
+  GDT_ENTRY(0, 0xfffff, GDT_KERNEL_CODE_SEGMENT_ACCESS_FLAGS, GDT_FLAGS),
 
-extern "C" void
-__stack_chk_fail(void)
+  /* Kernel Mode Data Segment */
+  GDT_ENTRY(0, 0xfffff, GDT_KERNEL_DATA_SEGMENT_ACCESS_FLAGS, GDT_FLAGS),
+
+  /* User Mode Code Segment */
+  // GDT_ENTRY(0, 0xfffff, GDT_USER_CODE_SEGMENT_ACCESS_FLAGS, FLAGS),
+
+  /* User Mode Data Segment */
+  // GDT_ENTRY(0, 0xfffff, GDT_USER_DATA_SEGMENT_ACCESS_FLAGS, FLAGS)
+
+  /* TODO: TSS? */
+  /* TODO: LDT? */
+};
+
+static gdt_descriptor_t descriptor = { sizeof(l_entries) - 1, l_entries };
+
+void
+gdt_load(void)
 {
-  /* TODO: Panic the kernel */
-  printk("Stack Smashing Protector", "Stack smashing detected!");
-  halt();
+  _GDT_flush(&descriptor);
 }

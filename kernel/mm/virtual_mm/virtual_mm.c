@@ -26,40 +26,37 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-namespace VirtualMM
-{
-
 extern uint32_t kernel_start;
 extern uint32_t kernel_end;
 
 uint32_t *l_current_page_directory = 0;
 
 /* Kernel's page directory */
-uint32_t l_page_directory[1024] ALIGNED(4096);
+static uint32_t l_page_directory[1024] ALIGNED(4096);
 /* Page table for the first 4 MiB */
-uint32_t l_fourMiB_page_table[1024] ALIGNED(4096);
+static uint32_t l_fourMiB_page_table[1024] ALIGNED(4096);
 /* Page table for the next 4 MiB */
-uint32_t l_eightMiB_page_table[1024] ALIGNED(4096);
+static uint32_t l_eightMiB_page_table[1024] ALIGNED(4096);
 
 uint32_t *
-get_page_directory(void)
+vmm_get_page_directory(void)
 {
   return l_current_page_directory;
 }
 
 ALWAYS_INLINE void
-load_page_directory(uint32_t *page_directory)
+vmm_load_page_directory(uint32_t *page_directory)
 {
   __asm__ volatile("movl %0, %%cr3" ::"r"(page_directory));
 }
 
 bool
-switch_page_directory(uint32_t *page_directory)
+vmm_switch_page_directory(uint32_t *page_directory)
 {
   if (!page_directory)
     return false;
   l_current_page_directory = page_directory;
-  load_page_directory(page_directory);
+  vmm_load_page_directory(page_directory);
 
   return true;
 }
@@ -74,7 +71,7 @@ enable_paging(void)
 }
 
 void
-initialize(void)
+vmm_initialize(void)
 {
   /* Zero out the page tables and directories */
   for (uint32_t i = 0; i < 1024; i++) {
@@ -103,16 +100,16 @@ initialize(void)
   *eightMiB_pd_entry = PDE_FRAME((uint32_t) l_eightMiB_page_table)
                        | PDE_PRESENT(1) | PDE_WRITABLE(1);
 
-  switch_page_directory(l_page_directory);
+  vmm_switch_page_directory(l_page_directory);
   enable_paging();
 
-  PageTableAllocator::initialize();
+  pta_initialize();
 }
 
 uint32_t *
 make_table(uint32_t *pd_entry)
 {
-  uint32_t *table = PageTableAllocator::allocate();
+  uint32_t *table = pta_allocate();
 
   for (uint32_t i = 0; i < 1024; i++)
     table[i] = 0x0;
@@ -135,7 +132,7 @@ get_or_make_table(uint32_t *pd_entry)
 }
 
 void
-map_page(void *physical_address, void *virtual_address)
+vmm_map_page(void *physical_address, void *virtual_address)
 {
   uint32_t *pd_entry
       = &l_current_page_directory[GET_PD_INDEX(virtual_address)];
@@ -151,7 +148,7 @@ map_page(void *physical_address, void *virtual_address)
 }
 
 void
-unmap_page(void *virtual_address)
+vmm_unmap_page(void *virtual_address)
 {
   uint32_t *pd_entry
       = &l_current_page_directory[GET_PD_INDEX(virtual_address)];
@@ -169,7 +166,7 @@ unmap_page(void *virtual_address)
 }
 
 void *
-find_free_pages(uint32_t n_pages)
+vmm_find_free_pages(uint32_t n_pages)
 {
   /* Skip the first two page directory entries; we don't wanna touch the first
    * 8MiB. */
@@ -226,6 +223,4 @@ find_free_pages(uint32_t n_pages)
 
   ASSERT_NOT_REACHED();
   return 0;
-}
-
 }

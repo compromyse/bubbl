@@ -21,12 +21,7 @@
 
 #include <stdint.h>
 
-namespace PageTableAllocator
-{
-
-uint32_t *allocate(void);
-void initialize(void);
-
-}
+uint32_t *pta_allocate(void);
+void pta_initialize(void);
 
 #endif

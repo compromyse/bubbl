@@ -2,33 +2,33 @@ cmake_minimum_required(VERSION 3.21)
 project(kernel C ASM_NASM)
 
 set(SRC
-  boot/gdt/gdt.cc
+  boot/gdt/gdt.c
   boot/gdt/gdt.s
   boot/init/boot.s
   boot/init/crti.s
   boot/init/crtn.s
-  boot/interrupts/exceptions.cc
-  boot/interrupts/idt.cc
-  boot/interrupts/interrupts.cc
+  boot/interrupts/exceptions.c
+  boot/interrupts/idt.c
+  boot/interrupts/interrupts.c
   boot/interrupts/isr.s
-  drivers/serial.cc
-  drivers/vga_text_buffer.cc
-  kernel/halt.cc
-  kernel/io.cc
-  kernel/kernel.cc
-  kernel/spinlock.cc
-  kernel/stack_smashing_protector.cc
-  libk/liballoc.cc
-  libk/memset.cc
-  libk/printf.cc
-  libk/printk.cc
-  libk/strlen.cc
-  mm/memory_map.cc
-  mm/physical_mm/bitmap.cc
-  mm/physical_mm/physical_mm.cc
-  mm/virtual_mm/page_table_allocator.cc
-  mm/virtual_mm/pages.cc
-  mm/virtual_mm/virtual_mm.cc
+  drivers/serial.c
+  drivers/vga_text_buffer.c
+  kernel/halt.c
+  kernel/io.c
+  kernel/kernel.c
+  kernel/spinlock.c
+  kernel/stack_smashing_protector.c
+  libk/liballoc.c
+  libk/memset.c
+  libk/printf.c
+  libk/printk.c
+  libk/strlen.c
+  mm/memory_map.c
+  mm/physical_mm/bitmap.c
+  mm/physical_mm/physical_mm.c
+  mm/virtual_mm/page_table_allocator.c
+  mm/virtual_mm/pages.c
+  mm/virtual_mm/virtual_mm.c
 )
 
 add_executable(kernel ${SRC})

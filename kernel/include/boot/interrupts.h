@@ -21,6 +21,7 @@
 
 #include <boot/gdt.h>
 #include <common.h>
+#include <stdbool.h>
 #include <stdint.h>
 
 #define IDT_ENTRY(isr, attributes)                                            \
@@ -36,14 +37,11 @@
 #define IDT_PRESENT (1 << 7)
 #define IDT_KERNEL_PRIVILEGE_LEVEL (0)
 #define IDT_USER_PRIVILEGE_LEVEL (3 << 5)
-#define IDT_TASK_GATE (0b0101)
-#define IDT_16BIT_INTERRUPT_GATE (0b0110)
-#define IDT_16BIT_TRAP_GATE (0b0111)
-#define IDT_32BIT_INTERRUPT_GATE (0b1110)
-#define IDT_32BIT_TRAP_GATE (0b1111)
-
-namespace Interrupts
-{
+#define IDT_TASK_GATE (0x05)
+#define IDT_16BIT_INTERRUPT_GATE (0x06)
+#define IDT_16BIT_TRAP_GATE (0x07)
+#define IDT_32BIT_INTERRUPT_GATE (0x0e)
+#define IDT_32BIT_TRAP_GATE (0x0f)
 
 typedef struct {
   uint16_t isr_low;
@@ -59,16 +57,14 @@ typedef struct {
 } PACKED descriptor_t;
 
 /* Simply loads IDT and enables interrupts */
-void initialize(void);
-void enable(void);
-void disable(void);
+void interrupts_initialize(void);
+void interrupts_enable(void);
+void interrupts_disable(void);
 
 /* IDT */
-void load_idt(void);
+void idt_load(void);
 bool idt_loaded(void);
 
-extern "C" NORETURN void exception_handler(int irq_number);
-
-}
+NORETURN void exception_handler(int irq_number);
 
 #endif
