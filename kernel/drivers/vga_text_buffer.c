@@ -16,18 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <common.h>
+#include <drivers/vga_text_buffer.h>
+#include <kernel/halt.h>
+#include <kernel/io.h>
+#include <libk/stdio.h>
+#include <libk/string.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-
-#include <common.h>
-
-#include <libk/stdio.h>
-#include <libk/string.h>
-
-#include <kernel/io.h>
-
-#include <drivers/vga_text_buffer.h>
 
 static uint16_t *l_buffer = (uint16_t *) 0xB8000;
 static uint8_t l_row = 0;
@@ -87,6 +84,9 @@ vgatb_write_string(const char *string)
 void
 vgatb_printf(const char *string, ...)
 {
+  if (strlen(string) >= 256)
+    ASSERT_NOT_REACHED();
+
   /* TODO: Dynamic Memory Allocation */
   char str[256];
 
