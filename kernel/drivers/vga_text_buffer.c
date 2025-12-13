@@ -32,7 +32,7 @@
 static uint16_t *l_buffer = (uint16_t *) 0xB8000;
 static uint8_t l_row = 0;
 static uint8_t l_column = 0;
-static uint8_t l_color = vga_entry_color(COLOR_LIGHT_GREY, COLOR_BLACK);
+static uint8_t l_color = VGA_ENTRY_COLOR(COLOR_LIGHT_GREY, COLOR_BLACK);
 
 ALWAYS_INLINE static void
 write_entry_at(const char c,
@@ -41,7 +41,7 @@ write_entry_at(const char c,
                const uint8_t y)
 {
   size_t index = y * VGA_WIDTH + x;
-  l_buffer[index] = vga_entry(c, color);
+  l_buffer[index] = VGA_ENTRY(c, color);
 }
 
 void

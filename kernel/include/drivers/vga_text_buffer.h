@@ -34,13 +34,13 @@
  * bg   fg
  * 1110 0101
  */
-#define vga_entry_color(fg, bg) (bg << 4 | fg)
+#define VGA_ENTRY_COLOR(fg, bg) (bg << 4 | fg)
 
 /*
  * color     character
  * 1110 0101 1001 1010
  */
-#define vga_entry(character, color)                                           \
+#define VGA_ENTRY(character, color)                                           \
   ((uint16_t) color << 8 | (uint16_t) character)
 
 /* Hardware text mode color constants. */
