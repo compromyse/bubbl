@@ -65,6 +65,6 @@ void interrupts_disable(void);
 void idt_load(void);
 bool idt_loaded(void);
 
-NORETURN void exception_handler(int irq_number);
+NORETURN void exception_handler(void);
 
 #endif

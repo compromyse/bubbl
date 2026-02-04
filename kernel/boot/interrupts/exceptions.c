@@ -23,10 +23,8 @@
 #include <stdbool.h>
 
 void
-exception_handler(int irq_number)
+exception_handler(void)
 {
-  printk("interrupts", "Interrupt: %d", irq_number);
-
   ASSERT_NOT_REACHED();
   while (true)
     __asm__ volatile("cli; hlt");

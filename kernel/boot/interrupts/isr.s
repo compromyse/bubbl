@@ -28,14 +28,12 @@ dd ISR_%+i
 
 %macro ISR_WITH_ERROR 1
 ISR_%+%1:
-  push %1
   call exception_handler
   iret
 %endmacro
 
 %macro ISR_NO_ERROR 1
 ISR_%+%1:
-  push %1
   call exception_handler
   iret
 %endmacro
