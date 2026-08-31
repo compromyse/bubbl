@@ -42,9 +42,6 @@ set(C_COMPILE_OPTIONS
   -fstack-protector
   -fstack-protector-all
 
-  # -O3
-  -O0
-
   -Wall
   -Wextra
   -pedantic
@@ -66,6 +63,9 @@ set(CXX_COMPILE_OPTIONS
   -Wno-c99-extensions
   -Wno-c++14-binary-literal
 )
+
+set(CMAKE_C_FLAGS_DEBUG_INIT "-O0")
+set(CMAKE_C_FLAGS_RELEASE_INIT "-O2 -Werror")
 
 target_compile_options(kernel PRIVATE 
   $<$<COMPILE_LANGUAGE:C>: ${C_COMPILE_OPTIONS}>

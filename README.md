@@ -10,7 +10,8 @@ After entering the devshell (with direnv or `nix develop`),
 
 ```sh
 mkdir build && cd build
-cmake -G Ninja ..
+# DEBUG: cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug ..
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
 ninja
 ```
 
