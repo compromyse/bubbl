@@ -89,8 +89,10 @@
     ((base >> 24) & 0xff)                         /* base_high */             \
   }
 
-#define GDT_KERNEL_CODE_OFFSET 0x8
-#define GDT_KERNEL_DATA_OFFSET 0x10
+/* sizeof(gdt_entry_t) = 0x8 */
+#define GDT_NULL 0x0
+#define GDT_KERNEL_CODE_OFFSET (GDT_NULL + 0x8)
+#define GDT_KERNEL_DATA_OFFSET (GDT_NULL + 0x10)
 
 typedef struct {
   uint16_t limit_low;
